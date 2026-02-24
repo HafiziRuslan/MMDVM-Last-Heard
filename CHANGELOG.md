@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta4] - (2026-02-25T04:20:58+08:00)
+## [beta4] - (2026-02-25T04:21:39+08:00)
 
-- 43 commit(s) contributed to the release.
+- 45 commit(s) contributed to the release.
 - 35 day(s) passed between the first and last commit.
 - 35 day(s) passed between releases.
 
 ### 🚀 Features in beta4
 
+- [6f5d401](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/6f5d401d9eaa4df7597d10a898958fc1225a41a8) feat(code): improve telegram messaging and log notifications *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T04:21:22+08:00*
 - [171ffb4](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/171ffb4bdf649b8b2cdb031209bfb55d181b5302) feat(main): extend log patterns and dmr data parsing *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T04:00:37+08:00*
 - [429a038](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/429a038472dc9cca86c0399de45e3fe99ee7ef78) feat(.gitignore): ignore sample directory added *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T02:52:54+08:00*
 - [68003ad](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/68003adae9451766e2401bf75623c75051053cb0) feat(main): notify on log file changes and startup/shutdown *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T02:46:17+08:00*
@@ -312,4 +313,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-02-25T04:21:24.932770312+08:00
+generated using git-cliff at 2026-02-25T04:22:05.271055395+08:00
