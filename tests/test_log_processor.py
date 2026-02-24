@@ -14,14 +14,20 @@ sys.modules['telegram'] = mock.MagicMock()
 sys.modules['telegram.ext'] = mock.MagicMock()
 
 # Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+src_dir = os.path.join(project_root, 'src')
+sys.path.insert(0, src_dir)
 
 # Now import from main.py
 try:
 	import importlib.util
 
 	# Load main.py as a module
-	spec = importlib.util.spec_from_file_location('main', 'main.py')
+	main_path = os.path.join(src_dir, 'main.py')
+	if not os.path.exists(main_path):
+		main_path = os.path.join(project_root, 'main.py')
+	spec = importlib.util.spec_from_file_location('main', main_path)
 	main_module = importlib.util.module_from_spec(spec)
 
 	# Inject required dependencies
@@ -46,7 +52,7 @@ try:
 
 except Exception as e:
 	print(f'❌ Error loading main.py: {e}')
-	print('Make sure main.py is in the current directory.')
+	print(f'Make sure main.py is in {src_dir} or {project_root}.')
 	sys.exit(1)
 
 
@@ -66,9 +72,6 @@ def process_log_file(log_file_path: str, ignore_time_messages: bool = True):
 		'watchdog has expired',
 		'received RF data',
 		'received network data',
-		'received network Data',
-		'ended RF data transmission',
-		'ended network data transmission',
 	]
 
 	print('=' * 80)

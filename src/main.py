@@ -36,9 +36,6 @@ RELEVANT_LOG_PATTERNS = [
 	'watchdog has expired',
 	'received RF data',
 	'received network data',
-	'received network Data',
-	'ended RF data transmission',
-	'ended network data transmission',
 ]
 
 
@@ -284,12 +281,12 @@ class MMDVMLogLine:
 		r'from (?P<callsign>[\w\d\-/]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
 		r'(?:, (?P<duration>[\d\.]+) seconds, BER: (?P<ber>[\d\.]+)%, RSSI: (?P<rssi1>-[\d]+)/(?P<rssi2>-[\d]+)/(?P<rssi3>-[\d]+) dBm)'
 	)
-	DMR_DATA_PATTERN = re.compile(
-		r'^M: (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) '
-		r'DMR Slot (?P<slot>\d), (?:received|ended) (?P<source>network|RF) (?P<dtype>[Dd]ata(?: (?:header|block|transmission|Preamble CSBK(?: \(\d+ to follow\))?))?)'
-		r'(?: from (?P<callsign>[\w\d\-/]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+))?'
-		r'(?:, (?P<block>[\d]+) blocks)?'
-	)
+	# DMR_DATA_PATTERN = re.compile(
+	# 	r'^M: (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) '
+	# 	r'DMR Slot (?P<slot>\d), (received|ended) (?P<source>network|RF) (?P<dtype>data (header|block|transmission))'
+	# 	r' from (?P<callsign>[\w\d\-/]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
+	# 	r'(?:, (?P<block>[\d]+) blocks)'
+	# )
 	DSTAR_PATTERN = re.compile(
 		r'^M: (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) '
 		r'D-Star, (?:received )?(?P<source>network|RF) end of transmission '
@@ -319,7 +316,7 @@ class MMDVMLogLine:
 		parsers = [
 			cls._parse_dmr_gw,
 			cls._parse_dmr_rf,
-			cls._parse_dmr_data,
+			# cls._parse_dmr_data,
 			cls._parse_dstar,
 			cls._parse_dstar_watchdog,
 			cls._parse_ysf,
@@ -367,25 +364,25 @@ class MMDVMLogLine:
 			return obj
 		return None
 
-	@classmethod
-	def _parse_dmr_data(cls, logline: str) -> Optional['MMDVMLogLine']:
-		match = cls.DMR_DATA_PATTERN.match(logline)
-		if match:
-			obj = cls()
-			obj.mode = 'DMR-D'
-			obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
-			obj.slot = int(match.group('slot'))
-			obj.is_network = match.group('source') == 'network'
-			obj.is_voice = False
-			obj.data_type = match.group('dtype')
-			if match.group('callsign'):
-				obj.callsign = match.group('callsign').strip()
-				obj._set_url(obj.callsign)
-			if match.group('destination'):
-				obj.destination = match.group('destination').strip()
-			obj.block = int(match.group('block')) if match.group('block') else 0
-			return obj
-		return None
+	# @classmethod
+	# def _parse_dmr_data(cls, logline: str) -> Optional['MMDVMLogLine']:
+	# 	match = cls.DMR_DATA_PATTERN.match(logline)
+	# 	if match:
+	# 		obj = cls()
+	# 		obj.mode = 'DMR-D'
+	# 		obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+	# 		obj.slot = int(match.group('slot'))
+	# 		obj.is_network = match.group('source') == 'network'
+	# 		obj.is_voice = False
+	# 		obj.data_type = match.group('dtype')
+	# 		if match.group('callsign'):
+	# 			obj.callsign = match.group('callsign').strip()
+	# 			obj._set_url(obj.callsign)
+	# 		if match.group('destination'):
+	# 			obj.destination = match.group('destination').strip()
+	# 		obj.block = int(match.group('block')) if match.group('block') else 0
+	# 		return obj
+	# 	return None
 
 	@classmethod
 	def _parse_dstar(cls, logline: str) -> Optional['MMDVMLogLine']:
@@ -569,15 +566,9 @@ class MMDVMLogLine:
 				else:
 					message += f'\n📶 <b>RSSI</b>: {self.rssi}'
 		else:
-			message += '\n💾 <b>Type</b>: Data'
-			if self.data_type:
-				if 'preamble csbk' in self.data_type:
-					message += ' (CSBK Preamble)'
-				elif 'end of' in self.data_type:
-					message += ' (End)'
-				elif 'header' in self.data_type:
-					message += ' (Header)'
-			message += f'\n📦 <b>Blocks</b>: {self.block}'
+			message += f'\n💾 <b>Type</b>: Data {self.data_type.split()[-1].title()}'
+			if self.block > 0:
+				message += f'\n📦 <b>Blocks</b>: {self.block}'
 		if self.is_watchdog:
 			message += '\n\n⚠️ <b>Warning</b>: Network watchdog expired'
 		if self.mode == 'D-Star':
