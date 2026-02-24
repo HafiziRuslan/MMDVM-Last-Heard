@@ -613,7 +613,7 @@ async def telegram_message_worker(stop_event: asyncio.Event):
 				tg_message = await asyncio.wait_for(MESSAGE_QUEUE.get(), timeout=1.0)
 			except asyncio.TimeoutError:
 				continue
-			message = f'{tg_message}\n\n{APP_NAME}'
+			message = f'{tg_message}\n\n<code>{APP_NAME}</code>'
 			if TG_APP:
 				try:
 					botmsg = await TG_APP.bot.send_message(
@@ -646,9 +646,11 @@ async def mmdvm_logs_observer(stop_event: asyncio.Event):
 				logging.info('Switching to new log file: %s', latest_log)
 				if latest_log:
 					if current_log_path:
-						await logs_to_telegram(f'📂 Log File Changed\nNew file: <b>{os.path.basename(latest_log)}</b>')
+						await logs_to_telegram(
+							f'📃 Log File Changed\nFile: <s>{os.path.basename(current_log_path)}</s> ➡️ <b>{os.path.basename(latest_log)}</b>'
+						)
 					else:
-						await logs_to_telegram(f'📂 Monitoring Log File\nFile: <b>{os.path.basename(latest_log)}</b>')
+						await logs_to_telegram(f'📃 Monitoring Log File\nFile: <b>{os.path.basename(latest_log)}</b>')
 				current_log_path = latest_log
 
 			if current_log_path:
