@@ -30,13 +30,7 @@ TG_TOPICID: str = ''
 GW_IGNORE_TIME_MESSAGES: bool = True
 TG_APP: Optional[TelegramApplication] = None
 MESSAGE_QUEUE: Optional[asyncio.Queue] = None
-RELEVANT_LOG_PATTERNS = [
-	'end of voice transmission',
-	'end of transmission',
-	'watchdog has expired',
-	'received RF data header',
-	'received network data header',
-]
+RELEVANT_LOG_PATTERNS = ['end of voice transmission', 'end of transmission', 'watchdog has expired', 'received RF data', 'received network data']
 
 
 @lru_cache
@@ -271,20 +265,20 @@ class MMDVMLogLine:
 	DMR_GW_PATTERN = re.compile(
 		r'^M: (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) '
 		r'DMR Slot (?P<slot>\d), received (?P<source>network) (?:late entry|voice header|end of voice transmission) '
-		r'from (?P<callsign>[\w\d]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
+		r'from (?P<callsign>[\w\d\-/]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
 		r'(?:, (?P<duration>[\d\.]+) seconds, (?P<packet_loss>[\d\.]+)% packet loss, BER: (?P<ber>[\d\.]+)%)'
 	)
 	DMR_RF_PATTERN = re.compile(
 		r'^M: (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) '
 		r'DMR Slot (?P<slot>\d), received (?P<source>RF) (?:late entry|voice header|end of voice transmission) '
-		r'from (?P<callsign>[\w\d]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
+		r'from (?P<callsign>[\w\d\-/]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
 		r'(?:, (?P<duration>[\d\.]+) seconds, BER: (?P<ber>[\d\.]+)%, RSSI: (?P<rssi1>-[\d]+)/(?P<rssi2>-[\d]+)/(?P<rssi3>-[\d]+) dBm)'
 	)
 	DMR_DATA_PATTERN = re.compile(
 		r'^M: (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) '
-		r'DMR Slot (?P<slot>\d), received (?P<source>network|RF) data header '
-		r'from (?P<callsign>[\w\d]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
-		r'(?:, (?P<block>[\d]+) blocks)'
+		r'DMR Slot (?P<slot>\d), received (?P<source>network|RF) data(?: header)? '
+		r'from (?P<callsign>[\w\d\-/]+) to (?P<destination>(TG [\d\w]+)|[\d\w]+)'
+		r'(?:, (?P<block>[\d]+) blocks)?'
 	)
 	DSTAR_PATTERN = re.compile(
 		r'^M: (?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+) '
@@ -375,7 +369,7 @@ class MMDVMLogLine:
 			obj.is_voice = False
 			obj.callsign = match.group('callsign').strip()
 			obj.destination = match.group('destination').strip()
-			obj.block = int(match.group('block'))
+			obj.block = int(match.group('block')) if match.group('block') else 0
 			obj._set_url(obj.callsign)
 			return obj
 		return None

@@ -60,13 +60,7 @@ def process_log_file(log_file_path: str, ignore_time_messages: bool = True):
 	"""
 
 	# Patterns to match (same as in main.py)
-	relevant_patterns = [
-		'end of voice transmission',
-		'end of transmission',
-		'watchdog has expired',
-		'received RF data header',
-		'received network data header',
-	]
+	relevant_patterns = ['end of voice transmission', 'end of transmission', 'watchdog has expired', 'received RF data', 'received network data']
 
 	print('=' * 80)
 	print(f'Processing log file: {log_file_path}')
