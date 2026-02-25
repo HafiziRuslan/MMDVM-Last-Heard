@@ -172,6 +172,11 @@ if [ "$INTERNET_AVAILABLE" = true ] && check_disk_space; then
       fi
 
       if [ "$UPDATE_SUCCESS" = true ] && [ "$(sudo -u $dir_own git rev-parse HEAD)" = "$REMOTE" ]; then
+        if ! sudo -u $dir_own git diff --quiet "$LOCAL" HEAD -- pyproject.toml; then
+          log_msg INFO "Application updated. Forcing environement recreation."
+          rm -rf .venv
+        fi
+        
         log_msg INFO "Verifying repository integrity..."
         if sudo -u $dir_own git fsck --full >/dev/null 2>&1; then
           log_msg INFO "Update applied and verified. Restarting script..."
@@ -235,6 +240,7 @@ sync_dependencies() {
   local action=$1
   if [ "$INTERNET_AVAILABLE" = true ]; then
     log_msg INFO "$action MMDVM_LastHeard dependencies"
+    sudo -u $dir_own uv cache clean -q
     sudo -u $dir_own uv sync -q
   elif [ "$action" = "Installing" ]; then
     log_msg WARN "Internet unavailable. Skipping dependency installation."
