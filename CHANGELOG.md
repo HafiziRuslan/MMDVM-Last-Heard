@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-02-25T23:57:45+08:00)
+## [beta5] - (2026-02-26T00:00:31+08:00)
 
-- 6 commit(s) contributed to the release.
+- 7 commit(s) contributed to the release.
 - 1 day(s) passed between releases.
 
 ### 🚀 Features in beta5
@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta5
 
+- [e690922](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/e690922fefc3a1a912cbe2ace5131c40b28ca9b5) docs(changelog): prefix changelog update commit with docs scope in workflow *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-26T00:00:31+08:00*
 - [49788fc](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/49788fc9befd18dec3bdebbffb4ce86d46cf0a39) fix(main): correct typo in log message for environment recreation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T23:45:10+08:00*
 - [bed6bf4](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/bed6bf4fb36e20b6fbe7d45ad53f76cea0e2a713) fix(changelog): update Tera template syntax and formatting for consistency *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T21:20:53+08:00*
 
@@ -340,4 +341,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-02-25T23:58:21.349021952+08:00
+generated using git-cliff at 2026-02-26T00:01:07.372591015+08:00
