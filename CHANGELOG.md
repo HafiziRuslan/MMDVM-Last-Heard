@@ -2,11 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-02-25T21:16:33+08:00)
+## [beta5] - (2026-02-25T21:20:53+08:00)
 
-- 1 commit(s) contributed to the release.
-- 0 day(s) passed between the first and last commit.
+- 2 commit(s) contributed to the release.
 - 1 day(s) passed between releases.
+
+### 🐛 Bug Fixes in beta5
+
+- [bed6bf4](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/bed6bf4fb36e20b6fbe7d45ad53f76cea0e2a713) fix(changelog): update Tera template syntax and formatting for consistency *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T21:20:53+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta5
 
@@ -78,7 +81,7 @@ All notable changes to this project will be documented in this file.
 
 ## [beta3] - (2026-01-20T09:06:34+08:00)
 
-- 29 commit(s) contributed to the release.
+- 30 commit(s) contributed to the release.
 - 27 day(s) passed between the first and last commit.
 - 27 day(s) passed between releases.
 
@@ -126,6 +129,7 @@ All notable changes to this project will be documented in this file.
 
 - [2e91574](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/2e915742772bb7e46bae4ab045f29692ed1fea70) chore(github): expand workflow permissions and add gitlab sync *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-01-20T02:33:10+08:00*
 - [fb293dc](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/fb293dc93e9e2521029da6608296806893db9173) build(changelog): use iso 8601 format for timestamps *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-01-08T23:13:36+08:00*
+- [20a068a](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/20a068a4e7bde7d0e60c3b0baa80f9c04b6fc7a7) chore(deps): update dependencies and lock files *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-01-08T23:11:29+08:00*
 - [a99c6af](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/a99c6af64a83c3f70ab7a1de4a65e8bbab1e2946) chore(script): improve script robustness and dependency handling *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-01-08T23:05:50+08:00*
 - [96b991a](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/96b991ac3a1324669d7c016168d8bf7bc538c505) ci(github): configure github automation and dependency tools *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-01-01T01:41:50+08:00*
 - [b3a8387](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/b3a83873c9a10d646e67edf4935f4fef58b50dd4) chore(license): switch to bsd-3-clause license *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-01-01T01:37:40+08:00*
@@ -138,7 +142,7 @@ All notable changes to this project will be documented in this file.
 
 ## [beta] - (2025-12-24T15:26:30+08:00)
 
-- 168 commit(s) contributed to the release.
+- 169 commit(s) contributed to the release.
 - 232 day(s) passed between the first and last commit.
 
 ### 🚀 Features in beta
@@ -314,6 +318,7 @@ All notable changes to this project will be documented in this file.
 - [fd8ee23](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/fd8ee236ad2f7961640056ce6e69383a049759fd) ci(sync): update git mirroring actions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2025-12-17T15:54:08+08:00*
 - [24cacb4](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/24cacb4c63ac481e0e78d379e97878f2732a374d) ci(sync): disable automatic repository creation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2025-12-17T15:47:23+08:00*
 - [e656ab8](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/e656ab8c2864540e9cd62708507e4db1c7867448) ci(workflows): update sync and merge schedule configurations *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2025-12-17T15:44:24+08:00*
+- [9a98586](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/9a9858643e086c2b87807a07692af23716c61c0c) chore(deps): update uv lock file *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2025-12-17T04:30:59+08:00*
 - [e62fcd3](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/e62fcd38bf5b8083e14e6247959641a6451800cf) chore(main.sh): clear extra spacing in log *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2025-12-11T09:00:59+08:00*
 - [b035931](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/b035931470f02e25df9fb906cd45a0bbe2271330) chore(main.sh): improve uv installation message *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2025-12-11T08:53:19+08:00*
 - [20b1a04](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/20b1a04f616795a6538f6137eaaf63fff52d7da7) chore(uv): remove uv self update *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2025-12-11T04:10:57+08:00*
@@ -328,4 +333,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-02-25T21:17:05.458888138+08:00
+generated using git-cliff at 2026-02-25T21:21:56.103020810+08:00
