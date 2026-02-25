@@ -2,21 +2,21 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:bbf2c248-5be1-4070-9cad-7c74727c3a71",
+  "serialNumber": "urn:uuid:e11e7929-a43a-4b12-9147-86b1e60f3dd2",
   "metadata": {
-    "timestamp": "2026-02-21T22:13:36.045654500Z",
+    "timestamp": "2026-02-25T13:11:23.201546300Z",
     "tools": [
       {
         "vendor": "Astral Software Inc.",
         "name": "uv",
-        "version": "0.10.4"
+        "version": "0.10.6"
       }
     ],
     "component": {
       "type": "library",
-      "bom-ref": "mmdvm-lastheard-1@0.1b4",
+      "bom-ref": "mmdvm-lastheard-1@0.1b5",
       "name": "mmdvm-lastheard",
-      "version": "0.1b4",
+      "version": "0.1b5",
       "properties": [
         {
           "name": "uv:package:is_project_root",
@@ -35,10 +35,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "certifi-3@2026.1.4",
+      "bom-ref": "certifi-3@2026.2.25",
       "name": "certifi",
-      "version": "2026.1.4",
-      "purl": "pkg:pypi/certifi@2026.1.4"
+      "version": "2026.2.25",
+      "purl": "pkg:pypi/certifi@2026.2.25"
     },
     {
       "type": "library",
@@ -98,7 +98,7 @@
       ]
     },
     {
-      "ref": "certifi-3@2026.1.4",
+      "ref": "certifi-3@2026.2.25",
       "dependsOn": []
     },
     {
@@ -108,7 +108,7 @@
     {
       "ref": "httpcore-5@1.0.9",
       "dependsOn": [
-        "certifi-3@2026.1.4",
+        "certifi-3@2026.2.25",
         "h11-4@0.16.0"
       ]
     },
@@ -116,7 +116,7 @@
       "ref": "httpx-6@0.28.1",
       "dependsOn": [
         "anyio-2@4.12.1",
-        "certifi-3@2026.1.4",
+        "certifi-3@2026.2.25",
         "httpcore-5@1.0.9",
         "idna-8@3.11"
       ]
@@ -130,7 +130,7 @@
       "dependsOn": []
     },
     {
-      "ref": "mmdvm-lastheard-1@0.1b4",
+      "ref": "mmdvm-lastheard-1@0.1b5",
       "dependsOn": [
         "humanize-7@4.15.0",
         "python-dotenv-9@1.2.1",
