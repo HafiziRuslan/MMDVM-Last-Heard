@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [beta5] - (2026-02-25T21:16:33+08:00)
+
+- 1 commit(s) contributed to the release.
+- 0 day(s) passed between the first and last commit.
+- 1 day(s) passed between releases.
+
+### ⚙️ Miscellaneous Tasks in beta5
+
+- [23d920a](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/23d920acadc5fc9d57a0c150ccf92e747df6020d) chore(release): update version to 0.1b5 and certifi to 2026.2.25 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T21:16:33+08:00*
+
+---
+
 ## [beta4] - (2026-02-25T05:33:44+08:00)
 
 - 49 commit(s) contributed to the release.
@@ -316,4 +328,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-02-25T05:34:13.378319616+08:00
+generated using git-cliff at 2026-02-25T21:17:05.458888138+08:00
