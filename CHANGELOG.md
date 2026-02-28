@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-03-01T01:21:53+08:00)
+## [beta5] - (2026-03-01T01:22:50+08:00)
 
-- 10 commit(s) contributed to the release.
+- 11 commit(s) contributed to the release.
 - 3 day(s) passed between the first and last commit.
 - 4 day(s) passed between releases.
 
@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 
 ### 💼 Other in beta5
 
+- [1f968c6](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/1f968c65931e417c75c684659f53ec7208288eb9) Update issue templates *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-01T01:22:50+08:00*
 - [4030e36](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/4030e36cee998736a24a8e75f0ec5d08a046c24d) Modify changelog commit message format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-01T01:21:53+08:00*
 - [65e6863](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/65e6863e86d938675212d4c51dd2326f07d1266f) Add Contributor Covenant Code of Conduct *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-01T01:18:52+08:00*
 
@@ -348,4 +349,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-01T01:22:14.388755625+08:00
+generated using git-cliff at 2026-03-01T01:23:10.094907212+08:00
