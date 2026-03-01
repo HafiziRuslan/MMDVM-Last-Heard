@@ -7,6 +7,7 @@ import datetime as dt
 import difflib
 import glob
 import logging
+import logging.handlers
 import os
 import re
 import shutil
@@ -30,13 +31,7 @@ TG_TOPICID: str = ''
 GW_IGNORE_TIME_MESSAGES: bool = True
 TG_APP: Optional[TelegramApplication] = None
 MESSAGE_QUEUE: Optional[asyncio.Queue] = None
-RELEVANT_LOG_PATTERNS = [
-	'end of voice transmission',
-	'end of transmission',
-	'watchdog has expired',
-	'received RF data',
-	'received network data',
-]
+RELEVANT_LOG_PATTERNS = ['end of voice transmission', 'end of transmission', 'watchdog has expired', 'received RF data', 'received network data']
 
 
 @lru_cache
@@ -63,7 +58,49 @@ APP_NAME, PROJECT_URL = get_app_metadata()
 
 
 def configure_logging():
-	logging.basicConfig(level=logging.INFO, datefmt='%Y-%m-%dT%H:%M:%S', format='%(asctime)s | %(levelname)s | %(message)s')
+	log_dir = '/var/log/mmdvmlhbot'
+	if not os.path.exists(log_dir) or not os.access(log_dir, os.W_OK):
+		log_dir = 'logs'
+	if not os.path.exists(log_dir):
+		os.makedirs(log_dir)
+	logging.getLogger('asyncio').setLevel(logging.DEBUG)
+	logging.getLogger('hpack').setLevel(logging.DEBUG)
+	logging.getLogger('httpx').setLevel(logging.DEBUG)
+	logging.getLogger('telegram').setLevel(logging.DEBUG)
+	logging.getLogger('urllib3').setLevel(logging.DEBUG)
+	logger = logging.getLogger()
+	logger.setLevel(logging.DEBUG)
+	formatter = logging.Formatter(
+		'%(asctime)s | %(levelname)s | %(threadName)s | %(name)s.%(funcName)s:%(lineno)d | %(message)s', datefmt='%Y-%m-%dT%H:%M:%S'
+	)
+	console_handler = logging.StreamHandler()
+	console_handler.setLevel(logging.WARNING)
+	console_handler.setFormatter(formatter)
+	logger.addHandler(console_handler)
+
+	class LevelFilter(logging.Filter):
+		def __init__(self, level):
+			self.level = level
+
+		def filter(self, record):
+			return record.levelno == self.level
+
+	levels = {
+		logging.DEBUG: 'debug.log',
+		logging.INFO: 'info.log',
+		logging.WARNING: 'warning.log',
+		logging.ERROR: 'error.log',
+		logging.CRITICAL: 'critical.log',
+	}
+	for level, filename in levels.items():
+		try:
+			handler = logging.handlers.RotatingFileHandler(os.path.join(log_dir, filename), maxBytes=1 * 1024 * 1024, backupCount=5)
+			handler.setLevel(level)
+			handler.addFilter(LevelFilter(level))
+			handler.setFormatter(formatter)
+			logger.addHandler(handler)
+		except (OSError, PermissionError) as e:
+			logging.error('Failed to create %s: %s', filename, e)
 
 
 def load_env_variables():

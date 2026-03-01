@@ -6,6 +6,12 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
+LOG_FILE="/var/log/mmdvmlhbot.log"
+# Save original stdout to fd 3 for display updates
+exec 3>&1
+# Redirect stdout and stderr to the log file
+exec >> "$LOG_FILE" 2>&1
+
 # Ensure we are in the script directory
 cd "$(dirname "$0")"
 
@@ -26,7 +32,7 @@ get_env_var() {
 
 send_notification() {
   local message="⚠️ MMDVM_LastHeard Alert: $1"
-  local log_file="/var/log/mmdvmlhbot.log"
+  local log_file=$LOG_FILE
 
   if [ -f "$log_file" ]; then
     local log_tail=$(tail -n 10 "$log_file")
@@ -117,21 +123,21 @@ check_disk_space() {
   return 0
 }
 
-# cleanup() {
-#   rm -rf /var/tmp/mmdvmlhbot
-#   # rm -rf /var/log/mmdvmlhbot
-# }
-# cleanup
-#
+cleanup() {
+  # rm -rf /var/tmp/mmdvmlhbot
+  rm -rf /var/log/mmdvmlhbot
+}
+cleanup
+
 # if [ ! -d "/var/tmp/mmdvmlhbot" ]; then
 #   mkdir -p /var/tmp/mmdvmlhbot
 #   chown -hR $dir_own:$dir_own /var/tmp/mmdvmlhbot
 # fi
-#
-# if [ ! -d "/var/log/mmdvmlhbot" ]; then
-#   mkdir -p /var/log/mmdvmlhbot
-#   chown -hR $dir_own:$dir_own /var/log/mmdvmlhbot
-# fi
+
+if [ ! -d "/var/log/mmdvmlhbot" ]; then
+  mkdir -p /var/log/mmdvmlhbot
+  chown -hR $dir_own:$dir_own /var/log/mmdvmlhbot
+fi
 
 if check_internet; then
   INTERNET_AVAILABLE=true
