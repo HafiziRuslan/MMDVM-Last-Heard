@@ -47,6 +47,7 @@ try:
 
 	# Import the class we need
 	MMDVMLogLine = main_module.MMDVMLogLine
+	RELEVANT_LOG_PATTERNS = main_module.RELEVANT_LOG_PATTERNS
 
 	print('✅ Successfully loaded MMDVMLogLine class from main.py\n')
 
@@ -54,6 +55,71 @@ except Exception as e:
 	print(f'❌ Error loading main.py: {e}')
 	print(f'Make sure main.py is in {src_dir} or {project_root}.')
 	sys.exit(1)
+
+
+def run_unit_tests():
+	"""Runs a series of predefined unit tests for log line parsing."""
+	print('=' * 80)
+	print('🔬 Running Unit Tests for Log Line Parsing')
+	print('=' * 80)
+
+	test_cases = [
+		{
+			'name': 'DMR Data Transmission (RF)',
+			'log_line': 'M: 2026-03-04 10:20:30.123 DMR Slot 1, ended RF data transmission from 9W2ZDR to TG 50210, 15 blocks',
+			'expected': {
+				'mode': 'DMR-D',
+				'callsign': '9W2ZDR',
+				'destination': 'TG 50210',
+				'is_voice': False,
+				'is_network': False,
+				'slot': 1,
+				'block': 15,
+				'data_type': 'data transmission',
+			},
+		},
+		{
+			'name': 'DMR Voice Transmission (RF)',
+			'log_line': 'M: 2026-03-04 10:21:00.456 DMR Slot 2, received RF end of voice transmission from N0CALL to TG 9, 5.2 seconds, BER: 0.1%, RSSI: -110/-109/-111 dBm',
+			'expected': {
+				'mode': 'DMR',
+				'callsign': 'N0CALL',
+				'destination': 'TG 9',
+				'is_voice': True,
+				'is_network': False,
+				'slot': 2,
+				'duration': 5.2,
+				'ber': 0.1,
+				'rssi3': -111,
+			},
+		},
+	]
+
+	passed = 0
+	failed = 0
+
+	for test in test_cases:
+		print(f'\n▶️  Testing: {test["name"]}')
+		try:
+			parsed = MMDVMLogLine.from_logline(test['log_line'])
+			errors = []
+			for key, value in test['expected'].items():
+				if getattr(parsed, key) != value:
+					errors.append(f'  - Mismatch on "{key}": Expected "{value}", Got "{getattr(parsed, key)}"')
+			if not errors:
+				print('  ✅ PASS')
+				passed += 1
+			else:
+				print(f'  ❌ FAIL\n' + '\n'.join(errors))
+				failed += 1
+		except Exception as e:
+			print(f'  ❌ FAIL: Exception during parsing: {e}')
+			failed += 1
+
+	print('\n' + '=' * 80)
+	print(f'Test Results: {passed} passed, {failed} failed.')
+	print('=' * 80)
+	sys.exit(failed)
 
 
 def process_log_file(log_file_path: str, ignore_time_messages: bool = True):
@@ -66,7 +132,7 @@ def process_log_file(log_file_path: str, ignore_time_messages: bool = True):
 	"""
 
 	# Patterns to match (same as in main.py)
-	relevant_patterns = ['end of voice transmission', 'end of transmission', 'watchdog has expired', 'received RF data', 'received network data']
+	relevant_patterns = RELEVANT_LOG_PATTERNS
 
 	print('=' * 80)
 	print(f'Processing log file: {log_file_path}')
@@ -96,7 +162,7 @@ def process_log_file(log_file_path: str, ignore_time_messages: bool = True):
 					continue
 
 				# Check if line matches our patterns
-				if not any(pattern in line for pattern in relevant_patterns):
+				if not any(pattern in line.lower() for pattern in relevant_patterns):
 					continue
 
 				matched_lines += 1
@@ -182,49 +248,32 @@ def main():
 	parser = argparse.ArgumentParser(
 		description='Test MMDVM log processing and display Telegram messages',
 		formatter_class=argparse.RawDescriptionHelpFormatter,
-		epilog="""
-Examples:
- %(prog)s MMDVM-2026-01-01.log
- %(prog)s MMDVM-2026-01-01.log --include-time
- %(prog)s /var/log/pi-star/MMDVM-2026-01-01.log
+		epilog="""Examples:
+  # Process a specific log file
+  %(prog)s MMDVM-2026-01-01.log
+
+  # Process a log file and include /TIME messages
+  %(prog)s MMDVM-2026-01-01.log --include-time
+
+  # Run built-in unit tests for the log line parser
+  %(prog)s --test
 		""",
 	)
 
-	parser.add_argument('logfile', help='Path to the MMDVM log file to process')
-
+	parser.add_argument('logfile', nargs='?', default=None, help='Path to the MMDVM log file to process. If not provided, must use --test.')
 	parser.add_argument('--include-time', action='store_true', help='Include /TIME messages (by default they are ignored)')
+	parser.add_argument('--test', action='store_true', help='Run built-in unit tests for log line parsing.')
 
 	args = parser.parse_args()
 
-	# Process the log file
-	process_log_file(args.logfile, ignore_time_messages=not args.include_time)
+	if args.test:
+		run_unit_tests()
+	elif args.logfile:
+		process_log_file(args.logfile, ignore_time_messages=not args.include_time)
+	else:
+		parser.print_help()
+		sys.exit(1)
 
 
 if __name__ == '__main__':
-	# If no arguments provided, show help
-	if len(sys.argv) == 1:
-		print('MMDVM Log Processor - Test Tool')
-		print('=' * 80)
-		print()
-		print('Usage: python test_log_processor.py <logfile> [--include-time]')
-		print()
-		print('This script processes an MMDVM log file and displays all entries')
-		print('that would be sent to the Telegram channel.')
-		print()
-		print('Examples:')
-		print(' python test_log_processor.py MMDVM-2026-01-01.log')
-		print(' python test_log_processor.py MMDVM-2026-01-01.log --include-time')
-		print()
-
-		# If MMDVM-2026-01-01.log exists in current directory, use it as default
-		default_log = 'MMDVM-2026-01-01.log'
-		if os.path.exists(default_log):
-			print(f'ℹ️ Found log file: {default_log}')
-			print('  Processing it now...\n')
-			process_log_file(default_log)
-		else:
-			print('❌ No log file specified and MMDVM-2026-01-01.log not found.')
-			print()
-			sys.exit(1)
-	else:
-		main()
+	main()
