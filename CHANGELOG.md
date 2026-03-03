@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-03-04T02:40:30+08:00)
+## [beta5] - (2026-03-04T02:43:26+08:00)
 
-- 16 commit(s) contributed to the release.
+- 17 commit(s) contributed to the release.
 - 6 day(s) passed between the first and last commit.
 - 7 day(s) passed between releases.
 
 ### 🚀 Features in beta5
 
+- [fc60870](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/fc608703bafe73cc389eb90bb976648181846143) feat(logging): add NumberedRotatingFileHandler to rotate logs with numbered backups before extension and update log setup to use it *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T02:43:26+08:00*
 - [b298eed](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/b298eed98448e39aafc0cb362ca192caebcc801a) feat(telegrams): prefix log/status notifications with APP_NAME-derived prefix *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T02:40:30+08:00*
 - [d7bfce0](https://github.com/HafiziRuslan/MMDVM-Last-Heard/commit/d7bfce015c1f86cd48edb96a66c58227650f38b3) feat(main): recreate virtualenv when pyproject.toml changes after update; clean uv cache before dependency sync when online *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-25T23:43:59+08:00*
 
@@ -360,4 +361,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-04T02:41:10.643388716+08:00
+generated using git-cliff at 2026-03-04T02:44:55.920083160+08:00
