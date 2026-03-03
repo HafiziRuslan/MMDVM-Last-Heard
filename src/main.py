@@ -675,10 +675,10 @@ async def mmdvm_logs_observer(stop_event: asyncio.Event):
 				if latest_log:
 					if current_log_path:
 						await logs_to_telegram(
-							f'📃 Log Changed\nOld File: <s>{os.path.basename(current_log_path)}</s>\nNew File: <b>{os.path.basename(latest_log)}</b>'
+							f'📃 {APP_NAME.split("-")[0]} Log Changed\nOld File: <s>{os.path.basename(current_log_path)}</s>\nNew File: <b>{os.path.basename(latest_log)}</b>'
 						)
 					else:
-						await logs_to_telegram(f'📃 Monitoring Log\nFile: <b>{os.path.basename(latest_log)}</b>')
+						await logs_to_telegram(f'📃 {APP_NAME.split("-")[0]} Monitoring Log\nFile: <b>{os.path.basename(latest_log)}</b>')
 				current_log_path = latest_log
 
 			if current_log_path:
@@ -762,13 +762,13 @@ async def main():
 				if tg_app_started:
 					try:
 						logging.info('Starting MMDVM logs observer...')
-						await logs_to_telegram('🚀 <b>Started</b>')
+						await logs_to_telegram(f'🚀 {APP_NAME.split("-")[0]} Started')
 						await mmdvm_logs_observer(stop_event)
 					except asyncio.CancelledError:
 						logging.info('MMDVM logs observer cancelled.')
 					finally:
 						try:
-							await logs_to_telegram('🛑 <b>Stopping</b>')
+							await logs_to_telegram(f'🛑 {APP_NAME.split("-")[0]} Stopping')
 						except Exception as e:
 							logging.error('Failed to send stop message: %s', e)
 						await TG_APP.stop()
