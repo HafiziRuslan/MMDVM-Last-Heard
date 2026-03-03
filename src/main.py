@@ -78,6 +78,30 @@ def configure_logging():
 	console_handler.setFormatter(formatter)
 	logger.addHandler(console_handler)
 
+	class NumberedRotatingFileHandler(logging.handlers.RotatingFileHandler):
+		"""RotatingFileHandler with backup number before the extension."""
+
+		def doRollover(self):
+			"""Do a rollover, with numbering before the extension."""
+			if self.stream:
+				self.stream.close()
+				self.stream = None
+			if self.backupCount > 0:
+				name, ext = os.path.splitext(self.baseFilename)
+				for i in range(self.backupCount - 1, 0, -1):
+					sfn = self.rotation_filename(f'{name}{i}{ext}')
+					dfn = self.rotation_filename(f'{name}{i + 1}{ext}')
+					if os.path.exists(sfn):
+						if os.path.exists(dfn):
+							os.remove(dfn)
+						os.rename(sfn, dfn)
+				dfn = self.rotation_filename(f'{name}1{ext}')
+				if os.path.exists(dfn):
+					os.remove(dfn)
+				self.rotate(self.baseFilename, dfn)
+			if not self.delay:
+				self.stream = self._open()
+
 	class LevelFilter(logging.Filter):
 		def __init__(self, level):
 			self.level = level
@@ -94,7 +118,7 @@ def configure_logging():
 	}
 	for level, filename in levels.items():
 		try:
-			handler = logging.handlers.RotatingFileHandler(os.path.join(log_dir, filename), maxBytes=1 * 1024 * 1024, backupCount=5)
+			handler = NumberedRotatingFileHandler(os.path.join(log_dir, filename), maxBytes=1 * 1024 * 1024, backupCount=5)
 			handler.setLevel(level)
 			handler.addFilter(LevelFilter(level))
 			handler.setFormatter(formatter)
