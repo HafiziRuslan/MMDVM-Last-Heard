@@ -199,10 +199,12 @@ def read_talkgroup_file(file_path: str, delimiter: str, id_idx: int, name_idx: i
 		logging.error('Error reading talkgroup file %s: %s', file_path, e)
 
 
-@lru_cache(maxsize=1)
+_TALKGROUP_CACHE = {'mtimes': {}, 'tg_map': {}, 'networks': []}
+
+
 def get_talkgroup_ids() -> dict:
-	"""Reads and caches the talkgroup list from files"""
-	tg_map = {}
+	"""Reads and caches the talkgroup list from files, reloading if files change."""
+	global _TALKGROUP_CACHE
 	file_configs = [
 		('/usr/local/etc/TGList_TGIF.txt', ';', 0, 1),
 		('/usr/local/etc/TGList_FreeStarIPSC.txt', ',', 0, 1),
@@ -212,22 +214,58 @@ def get_talkgroup_ids() -> dict:
 		('/usr/local/etc/TGList_DMRp.txt', ',', 0, 1),
 		('/usr/local/etc/TGList_QuadNet.txt', ',', 0, 1),
 		('/usr/local/etc/TGList_AmComm.txt', ',', 0, 1),
-		('/usr/local/etc/YSFHosts.txt', ';', 0, 1),
 		('/usr/local/etc/TGList_NXDN.txt', ';', 0, 1),
 		('/usr/local/etc/TGList_P25.txt', ';', 0, 1),
 		('/usr/local/etc/TGList_BM.txt', ';', 0, 2),
 		('/usr/local/etc/groups.txt', ' ', 0, 1),
 	]
-	processed_files = set()
+
+	# Add dynamic files from DMRGateway config
+	get_dmrgateway_rules()
+	dmr_networks = _DMRGATEWAY_CACHE.get('networks', [])
+	for net in dmr_networks:
+		name_clean = net.rstrip('_')
+		fpath = f'/usr/local/etc/TGList_{name_clean}.txt'
+		# BM usually uses index 2 for name, others 1
+		name_idx = 2 if 'BM' in name_clean else 1
+		file_configs.append((fpath, ';', 0, name_idx))
+
+	current_mtimes = {}
+	expanded_configs = []
+
+	# Process configured patterns
 	for pattern, delimiter, id_idx, name_idx in file_configs:
 		files = glob.glob(pattern)
+		expanded_configs.append((files, delimiter, id_idx, name_idx))
+		for f in files:
+			try:
+				current_mtimes[f] = os.path.getmtime(f)
+			except OSError:
+				pass
+
+	# Process catch-all pattern
+	catch_all_files = glob.glob('/usr/local/etc/TGList_*.txt')
+	for f in catch_all_files:
+		try:
+			current_mtimes[f] = os.path.getmtime(f)
+		except OSError:
+			pass
+
+	# Check cache
+	if current_mtimes == _TALKGROUP_CACHE['mtimes'] and _TALKGROUP_CACHE['tg_map']:
+		return _TALKGROUP_CACHE['tg_map']
+
+	# Rebuild map
+	tg_map = {}
+	processed_files = set()
+	for files, delimiter, id_idx, name_idx in expanded_configs:
 		for tg_file in files:
 			processed_files.add(tg_file)
 			filename = os.path.basename(tg_file)
 			name_part = os.path.splitext(filename)[0]
 			suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
 			read_talkgroup_file(tg_file, delimiter, id_idx, name_idx, tg_map, suffix=suffix, overwrite=True)
-	for tg_file in glob.glob('/usr/local/etc/TGList_*.txt'):
+	for tg_file in catch_all_files:
 		if tg_file not in processed_files:
 			filename = os.path.basename(tg_file)
 			name_part = os.path.splitext(filename)[0]
@@ -236,7 +274,78 @@ def get_talkgroup_ids() -> dict:
 	tg_map['4000'] = 'Disconnect'
 	tg_map['9990'] = 'Parrot'
 	tg_map['999'] = 'Message'
+	for i in range(1, 10):
+		tg_map[f'{i}004000'] = 'Disconnect'
+		tg_map[f'{i}009990'] = 'Parrot'
+	_TALKGROUP_CACHE = {'mtimes': current_mtimes, 'tg_map': tg_map}
 	return tg_map
+
+
+_DMRGATEWAY_CACHE = {'path': None, 'mtime': 0, 'rules': [], 'networks': []}
+
+
+def get_dmrgateway_rules() -> list:
+	"""Reads DMRGateway configuration to find rewrite rules, reloading if file changes."""
+	global _DMRGATEWAY_CACHE
+	conf_files = ['/etc/dmrgateway', '/etc/DMRGateway.ini', '/opt/DMRGateway/DMRGateway.ini']
+	config_path = _DMRGATEWAY_CACHE['path']
+
+	if not config_path or not os.path.isfile(config_path):
+		config_path = None
+		for f in conf_files:
+			if os.path.isfile(f):
+				config_path = f
+				break
+
+	if config_path:
+		try:
+			mtime = os.path.getmtime(config_path)
+			if config_path == _DMRGATEWAY_CACHE['path'] and mtime == _DMRGATEWAY_CACHE['mtime']:
+				return _DMRGATEWAY_CACHE['rules']
+
+			rules = []
+			networks = []
+			config = configparser.ConfigParser(strict=False, interpolation=None)
+			config.read(config_path)
+
+			for section in config.sections():
+				if section.startswith('DMR Network'):
+					net_name = config.get(section, 'Name', fallback=section)
+					networks.append(net_name)
+					for key, value in config.items(section):
+						key_lower = key.lower()
+						rule_type = None
+						if key_lower.startswith('tgrewrite'):
+							rule_type = 'TG'
+						elif key_lower.startswith('pcrewrite'):
+							rule_type = 'PC'
+
+						if rule_type:
+							parts = [p.strip() for p in value.split(',')]
+							if len(parts) >= 5:
+								try:
+									src_slot = int(parts[0])
+									src_tg = int(parts[1])
+									dst_tg = int(parts[3])
+									range_val = int(parts[4])
+
+									rules.append(
+										{
+											'slot': src_slot,
+											'start': src_tg,
+											'end': src_tg + range_val - 1,
+											'offset': dst_tg - src_tg,
+											'name': net_name,
+											'type': rule_type,
+										}
+									)
+								except ValueError:
+									continue
+			_DMRGATEWAY_CACHE = {'path': config_path, 'mtime': mtime, 'rules': rules, 'networks': networks}
+			return rules
+		except Exception as e:
+			logging.error('Error reading DMRGateway config %s: %s', config_path, e)
+	return _DMRGATEWAY_CACHE['rules']
 
 
 @lru_cache(maxsize=1)
@@ -564,12 +673,27 @@ class MMDVMLogLine:
 	def get_talkgroup_name(self) -> str:
 		"""Returns the talkgroup name based on the destination."""
 		tg_name = ''
-		if self.destination.startswith('TG '):
-			tg_id = self.destination.split()[-1]
-			tg_map = get_talkgroup_ids()
-			name = tg_map.get(tg_id)
-			if name:
-				tg_name = f' ({name})'
+		is_group = self.destination.startswith('TG ')
+		tg_id_str = self.destination.split()[-1] if is_group else self.destination
+
+		tg_map = get_talkgroup_ids()
+		name = tg_map.get(tg_id_str)
+
+		if not name and tg_id_str.isdigit():
+			tg_id = int(tg_id_str)
+			rules = get_dmrgateway_rules()
+			required_type = 'TG' if is_group else 'PC'
+			for rule in rules:
+				if rule.get('type', 'TG') != required_type:
+					continue
+				if rule['slot'] != 0 and rule['slot'] != self.slot:
+					continue
+				if rule['start'] <= tg_id <= rule['end']:
+					remapped_id = tg_id + rule['offset']
+					name = f'{rule["name"]}: {remapped_id}'
+					break
+		if name:
+			tg_name = f' ({name})'
 		return tg_name
 
 	def get_caller_location(self) -> str:
