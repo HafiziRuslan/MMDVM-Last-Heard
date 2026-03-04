@@ -20,9 +20,8 @@ from functools import lru_cache
 from typing import Optional
 
 import humanize
-from country_codes import COUNTRY_CODES
 from dotenv import load_dotenv
-from mcc_codes import MCC_CODES
+from codes import COUNTRY_CODES, MCC_CODES
 from telegram.ext import Application as TelegramApplication
 from telegram.ext import ApplicationBuilder
 
