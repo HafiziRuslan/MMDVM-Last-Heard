@@ -22,7 +22,7 @@ urls.issuetracker = 'https://github.com/HafiziRuslan/MMDVM-Last-Heard/issues'
 requires-python = '>=3.13'
 dependencies = [
   'humanize>=4.15.0',
-  'python-dotenv>=1.2.1',
+  'python-dotenv>=1.2.2',
   'python-telegram-bot>=22.6',
 ]
 
