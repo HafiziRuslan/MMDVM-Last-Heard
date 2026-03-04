@@ -246,7 +246,7 @@ sync_dependencies() {
   local action=$1
   if [ "$INTERNET_AVAILABLE" = true ]; then
     log_msg INFO "$action MMDVM_LastHeard dependencies"
-    sudo -u $dir_own uv cache clean -q
+    sudo -u $dir_own uv tool run pyclean . -d -y -q
     sudo -u $dir_own uv sync -q
   elif [ "$action" = "Installing" ]; then
     log_msg WARN "Internet unavailable. Skipping dependency installation."
