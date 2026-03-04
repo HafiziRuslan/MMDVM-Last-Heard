@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-03-04T11:57:19+08:00)
+## [beta5] - (2026-03-04T22:25:06+08:00)
 
-- 28 commit(s) contributed to the release.
+- 30 commit(s) contributed to the release.
 - 7 day(s) passed between the first and last commit.
 - 8 day(s) passed between releases.
 
@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta5
 
+- [e99ac3a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e99ac3a57a68d7e4a6ef3aab9cb8b1050e75f2f8) fix(deps): update uv and python-dotenv versions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T22:25:06+08:00*
 - [287ba9c](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/287ba9c9473c824b4fd7edafe897cb0d5c5e99d2) fix(config): update repository urls *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T11:57:19+08:00*
 - [82ef3eb](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/82ef3ebca8b1abe118872a0e8b9f4bfb72320bac) refactor(imports): move MCC_CODES import after load_dotenv *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T08:23:05+08:00*
 - [e690922](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e690922fefc3a1a912cbe2ace5131c40b28ca9b5) docs(changelog): prefix changelog update commit with docs scope in workflow *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-26T00:00:31+08:00*
@@ -43,6 +44,7 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation in beta5
 
+- [395e749](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/395e7492cd69923dd5e73ec67e609310fbafa7db) docs: update mirror repositories terminology *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T22:23:17+08:00*
 - [f493309](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f493309bb66030f9b881525c979ae3bdd13dbf41) docs(code-of-conduct): update Code of Conduct - MMDVM-LastHeard with British English and revised enforcement *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-01T02:00:43+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta5
@@ -372,4 +374,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-04T11:58:05.644731485+08:00
+generated using git-cliff at 2026-03-04T22:26:08.970823702+08:00
