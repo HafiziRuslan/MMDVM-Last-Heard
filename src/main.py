@@ -21,8 +21,8 @@ from typing import Optional
 
 import humanize
 from country_codes import COUNTRY_CODES
-from mcc_codes import MCC_CODES
 from dotenv import load_dotenv
+from mcc_codes import MCC_CODES
 from telegram.ext import Application as TelegramApplication
 from telegram.ext import ApplicationBuilder
 
@@ -227,8 +227,6 @@ def get_talkgroup_ids() -> dict:
 		('/usr/local/etc/TGList_P25.txt', ';', 0, 1),
 		('/usr/local/etc/groups.txt', ' ', 0, 1),
 	]
-
-	# Add dynamic files from DMRGateway config
 	get_dmrgateway_rules()
 	dmr_networks = _DMRGATEWAY_CACHE.get('networks', [])
 	for net in dmr_networks:
@@ -237,11 +235,8 @@ def get_talkgroup_ids() -> dict:
 		# BM usually uses index 2 for name, others 1
 		name_idx = 2 if 'BM' in name_clean else 1
 		file_configs.append((fpath, ';', 0, name_idx))
-
 	current_mtimes = {}
 	expanded_configs = []
-
-	# Process configured patterns
 	for pattern, delimiter, id_idx, name_idx in file_configs:
 		files = glob.glob(pattern)
 		expanded_configs.append((files, delimiter, id_idx, name_idx))
@@ -250,20 +245,14 @@ def get_talkgroup_ids() -> dict:
 				current_mtimes[f] = os.path.getmtime(f)
 			except OSError:
 				pass
-
-	# Process catch-all pattern
 	catch_all_files = glob.glob('/usr/local/etc/TGList_*.txt')
 	for f in catch_all_files:
 		try:
 			current_mtimes[f] = os.path.getmtime(f)
 		except OSError:
 			pass
-
-	# Check cache
 	if current_mtimes == _TALKGROUP_CACHE['mtimes'] and _TALKGROUP_CACHE['tg_map']:
 		return _TALKGROUP_CACHE['tg_map']
-
-	# Rebuild map
 	tg_map = {}
 	processed_files = set()
 	for files, delimiter, id_idx, name_idx in expanded_configs:
@@ -279,8 +268,8 @@ def get_talkgroup_ids() -> dict:
 			name_part = os.path.splitext(filename)[0]
 			suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
 			read_talkgroup_file(tg_file, ';', 0, 1, tg_map, suffix=suffix, overwrite=False)
-	rules = get_dmrgateway_rules()
-	for rule in rules:
+	dmr_rules = _DMRGATEWAY_CACHE.get('rules', [])
+	for rule in dmr_rules:
 		if rule.get('type') == 'TG':
 			for target_tg, label in [(4000, 'Disconnect'), (9990, 'Parrot')]:
 				src_tg = target_tg - rule['offset']
@@ -303,25 +292,21 @@ def get_dmrgateway_rules() -> list:
 	global _DMRGATEWAY_CACHE
 	conf_files = ['/etc/dmrgateway', '/etc/DMRGateway.ini', '/opt/DMRGateway/DMRGateway.ini']
 	config_path = _DMRGATEWAY_CACHE['path']
-
 	if not config_path or not os.path.isfile(config_path):
 		config_path = None
 		for f in conf_files:
 			if os.path.isfile(f):
 				config_path = f
 				break
-
 	if config_path:
 		try:
 			mtime = os.path.getmtime(config_path)
 			if config_path == _DMRGATEWAY_CACHE['path'] and mtime == _DMRGATEWAY_CACHE['mtime']:
 				return _DMRGATEWAY_CACHE['rules']
-
 			rules = []
 			networks = []
 			config = configparser.ConfigParser(strict=False, interpolation=None)
 			config.read(config_path)
-
 			for section in config.sections():
 				if section.startswith('DMR Network'):
 					net_name = config.get(section, 'Name', fallback=section)
@@ -333,7 +318,6 @@ def get_dmrgateway_rules() -> list:
 							rule_type = 'TG'
 						elif key_lower.startswith('pcrewrite'):
 							rule_type = 'PC'
-
 						if rule_type:
 							parts = [p.strip() for p in value.split(',')]
 							if len(parts) >= 5:
@@ -342,7 +326,6 @@ def get_dmrgateway_rules() -> list:
 									src_tg = int(parts[1])
 									dst_tg = int(parts[3])
 									range_val = int(parts[4])
-
 									rules.append(
 										{
 											'slot': src_slot,
@@ -463,8 +446,6 @@ class MMDVMLogLine:
 	is_kerchunk: bool = False
 	is_network: bool = True
 	is_watchdog: bool = False
-
-	# Common Regex Parts
 	_TIMESTAMP = r'(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)'
 	_SOURCE = r'(?P<source>network|RF)'
 	_CALLSIGN = r'from (?P<callsign>[\w\d\-/]+)'
@@ -476,7 +457,6 @@ class MMDVMLogLine:
 	_PACKET_LOSS = r'(?P<packet_loss>[\d\.]+)% packet loss'
 	_BER = r'BER: (?P<ber>[\d\.]+)%'
 	_RSSI = r'RSSI: (?P<rssi1>-[\d]+)/(?P<rssi2>-[\d]+)/(?P<rssi3>-[\d]+) dBm'
-
 	DMR_GW_PATTERN = re.compile(
 		rf'^M: {_TIMESTAMP} DMR Slot (?P<slot>\d), received (?P<source>network) '
 		r'(?:late entry|voice header|end of voice transmission) '
@@ -567,7 +547,6 @@ class MMDVMLogLine:
 	# 		obj.block = int(match.group('block'))
 	# 		return obj
 	# 	return None
-
 	@classmethod
 	def _parse_dstar(cls, logline: str) -> Optional['MMDVMLogLine']:
 		match = cls.DSTAR_PATTERN.match(logline)
@@ -689,10 +668,8 @@ class MMDVMLogLine:
 		tg_name = ''
 		is_group = self.destination.startswith('TG ')
 		tg_id_str = self.destination.split()[-1] if is_group else self.destination
-
 		tg_map = get_talkgroup_ids()
 		name = tg_map.get(tg_id_str)
-
 		if not name and tg_id_str.isdigit():
 			tg_id = int(tg_id_str)
 			rules = get_dmrgateway_rules()
@@ -836,7 +813,6 @@ async def mmdvm_logs_observer(stop_event: asyncio.Event):
 	logging.info('Starting MMDVM log file retrieval...')
 	last_event: Optional[datetime] = None
 	current_log_path: Optional[str] = None
-
 	while not stop_event.is_set():
 		try:
 			latest_log = get_latest_mmdvm_log_path()
@@ -850,19 +826,15 @@ async def mmdvm_logs_observer(stop_event: asyncio.Event):
 					else:
 						await logs_to_telegram(f'📃 {APP_NAME.split("-")[0]} Monitoring Log\nFile: <b>{os.path.basename(latest_log)}</b>')
 				current_log_path = latest_log
-
 			if current_log_path:
 				last_line = get_last_line_of_file(current_log_path)
 				logging.debug('Last line of log file: %s', last_line)
-
 				if any(pattern in last_line for pattern in RELEVANT_LOG_PATTERNS):
 					parsed_line = MMDVMLogLine.from_logline(last_line)
 					logging.debug('Parsed log line: %s', parsed_line)
-
 					if parsed_line.timestamp and (last_event is None or parsed_line.timestamp > last_event):
 						logging.info('New log entry: %s', parsed_line)
 						last_event = parsed_line.timestamp
-
 						if not (GW_IGNORE_TIME_MESSAGES and '/TIME' in parsed_line.callsign):
 							tg_message = parsed_line.get_telegram_message()
 							if tg_message and TG_APP:
@@ -875,14 +847,12 @@ async def mmdvm_logs_observer(stop_event: asyncio.Event):
 					logging.debug('Line does not contain transmission end marker, skipping.')
 			else:
 				logging.error('No log file path available')
-
 		except ValueError as e:
 			logging.debug('Could not parse log line: %s', e)
 		except OSError as e:
 			logging.error('File system error reading log file: %s', e)
 		except Exception as e:
 			logging.error('Error in observer loop: %s', e)
-
 		try:
 			await asyncio.wait_for(stop_event.wait(), timeout=1.0)
 		except asyncio.TimeoutError:
