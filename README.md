@@ -23,7 +23,7 @@ git clone https://github.com/HafiziRuslan/MMDVM-LastHeard.git mmdvmlhbot
 cd mmdvmlhbot
 ```
 
-Mirror Repositories (delayed daily update):
+Mirrors (daily update):
 
 - GitLab: <https://gitlab.com/hafiziruslan/MMDVM-LastHeard>
 - Codeberg: <https://codeberg.org/hafiziruslan/MMDVM-LastHeard>
