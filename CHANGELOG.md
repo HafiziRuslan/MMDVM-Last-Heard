@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-03-04T22:25:06+08:00)
+## [beta5] - (2026-03-06T00:17:05+08:00)
 
-- 30 commit(s) contributed to the release.
-- 7 day(s) passed between the first and last commit.
-- 8 day(s) passed between releases.
+- 31 commit(s) contributed to the release.
+- 8 day(s) passed between the first and last commit.
+- 9 day(s) passed between releases.
 
 ### 🚀 Features in beta5
 
+- [3b72b43](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/3b72b4337e4d955280cf74f9be8a823ccd36a1b9) feat(logging): use ISO8601Formatter for timestamps in configure_logging *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-06T00:17:05+08:00*
 - [9b25681](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9b25681472c4ad9315552bb9d132a5f128d87fa8) feat(main): add MCC-based flag emoji support and dynamic talkgroup mapping *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T08:10:43+08:00*
 - [6fec89f](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/6fec89fc227d45ece58296aa1ae21e8872c47adb) feat(mcc-codes): add MCC_CODES mapping for MCC to country and ISO code *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T08:09:27+08:00*
 - [9064283](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/906428396d6cddd1294195aa81c953054072ac26) feat(talkgroups): add dynamic loading, caching, and DMRGateway-based remapping for talkgroups *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T06:38:38+08:00*
@@ -374,4 +375,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-04T22:26:08.970823702+08:00
+generated using git-cliff at 2026-03-06T00:18:46.216082759+08:00
