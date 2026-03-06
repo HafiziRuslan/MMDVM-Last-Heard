@@ -549,6 +549,7 @@ class MMDVMLogLine:
 	# 		obj.block = int(match.group('block'))
 	# 		return obj
 	# 	return None
+ 
 	@classmethod
 	def _parse_dstar(cls, logline: str) -> Optional['MMDVMLogLine']:
 		match = cls.DSTAR_PATTERN.match(logline)
