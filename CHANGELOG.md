@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-03-06T01:14:13+08:00)
+## [beta5] - (2026-03-06T20:33:16+08:00)
 
-- 33 commit(s) contributed to the release.
-- 8 day(s) passed between the first and last commit.
-- 9 day(s) passed between releases.
+- 34 commit(s) contributed to the release.
+- 9 day(s) passed between the first and last commit.
+- 10 day(s) passed between releases.
 
 ### 🚀 Features in beta5
 
@@ -37,6 +37,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta5
 
+- [84bead8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/84bead8f75a7e4512a6dd2504186353d00778996) refactor(main): add blank line before _parse_dstar method *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-06T20:33:16+08:00*
 - [f0c3120](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f0c31200c16b53264801379057ab728ebb1da3c1) refactor(main.sh): improve notification handling and error checking *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T09:56:46+08:00*
 - [71453c5](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/71453c54594179717fbe897791c7d72aeaa25b10) refactor(main): replace uv cache clean with uv tool run pyclean in sync_dependencies *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T09:39:37+08:00*
 - [c2b092e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c2b092e429a7ccf58a0684d7a9be2915fbf62ad5) refactor(log_processor): return parsed entries and statistics from process_log_file and add display_processed_results for formatted output; update main to render results and adjust error handling to return empty structures; minor test output formatting improvements *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T08:55:27+08:00*
@@ -377,4 +378,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-06T01:48:13.268374378+08:00
+generated using git-cliff at 2026-03-06T21:17:34.119377835+08:00
