@@ -69,7 +69,7 @@ send_notification() {
       fi
 
       if json_data=$(jq -n "${jq_args[@]}" "$jq_filter" 2>/dev/null); then
-        curl_args=("-H" "Content-Type: application/json" "-d" "$json_data")
+        curl_args=("--json" "$json_data")
       fi
     fi
 
@@ -284,7 +284,7 @@ RETRY_COUNT=0
 while true; do
   if [ ! -f .env ]; then
     log_msg ERROR "❌ .env file not found! Cannot start MMDVM_LastHeard. Exiting."
-    send_notification ".env file not found! Service stopping."
+    send_notification ".env file not found! Stopping MMDVM_LastHeard."
     exit 1
   fi
 
@@ -311,7 +311,7 @@ while true; do
     RETRY_COUNT=$((RETRY_COUNT + 1))
     if [ "$RETRY_COUNT" -gt "$MAX_RETRIES" ]; then
       log_msg ERROR "Maximum retries ($MAX_RETRIES) reached. Exiting."
-      send_notification "Maximum retries ($MAX_RETRIES) reached. Service stopping."
+      send_notification "Maximum retries ($MAX_RETRIES) reached. Stopping MMDVM_LastHeard."
       exit 1
     fi
 
@@ -328,7 +328,7 @@ while true; do
     break
   else
     log_msg ERROR "MMDVM_LastHeard exited with unrecoverable code $exit_code. Stopping."
-    send_notification "Script exited with unrecoverable code $exit_code. Service stopping."
+    send_notification "Application exited with unrecoverable code $exit_code. Stopping MMDVM_LastHeard."
     exit "$exit_code"
   fi
 done
