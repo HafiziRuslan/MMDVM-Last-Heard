@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-03-07T13:50:36+08:00)
+## [beta5] - (2026-03-07T21:51:14+08:00)
 
-- 38 commit(s) contributed to the release.
+- 39 commit(s) contributed to the release.
 - 10 day(s) passed between the first and last commit.
 - 11 day(s) passed between releases.
 
@@ -57,6 +57,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta5
 
+- [761d27c](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/761d27cce50f0186a5284470598efc3377efb72f) chore: update GitHub repository URL *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-07T21:51:14+08:00*
 - [61e4c55](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/61e4c5574ad791c6ad619d9562846426e48d4f60) chore(deps): bump python-dotenv to 1.2.2 across manifests and lockfiles *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T10:01:02+08:00*
 - [9e94de8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9e94de88f12aac9e0cdaeeec9de41132c86c9ce9) chore(pull-request-template): add pull_request_template.md *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-01T02:04:42+08:00*
 - [7d4f18b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/7d4f18b288478ac686bff2d0620f84cb5bfeb225) chore(sbom): update sbom.json metadata with new serialNumber, timestamp, and uv tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-02-28T01:33:33+08:00*
@@ -382,4 +383,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-07T13:51:19.296754760+08:00
+generated using git-cliff at 2026-03-07T21:51:41.529472998+08:00
