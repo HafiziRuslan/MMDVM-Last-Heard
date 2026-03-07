@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta5] - (2026-03-07T21:51:14+08:00)
+## [beta5] - (2026-03-08T01:20:05+08:00)
 
-- 39 commit(s) contributed to the release.
+- 41 commit(s) contributed to the release.
 - 10 day(s) passed between the first and last commit.
 - 11 day(s) passed between releases.
 
@@ -39,6 +39,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta5
 
+- [435e8a7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/435e8a72e6227614924159028019bfdd02b8f46d) refactor(main): use curl --json for JSON payload and standardize stop messages for MMDVM_LastHeard *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-08T01:13:07+08:00*
 - [cbdb71a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/cbdb71a88a7620d7efb0a99389d68a1c30afc7d3) refactor(main): factor RSSI formatting into _format_rssi_string and invoke during DMR voice parsing; update string formatting to use a single self.rssi representation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-07T00:10:59+08:00*
 - [ae48322](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ae483227b93a4b49e8d2ee55cfe2d2392932bf64) refactor(telegram): standardize and improve formatting of telegram message output *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-06T23:57:39+08:00*
 - [84bead8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/84bead8f75a7e4512a6dd2504186353d00778996) refactor(main): add blank line before _parse_dstar method *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-06T20:33:16+08:00*
@@ -54,6 +55,10 @@ All notable changes to this project will be documented in this file.
 
 - [395e749](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/395e7492cd69923dd5e73ec67e609310fbafa7db) docs: update mirror repositories terminology *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-04T22:23:17+08:00*
 - [f493309](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f493309bb66030f9b881525c979ae3bdd13dbf41) docs(code-of-conduct): update Code of Conduct - MMDVM-LastHeard with British English and revised enforcement *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-01T02:00:43+08:00*
+
+### 🧪 Testing in beta5
+
+- [04ead49](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/04ead49c797cb17c0a63614753e7a5a8faa47528) test(notification): add test_notification.sh to validate send_notification behavior with optional curl mocking and environment isolation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-08T01:20:05+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta5
 
@@ -383,4 +388,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-07T21:51:41.529472998+08:00
+generated using git-cliff at 2026-03-08T01:20:42.331448713+08:00
