@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [beta6] - (2026-03-09T21:20:17+08:00)
+
+- 2 commit(s) contributed to the release.
+
+### 🚜 Refactor in beta6
+
+- [76e6229](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/76e6229daf33ebc8c0a93eb071d15a3464534563) refactor(app): modularize core components and introduce data-driven architecture for logging, config, and Telegram integration *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:20:17+08:00*
+
+### ⚙️ Miscellaneous Tasks in beta6
+
+- [e8a4cc1](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e8a4cc116cc7c1575b657dfdef84e06b95c9dfed) chore(release): bump to 0.1b6 across project and release assets *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:13:46+08:00*
+
+---
+
 ## [beta5] - (2026-03-09T19:50:56+08:00)
 
 - 44 commit(s) contributed to the release.
@@ -391,4 +405,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-09T20:58:11.812435666+08:00
+generated using git-cliff at 2026-03-09T21:20:54.398558342+08:00
