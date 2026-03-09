@@ -380,48 +380,97 @@ class TalkgroupManager:
 
 
 class UserManager:
-	"""Manages loading and caching of user data from user.csv."""
+	"""Manages loading and caching of user data from user.csv and DMRIds.dat."""
 
-	def __init__(self, file_path='/usr/local/etc/user.csv'):
+	def __init__(self, user_csv_path='/usr/local/etc/user.csv', dmr_ids_path='/usr/local/etc/DMRIds.dat'):
 		"""Initializes the UserManager."""
-		self._file_path = file_path
-		self._cache = {'mtime': 0, 'user_map': {}}
+		self._user_csv_path = user_csv_path
+		self._dmr_ids_path = dmr_ids_path
+		self._cache = {'mtime_csv': 0, 'mtime_dat': 0, 'user_map': {}}
 
 	def get_map(self) -> dict:
 		"""Returns the user map, reloading from file if it has changed."""
 		try:
-			mtime = os.path.getmtime(self._file_path)
+			mtime_csv = os.path.getmtime(self._user_csv_path)
 		except OSError:
-			mtime = 0
-		if mtime == self._cache.get('mtime') and self._cache.get('user_map'):
+			mtime_csv = 0
+		try:
+			mtime_dat = os.path.getmtime(self._dmr_ids_path)
+		except OSError:
+			mtime_dat = 0
+
+		if mtime_csv == self._cache.get('mtime_csv') and mtime_dat == self._cache.get('mtime_dat') and self._cache.get('user_map'):
 			return self._cache['user_map']
+
 		user_map = self._load_data()
-		self._cache = {'mtime': mtime, 'user_map': user_map}
+		self._cache = {'mtime_csv': mtime_csv, 'mtime_dat': mtime_dat, 'user_map': user_map}
 		return user_map
 
 	def _load_data(self) -> dict:
-		"""Loads user data from the CSV file."""
-		if not os.path.isfile(self._file_path):
+		"""Loads user data, preferring user.csv and falling back to DMRIds.dat."""
+		user_map = self._load_from_user_csv()
+		if not user_map:
+			logging.warning('Could not load user data from %s, falling back to %s.', self._user_csv_path, self._dmr_ids_path)
+			user_map = self._load_from_dmr_ids()
+		return user_map
+
+	def _load_from_user_csv(self) -> dict:
+		"""Loads user data from the user.csv file."""
+		if not os.path.isfile(self._user_csv_path):
 			return {}
 		encodings = ['utf-8', 'latin-1']
 		for encoding in encodings:
 			try:
 				user_map = {}
-				with open(self._file_path, 'r', encoding=encoding, errors='replace') as file:
+				with open(self._user_csv_path, 'r', encoding=encoding, errors='replace') as file:
 					for line in file:
 						parts = line.strip().split(',')
-						if len(parts) >= 7:
+						if len(parts) >= 3:
 							call = parts[1].strip()
 							fname = parts[2].strip()
-							country = parts[6].strip()
+							country = parts[-1].strip()
 							if call:
 								user_map[call] = (fname, country)
-				logging.debug('Successfully loaded user data from %s with %s encoding.', self._file_path, encoding)
+				logging.debug('Successfully loaded user data from %s with %s encoding.', self._user_csv_path, encoding)
 				return user_map
 			except UnicodeDecodeError:
-				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, self._file_path)
+				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', self._user_csv_path)
 			except Exception as e:
-				logging.error('Error reading user file %s: %s', self._file_path, e)
+				logging.error('Error reading user file %s: %s', self._user_csv_path, e)
+				break
+		return {}
+
+	def _load_from_dmr_ids(self) -> dict:
+		"""Loads user data from the DMRIds.dat file."""
+		if not os.path.isfile(self._dmr_ids_path):
+			return {}
+		encodings = ['utf-8', 'latin-1']
+		for encoding in encodings:
+			try:
+				user_map = {}
+				with open(self._dmr_ids_path, 'r', encoding=encoding, errors='replace') as file:
+					for line in file:
+						line = line.strip()
+						if not line or line.startswith('#'):
+							continue
+						parts = line.split('\t')
+						if len(parts) >= 3:
+							dmr_id_str = parts[0].strip()
+							call = parts[1].strip()
+							fname = parts[2].strip()
+							country = ''
+							if dmr_id_str.isdigit() and len(dmr_id_str) >= 3:
+								mcc = int(dmr_id_str[:3])
+								if mcc in MCC_CODES:
+									country, _ = MCC_CODES[mcc]
+							if call:
+								user_map[call] = (fname, country)
+				logging.debug('Successfully loaded user data from %s with %s encoding.', self._dmr_ids_path, encoding)
+				return user_map
+			except UnicodeDecodeError:
+				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, self._dmr_ids_path)
+			except Exception as e:
+				logging.error('Error reading user file %s: %s', self._dmr_ids_path, e)
 				break
 		return {}
 
