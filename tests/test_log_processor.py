@@ -47,7 +47,9 @@ try:
 
 	# Import the class we need
 	MMDVMLogLine = main_module.MMDVMLogLine
-	RELEVANT_LOG_PATTERNS = main_module.RELEVANT_LOG_PATTERNS
+	DataManager = main_module.DataManager
+	ConfigManager = main_module.ConfigManager
+	RELEVANT_LOG_PATTERNS = ConfigManager().relevant_log_patterns
 
 	print('✅ Successfully loaded MMDVMLogLine class from main.py\n')
 
@@ -98,10 +100,16 @@ def run_unit_tests():
 	passed = 0
 	failed = 0
 
+	# Mock DataManager for unit tests
+	mock_data_manager = mock.MagicMock()
+	mock_data_manager.talkgroups.get_map.return_value = {}
+	mock_data_manager.users.get_map.return_value = {}
+	mock_data_manager.dmr_gateway.get_rules.return_value = []
+
 	for test in test_cases:
 		print(f'\n▶️  Testing: {test["name"]}')
 		try:
-			parsed = MMDVMLogLine.from_logline(test['log_line'])
+			parsed = MMDVMLogLine.from_logline(test['log_line'], mock_data_manager)
 			errors = []
 			for key, value in test['expected'].items():
 				if getattr(parsed, key) != value:
@@ -148,6 +156,14 @@ def process_log_file(log_file_path: str, ignore_time_messages: bool = True) -> t
 	last_timestamp = None
 	entries = []
 
+	# Instantiate DataManager for processing
+	try:
+		data_manager = DataManager()
+	except Exception as e:
+		print(f'⚠️ Warning: Could not instantiate DataManager: {e}. Using mock.')
+		data_manager = mock.MagicMock()
+		data_manager.talkgroups.get_map.return_value = {}
+
 	try:
 		with open(log_file_path, 'r', encoding='UTF-8', errors='replace') as f:
 			for line_num, line in enumerate(f, 1):
@@ -159,7 +175,7 @@ def process_log_file(log_file_path: str, ignore_time_messages: bool = True) -> t
 					continue
 				matched_lines += 1
 				try:
-					parsed = MMDVMLogLine.from_logline(line)
+					parsed = MMDVMLogLine.from_logline(line, data_manager)
 					parsed_entries += 1
 					if last_timestamp and parsed.timestamp <= last_timestamp:
 						continue

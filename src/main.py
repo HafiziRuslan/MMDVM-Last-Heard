@@ -15,7 +15,7 @@ import signal
 import subprocess
 import tomllib
 from dataclasses import dataclass
-from datetime import datetime
+from dataclasses import field
 from functools import lru_cache
 from typing import Optional
 
@@ -25,24 +25,9 @@ from codes import COUNTRY_CODES, MCC_CODES
 from telegram.ext import Application as TelegramApplication
 from telegram.ext import ApplicationBuilder
 
-TG_BOTTOKEN: str = ''
-TG_CHATID: str = ''
-TG_TOPICID: str = ''
-GW_IGNORE_TIME_MESSAGES: bool = True
-TG_APP: Optional[TelegramApplication] = None
-MESSAGE_QUEUE: Optional[asyncio.Queue] = None
-RELEVANT_LOG_PATTERNS = [
-	'end of voice transmission',
-	'end of transmission',
-	'watchdog has expired',
-	# 'received RF data',
-	# 'received network data',
-	# 'data transmission',
-]
-
 
 @lru_cache
-def get_app_metadata():
+def _get_app_metadata():
 	repo_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 	git_sha = 'unknown'
 	if shutil.which('git'):
@@ -61,32 +46,14 @@ def get_app_metadata():
 	return f'{meta["name"]}-{meta["version"]}-{git_sha}', meta['github']
 
 
-APP_NAME, PROJECT_URL = get_app_metadata()
-
-
-def configure_logging():
-	log_dir = '/var/log/mmdvmlhbot'
-	if not os.path.exists(log_dir) or not os.access(log_dir, os.W_OK):
-		log_dir = 'logs'
-	if not os.path.exists(log_dir):
-		os.makedirs(log_dir)
-	logging.getLogger('asyncio').setLevel(logging.DEBUG)
-	logging.getLogger('hpack').setLevel(logging.DEBUG)
-	logging.getLogger('httpx').setLevel(logging.DEBUG)
-	logging.getLogger('telegram').setLevel(logging.DEBUG)
-	logging.getLogger('urllib3').setLevel(logging.DEBUG)
+class LoggingManager:
+	"""Manages the application's logging configuration."""
 
 	class ISO8601Formatter(logging.Formatter):
+		"""A logging formatter that uses ISO 8601 format for timestamps."""
+
 		def formatTime(self, record, datefmt=None):
 			return dt.datetime.fromtimestamp(record.created, dt.timezone.utc).astimezone().isoformat(timespec='milliseconds')
-
-	logger = logging.getLogger()
-	logger.setLevel(logging.DEBUG)
-	formatter = ISO8601Formatter('%(asctime)s | %(levelname)-8s | %(threadName)-12s | %(name)s.%(funcName)s:%(lineno)d | %(message)s')
-	console_handler = logging.StreamHandler()
-	console_handler.setLevel(logging.WARNING)
-	console_handler.setFormatter(formatter)
-	logger.addHandler(console_handler)
 
 	class NumberedRotatingFileHandler(logging.handlers.RotatingFileHandler):
 		"""RotatingFileHandler with backup number before the extension."""
@@ -113,323 +80,420 @@ def configure_logging():
 				self.stream = self._open()
 
 	class LevelFilter(logging.Filter):
+		"""A filter that allows log records of a specific level."""
+
 		def __init__(self, level):
 			self.level = level
 
 		def filter(self, record):
 			return record.levelno == self.level
 
-	levels = {
-		logging.DEBUG: 'debug.log',
-		logging.INFO: 'info.log',
-		logging.WARNING: 'warning.log',
-		logging.ERROR: 'error.log',
-		logging.CRITICAL: 'critical.log',
-	}
-	for level, filename in levels.items():
-		try:
-			handler = NumberedRotatingFileHandler(os.path.join(log_dir, filename), maxBytes=1 * 1024 * 1024, backupCount=5)
-			handler.setLevel(level)
-			handler.addFilter(LevelFilter(level))
-			handler.setFormatter(formatter)
-			logger.addHandler(handler)
-		except (OSError, PermissionError) as e:
-			logging.error('Failed to create %s: %s', filename, e)
+	def __init__(self, log_dir: str = '/var/log/mmdvmlhbot', fallback_log_dir: str = 'logs'):
+		self.log_dir = log_dir
+		if not os.path.exists(self.log_dir) or not os.access(self.log_dir, os.W_OK):
+			self.log_dir = fallback_log_dir
+		if not os.path.exists(self.log_dir):
+			os.makedirs(self.log_dir)
 
+	def setup(self):
+		"""Sets up the logging configuration."""
+		logging.getLogger('asyncio').setLevel(logging.DEBUG)
+		logging.getLogger('hpack').setLevel(logging.DEBUG)
+		logging.getLogger('httpx').setLevel(logging.DEBUG)
+		logging.getLogger('telegram').setLevel(logging.DEBUG)
+		logging.getLogger('urllib3').setLevel(logging.DEBUG)
 
-def load_env_variables():
-	"""Load environment variables from .env file."""
-	load_dotenv()
-	global TG_BOTTOKEN, TG_CHATID, TG_TOPICID, GW_IGNORE_TIME_MESSAGES
-	TG_BOTTOKEN = os.getenv('TG_BOTTOKEN', '')
-	TG_CHATID = os.getenv('TG_CHATID', '')
-	TG_TOPICID = os.getenv('TG_TOPICID', '0')
-	GW_IGNORE_TIME_MESSAGES = os.getenv('GW_IGNORE_MESSAGES', 'True').lower() == 'true'
-	if not TG_BOTTOKEN:
-		logging.warning('TG_BOTTOKEN is not set in the environment variables.')
-	if not TG_CHATID:
-		logging.warning('TG_CHATID is not set in the environment variables.')
-	if GW_IGNORE_TIME_MESSAGES:
-		logging.info('GW_IGNORE_MESSAGES is set to true, messages from the gateway will be ignored.')
-	logging.info('Environment variables loaded successfully.')
+		logger = logging.getLogger()
+		logger.setLevel(logging.DEBUG)
+		formatter = self.ISO8601Formatter('%(asctime)s | %(levelname)-8s | %(threadName)-12s | %(name)s.%(funcName)s:%(lineno)d | %(message)s')
+		console_handler = logging.StreamHandler()
+		console_handler.setLevel(logging.WARNING)
+		console_handler.setFormatter(formatter)
+		logger.addHandler(console_handler)
 
-
-def remove_double_spaces(text: str) -> str:
-	"""Removes double spaces from a string."""
-	while '  ' in text:
-		text = text.replace('  ', ' ')
-	return text
-
-
-@lru_cache(maxsize=128)
-def get_country_code(country_name: str) -> str:
-	"""Returns the country code for a given country name."""
-	code = COUNTRY_CODES.get(country_name)
-	if not code:
-		for name, c in COUNTRY_CODES.items():
-			if name.lower() == country_name.lower():
-				code = c
-				break
-		if not code:
-			matches = difflib.get_close_matches(country_name, COUNTRY_CODES.keys(), n=1, cutoff=0.8)
-			if matches:
-				code = COUNTRY_CODES[matches[0]]
-	return code if code else ''
-
-
-def get_flag_emoji(country_code: str) -> str:
-	"""Converts a two-letter country code to a flag emoji."""
-	if country_code and len(country_code) == 2:
-		return ''.join(chr(ord(c) + 127397) for c in country_code.upper())
-	return '🌐'
-
-
-def read_talkgroup_file(file_path: str, delimiter: str, id_idx: int, name_idx: int, tg_map: dict, suffix: str = '', overwrite: bool = True):
-	"""Helper to read a talkgroup file and update the map."""
-	if not os.path.isfile(file_path):
-		return
-	try:
-		with open(file_path, 'r', encoding='UTF-8', errors='replace') as file:
-			for line in file:
-				line = line.strip()
-				if line.startswith('#') or not line:
-					continue
-				parts = line.split(maxsplit=1) if delimiter == ' ' else line.split(delimiter)
-				try:
-					if len(parts) > max(id_idx, name_idx):
-						tgid = parts[id_idx].strip()
-						name = parts[name_idx].strip()
-						if tgid and name:
-							display_name = f'{suffix}: {name}' if suffix else name
-							if overwrite or tgid not in tg_map:
-								tg_map[tgid] = display_name
-				except IndexError:
-					continue
-	except Exception as e:
-		logging.error('Error reading talkgroup file %s: %s', file_path, e)
-
-
-_TALKGROUP_CACHE = {'mtimes': {}, 'tg_map': {}, 'networks': []}
-
-
-def get_talkgroup_ids() -> dict:
-	"""Reads and caches the talkgroup list from files, reloading if files change."""
-	global _TALKGROUP_CACHE
-	file_configs = [
-		('/usr/local/etc/TGList_BM.txt', ';', 0, 2),
-		('/usr/local/etc/TGList_TGIF.txt', ';', 0, 1),
-		('/usr/local/etc/TGList_FreeStarIPSC.txt', ',', 0, 1),
-		('/usr/local/etc/TGList_SystemX.txt', ',', 0, 1),
-		('/usr/local/etc/TGList_FreeDMR.txt', ',', 0, 1),
-		('/usr/local/etc/TGList_ADN.txt', ',', 0, 1),
-		('/usr/local/etc/TGList_DMRp.txt', ',', 0, 1),
-		('/usr/local/etc/TGList_QuadNet.txt', ',', 0, 1),
-		('/usr/local/etc/TGList_AmComm.txt', ',', 0, 1),
-		('/usr/local/etc/TGList_NXDN.txt', ';', 0, 1),
-		('/usr/local/etc/TGList_P25.txt', ';', 0, 1),
-		('/usr/local/etc/groups.txt', ' ', 0, 1),
-	]
-	get_dmrgateway_rules()
-	dmr_networks = _DMRGATEWAY_CACHE.get('networks', [])
-	for net in dmr_networks:
-		name_clean = net.split('_')[0]
-		fpath = f'/usr/local/etc/TGList_{name_clean}.txt'
-		# BM usually uses index 2 for name, others 1
-		name_idx = 2 if 'BM' in name_clean else 1
-		file_configs.append((fpath, ';', 0, name_idx))
-	current_mtimes = {}
-	expanded_configs = []
-	for pattern, delimiter, id_idx, name_idx in file_configs:
-		files = glob.glob(pattern)
-		expanded_configs.append((files, delimiter, id_idx, name_idx))
-		for f in files:
+		levels = {
+			logging.DEBUG: 'debug.log',
+			logging.INFO: 'info.log',
+			logging.WARNING: 'warning.log',
+			logging.ERROR: 'error.log',
+			logging.CRITICAL: 'critical.log',
+		}
+		for level, filename in levels.items():
 			try:
-				current_mtimes[f] = os.path.getmtime(f)
+				handler = self.NumberedRotatingFileHandler(os.path.join(self.log_dir, filename), maxBytes=1 * 1024 * 1024, backupCount=5)
+				handler.setLevel(level)
+				handler.addFilter(self.LevelFilter(level))
+				handler.setFormatter(formatter)
+				logger.addHandler(handler)
+			except (OSError, PermissionError) as e:
+				logging.error('Failed to create %s: %s', filename, e)
+
+
+class ConfigManager:
+	"""Manages all application configuration."""
+
+	def __init__(self):
+		load_dotenv()
+		self.tg_bot_token = os.getenv('TG_BOTTOKEN', '')
+		self.tg_chat_id = os.getenv('TG_CHATID', '')
+		self.tg_topic_id = os.getenv('TG_TOPICID', '0')
+		self.gw_ignore_time_messages = os.getenv('GW_IGNORE_MESSAGES', 'True').lower() == 'true'
+
+		self.app_name, self.project_url = _get_app_metadata()
+		self.app_name_short = self.app_name.split('-')[0]
+
+		self.relevant_log_patterns = ['end of voice transmission', 'end of transmission', 'watchdog has expired']
+
+		if not self.tg_bot_token or not self.tg_chat_id:
+			logging.warning('TG_BOTTOKEN or TG_CHATID is not set in the environment variables.')
+		if self.gw_ignore_time_messages:
+			logging.info('GW_IGNORE_MESSAGES is set to true, messages from the gateway will be ignored.')
+
+
+class Formatter:
+	"""A collection of formatting utility functions."""
+
+	@staticmethod
+	def remove_double_spaces(text: str) -> str:
+		"""Removes double spaces from a string."""
+		while '  ' in text:
+			text = text.replace('  ', ' ')
+		return text
+
+	@staticmethod
+	@lru_cache(maxsize=128)
+	def get_country_code(country_name: str) -> str:
+		"""Returns the country code for a given country name."""
+		code = COUNTRY_CODES.get(country_name)
+		if not code:
+			for name, c in COUNTRY_CODES.items():
+				if name.lower() == country_name.lower():
+					code = c
+					break
+			if not code:
+				matches = difflib.get_close_matches(country_name, COUNTRY_CODES.keys(), n=1, cutoff=0.8)
+				if matches:
+					code = COUNTRY_CODES[matches[0]]
+		return code if code else ''
+
+	@staticmethod
+	def get_flag_emoji(country_code: str) -> str:
+		"""Converts a two-letter country code to a flag emoji."""
+		if country_code and len(country_code) == 2:
+			return ''.join(chr(ord(c) + 127397) for c in country_code.upper())
+		return '🌐'
+
+
+class DMRGatewayManager:
+	"""Manages loading and caching of DMRGateway configuration."""
+
+	def __init__(self, config_files: list[str] = None):
+		self._cache = {'path': None, 'mtime': 0, 'rules': [], 'networks': []}
+		self._conf_files = config_files or ['/etc/dmrgateway', '/etc/DMRGateway.ini', '/opt/DMRGateway/DMRGateway.ini']
+
+	def get_rules(self) -> list:
+		"""Returns the list of rewrite rules."""
+		self._update_cache()
+		return self._cache['rules']
+
+	def get_networks(self) -> list:
+		"""Returns the list of configured networks."""
+		self._update_cache()
+		return self._cache['networks']
+
+	def _update_cache(self):
+		"""Updates the cache if the configuration file has changed."""
+		config_path = self._cache['path']
+		if not config_path or not os.path.isfile(config_path):
+			config_path = None
+			for f in self._conf_files:
+				if os.path.isfile(f):
+					config_path = f
+					break
+		if config_path:
+			try:
+				mtime = os.path.getmtime(config_path)
+				if config_path == self._cache['path'] and mtime == self._cache['mtime']:
+					return
+				rules = []
+				networks = []
+				config = configparser.ConfigParser(strict=False, interpolation=None)
+				config.read(config_path)
+				for section in config.sections():
+					if section.startswith('DMR Network'):
+						net_name = config.get(section, 'Name', fallback=section)
+						networks.append(net_name)
+						for key, value in config.items(section):
+							key_lower = key.lower()
+							rule_type = None
+							if key_lower.startswith('tgrewrite'):
+								rule_type = 'TG'
+							elif key_lower.startswith('pcrewrite'):
+								rule_type = 'PC'
+							if rule_type:
+								parts = [p.strip() for p in value.split(',')]
+								if len(parts) >= 5:
+									try:
+										src_slot = int(parts[0])
+										src_tg = int(parts[1])
+										dst_tg = int(parts[3])
+										range_val = int(parts[4])
+										rules.append(
+											{
+												'slot': src_slot,
+												'start': src_tg,
+												'end': src_tg + range_val - 1,
+												'offset': dst_tg - src_tg,
+												'name': net_name,
+												'type': rule_type,
+											}
+										)
+									except ValueError:
+										continue
+				self._cache = {'path': config_path, 'mtime': mtime, 'rules': rules, 'networks': networks}
+			except Exception as e:
+				logging.error('Error reading DMRGateway config %s: %s', config_path, e)
+
+
+class TalkgroupManager:
+	"""Manages loading, caching, and retrieving talkgroup information."""
+
+	def __init__(self, dmr_gateway_manager: DMRGatewayManager):
+		"""Initializes the TalkgroupManager."""
+		self._dmr_gateway_manager = dmr_gateway_manager
+		self._cache = {'mtimes': {}, 'tg_map': {}}
+
+	def get_map(self) -> dict:
+		"""Reads and caches the talkgroup list from files, reloading if files change."""
+		current_mtimes, expanded_configs, catch_all_files = self._collect_files_and_mtimes()
+		if current_mtimes == self._cache.get('mtimes') and self._cache.get('tg_map'):
+			return self._cache['tg_map']
+		tg_map = {}
+		processed_files = set()
+		for files, delimiter, id_idx, name_idx in expanded_configs:
+			for tg_file in files:
+				processed_files.add(tg_file)
+				filename = os.path.basename(tg_file)
+				name_part = os.path.splitext(filename)[0]
+				suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
+				self._read_talkgroup_file(tg_file, delimiter, id_idx, name_idx, tg_map, suffix=suffix, overwrite=True)
+		for tg_file in catch_all_files:
+			if tg_file not in processed_files:
+				filename = os.path.basename(tg_file)
+				name_part = os.path.splitext(filename)[0]
+				suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
+				self._read_talkgroup_file(tg_file, ';', 0, 1, tg_map, suffix=suffix, overwrite=False)
+		self._apply_special_rules(tg_map)
+		self._cache = {'mtimes': current_mtimes, 'tg_map': tg_map}
+		return tg_map
+
+	def _read_talkgroup_file(
+		self, file_path: str, delimiter: str, id_idx: int, name_idx: int, tg_map: dict, suffix: str = '', overwrite: bool = True
+	):
+		"""Helper to read a talkgroup file and update the map."""
+		if not os.path.isfile(file_path):
+			return
+		try:
+			with open(file_path, 'r', encoding='UTF-8', errors='replace') as file:
+				for line in file:
+					line = line.strip()
+					if line.startswith('#') or not line:
+						continue
+					parts = line.split(maxsplit=1) if delimiter == ' ' else line.split(delimiter)
+					try:
+						if len(parts) > max(id_idx, name_idx):
+							tgid = parts[id_idx].strip()
+							name = parts[name_idx].strip()
+							if tgid and name:
+								display_name = f'{suffix}: {name}' if suffix else name
+								if overwrite or tgid not in tg_map:
+									tg_map[tgid] = display_name
+					except IndexError:
+						continue
+		except Exception as e:
+			logging.error('Error reading talkgroup file %s: %s', file_path, e)
+
+	def _get_static_sources(self) -> list[tuple[str, str, int, int]]:
+		"""Returns the list of static talkgroup file sources."""
+		return [
+			('/usr/local/etc/groups.txt', ':', 0, 1),
+			('/usr/local/etc/groupsNextion.txt', ',', 0, 1),
+			('/usr/local/etc/TGList_ADN', ',', 0, 1),
+			('/usr/local/etc/TGList_ADN-NoPrefix', ',', 0, 1),
+			('/usr/local/etc/TGList_BM', ';', 0, 2),
+			('/usr/local/etc/TGList_DMRp', ',', 0, 1),
+			('/usr/local/etc/TGList_DMRp_NoPrefix', ',', 0, 1),
+			('/usr/local/etc/TGList_FreeDMR', ',', 0, 1),
+			('/usr/local/etc/TGList_FreeStarIPSC', ',', 0, 1),
+			('/usr/local/etc/TGList_NXDN', ';', 0, 2),
+			('/usr/local/etc/TGList_P25', ';', 0, 2),
+			('/usr/local/etc/TGList_QuadNet', ',', 0, 1),
+			('/usr/local/etc/TGList_QuadNet-NoPrefix', ',', 0, 1),
+			('/usr/local/etc/TGList_SystemX', ',', 0, 1),
+			('/usr/local/etc/TGList_TGIF', ';', 0, 1),
+			('/usr/local/etc/TGList_YSF', ';', 0, 1),
+		]
+
+	def _get_dynamic_sources(self) -> list[tuple[str, str, int, int]]:
+		"""Returns the list of dynamic talkgroup file sources based on DMRGateway config."""
+		configs = []
+		for net in self._dmr_gateway_manager.get_networks():
+			name_clean = net.split('_')[0]
+			fpath = f'/usr/local/etc/TGList_{name_clean}.txt'
+			name_idx = 2 if 'BM' in name_clean else 1
+			configs.append((fpath, ';', 0, name_idx))
+		return configs
+
+	def _collect_files_and_mtimes(self) -> tuple[dict, list, list]:
+		"""Collects all talkgroup files and their modification times."""
+		mtimes = {}
+		expanded_configs = []
+		sources = self._get_static_sources() + self._get_dynamic_sources()
+		for pattern, delimiter, id_idx, name_idx in sources:
+			files = glob.glob(pattern)
+			expanded_configs.append((files, delimiter, id_idx, name_idx))
+			for f in files:
+				try:
+					mtimes[f] = os.path.getmtime(f)
+				except OSError:
+					pass
+		catch_all_files = glob.glob('/usr/local/etc/TGList_*.txt')
+		for f in catch_all_files:
+			try:
+				mtimes[f] = os.path.getmtime(f)
 			except OSError:
 				pass
-	catch_all_files = glob.glob('/usr/local/etc/TGList_*.txt')
-	for f in catch_all_files:
+		return mtimes, expanded_configs, catch_all_files
+
+	def _apply_special_rules(self, tg_map: dict):
+		"""Applies special talkgroup rules for DMRGateway and MCCs."""
+		for rule in self._dmr_gateway_manager.get_rules():
+			if rule.get('type') in ('TG', 'PC'):
+				for target_tg, label in [(4000, 'Disconnect'), (9990, 'Parrot'), (31000, 'Parrot')]:
+					src_tg = target_tg - rule['offset']
+					if rule['start'] <= src_tg <= rule['end']:
+						tg_map[str(src_tg)] = label
+		for mcc, (country, _) in MCC_CODES.items():
+			tg_map[f'{mcc}990'] = f'{country} Text Message'
+			tg_map[f'{mcc}997'] = f'{country} Parrot'
+			tg_map[f'{mcc}999'] = f'{country} ARS/RRS/GPS'
+
+
+class UserManager:
+	"""Manages loading and caching of user data from user.csv."""
+
+	def __init__(self, file_path='/usr/local/etc/user.csv'):
+		"""Initializes the UserManager."""
+		self._file_path = file_path
+		self._cache = {'mtime': 0, 'user_map': {}}
+
+	def get_map(self) -> dict:
+		"""Returns the user map, reloading from file if it has changed."""
 		try:
-			current_mtimes[f] = os.path.getmtime(f)
+			mtime = os.path.getmtime(self._file_path)
 		except OSError:
-			pass
-	if current_mtimes == _TALKGROUP_CACHE['mtimes'] and _TALKGROUP_CACHE['tg_map']:
-		return _TALKGROUP_CACHE['tg_map']
-	tg_map = {}
-	processed_files = set()
-	for files, delimiter, id_idx, name_idx in expanded_configs:
-		for tg_file in files:
-			processed_files.add(tg_file)
-			filename = os.path.basename(tg_file)
-			name_part = os.path.splitext(filename)[0]
-			suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
-			read_talkgroup_file(tg_file, delimiter, id_idx, name_idx, tg_map, suffix=suffix, overwrite=True)
-	for tg_file in catch_all_files:
-		if tg_file not in processed_files:
-			filename = os.path.basename(tg_file)
-			name_part = os.path.splitext(filename)[0]
-			suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
-			read_talkgroup_file(tg_file, ';', 0, 1, tg_map, suffix=suffix, overwrite=False)
-	dmr_rules = _DMRGATEWAY_CACHE.get('rules', [])
-	for rule in dmr_rules:
-		if rule.get('type') == 'TG' or rule.get('type') == 'PC':
-			for target_tg, label in [(4000, 'Disconnect'), (9990, 'Parrot'), (31000, 'Parrot')]:
-				src_tg = target_tg - rule['offset']
-				if rule['start'] <= src_tg <= rule['end']:
-					tg_map[str(src_tg)] = label
-	for mcc in MCC_CODES:
-		country, _ = MCC_CODES[mcc]
-		tg_map[f'{mcc}990'] = f'{country} Text Message'
-		tg_map[f'{mcc}997'] = f'{country} Parrot'
-		tg_map[f'{mcc}999'] = f'{country} ARS/RRS/GPS'
-	_TALKGROUP_CACHE = {'mtimes': current_mtimes, 'tg_map': tg_map}
-	return tg_map
+			mtime = 0
+		if mtime == self._cache.get('mtime') and self._cache.get('user_map'):
+			return self._cache['user_map']
+		user_map = self._load_data()
+		self._cache = {'mtime': mtime, 'user_map': user_map}
+		return user_map
 
-
-_DMRGATEWAY_CACHE = {'path': None, 'mtime': 0, 'rules': [], 'networks': []}
-
-
-def get_dmrgateway_rules() -> list:
-	"""Reads DMRGateway configuration to find rewrite rules, reloading if file changes."""
-	global _DMRGATEWAY_CACHE
-	conf_files = ['/etc/dmrgateway', '/etc/DMRGateway.ini', '/opt/DMRGateway/DMRGateway.ini']
-	config_path = _DMRGATEWAY_CACHE['path']
-	if not config_path or not os.path.isfile(config_path):
-		config_path = None
-		for f in conf_files:
-			if os.path.isfile(f):
-				config_path = f
-				break
-	if config_path:
-		try:
-			mtime = os.path.getmtime(config_path)
-			if config_path == _DMRGATEWAY_CACHE['path'] and mtime == _DMRGATEWAY_CACHE['mtime']:
-				return _DMRGATEWAY_CACHE['rules']
-			rules = []
-			networks = []
-			config = configparser.ConfigParser(strict=False, interpolation=None)
-			config.read(config_path)
-			for section in config.sections():
-				if section.startswith('DMR Network'):
-					net_name = config.get(section, 'Name', fallback=section)
-					networks.append(net_name)
-					for key, value in config.items(section):
-						key_lower = key.lower()
-						rule_type = None
-						if key_lower.startswith('tgrewrite'):
-							rule_type = 'TG'
-						elif key_lower.startswith('pcrewrite'):
-							rule_type = 'PC'
-						if rule_type:
-							parts = [p.strip() for p in value.split(',')]
-							if len(parts) >= 5:
-								try:
-									src_slot = int(parts[0])
-									src_tg = int(parts[1])
-									dst_tg = int(parts[3])
-									range_val = int(parts[4])
-									rules.append(
-										{
-											'slot': src_slot,
-											'start': src_tg,
-											'end': src_tg + range_val - 1,
-											'offset': dst_tg - src_tg,
-											'name': net_name,
-											'type': rule_type,
-										}
-									)
-								except ValueError:
-									continue
-			_DMRGATEWAY_CACHE = {'path': config_path, 'mtime': mtime, 'rules': rules, 'networks': networks}
-			return rules
-		except Exception as e:
-			logging.error('Error reading DMRGateway config %s: %s', config_path, e)
-	return _DMRGATEWAY_CACHE['rules']
-
-
-@lru_cache(maxsize=1)
-def get_user_csv_data() -> dict:
-	"""Reads and caches the user.csv file."""
-	user_map = {}
-	caller_file = '/usr/local/etc/user.csv'
-	if os.path.isfile(caller_file):
+	def _load_data(self) -> dict:
+		"""Loads user data from the CSV file."""
+		if not os.path.isfile(self._file_path):
+			return {}
 		encodings = ['utf-8', 'latin-1']
 		for encoding in encodings:
 			try:
-				temp_map = {}
-				with open(caller_file, 'r', encoding=encoding) as file:
+				user_map = {}
+				with open(self._file_path, 'r', encoding=encoding, errors='replace') as file:
 					for line in file:
 						parts = line.strip().split(',')
 						if len(parts) >= 7:
 							call = parts[1].strip()
 							fname = parts[2].strip()
 							country = parts[6].strip()
-							temp_map[call] = (fname, country)
-				user_map = temp_map
-				break
+							if call:
+								user_map[call] = (fname, country)
+				logging.debug('Successfully loaded user data from %s with %s encoding.', self._file_path, encoding)
+				return user_map
 			except UnicodeDecodeError:
-				continue
+				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, self._file_path)
 			except Exception as e:
-				logging.error('Error reading caller file %s: %s', caller_file, e)
+				logging.error('Error reading user file %s: %s', self._file_path, e)
 				break
-	return user_map
+		return {}
 
 
-@lru_cache
-def get_mmdvm_log_dir() -> str:
-	"""Reads the MMDVMHost configuration to find the log directory."""
-	conf_files = ['/etc/mmdvmhost', '/etc/MMDVM.ini', '/opt/MMDVMHost/MMDVM.ini']
-	for conf_file in conf_files:
-		if os.path.isfile(conf_file):
-			try:
-				config = configparser.ConfigParser()
-				config.read(conf_file)
-				if config.has_section('Log') and config.has_option('Log', 'FilePath'):
-					log_dir = config.get('Log', 'FilePath')
-					if os.path.isdir(log_dir):
-						return log_dir
-			except Exception:
-				pass
-	default_dirs = ['/var/log/pi-star', '/var/log/mmdvm', '/var/log/MMDVMHost']
-	for log_dir in default_dirs:
-		if os.path.isdir(log_dir):
-			return log_dir
-	return '/var/log/pi-star'
+class LogFileReader:
+	"""Handles finding and reading MMDVM log files."""
+
+	def __init__(self):
+		self.log_dir = self._find_log_dir()
+
+	def _find_log_dir(self) -> str:
+		"""Reads the MMDVMHost configuration to find the log directory."""
+		conf_files = ['/etc/mmdvmhost', '/etc/MMDVM.ini', '/opt/MMDVMHost/MMDVM.ini']
+		for conf_file in conf_files:
+			if os.path.isfile(conf_file):
+				try:
+					config = configparser.ConfigParser()
+					config.read(conf_file)
+					if config.has_section('Log') and config.has_option('Log', 'FilePath'):
+						log_dir = config.get('Log', 'FilePath')
+						if os.path.isdir(log_dir):
+							return log_dir
+				except Exception:
+					pass
+		default_dirs = ['/var/log/pi-star', '/var/log/mmdvm', '/var/log/MMDVMHost']
+		for log_dir in default_dirs:
+			if os.path.isdir(log_dir):
+				return log_dir
+		return '/var/log/pi-star'
+
+	def get_latest_log_path(self) -> Optional[str]:
+		"""Finds and returns the path to the most recent MMDVM log file."""
+		log_files = glob.glob(os.path.join(self.log_dir, 'MMDVM-*.log'))
+		if not log_files:
+			return None
+		log_files.sort(key=os.path.getmtime, reverse=True)
+		latest_log = log_files[0]
+		logging.debug('Latest MMDVM log file: %s', latest_log)
+		return latest_log
+
+	@staticmethod
+	def get_last_line(file_path: str) -> str:
+		"""Reads the last line of a file using seek for performance."""
+		try:
+			with open(file_path, 'rb') as f:
+				try:
+					f.seek(-4096, os.SEEK_END)
+				except OSError:
+					f.seek(0)
+				lines = f.readlines()
+				for line in reversed(lines):
+					decoded = line.decode('utf-8', errors='replace').strip()
+					if len(decoded) >= 10:
+						return decoded
+		except OSError as e:
+			logging.error('Error reading last line of file %s: %s', file_path, e)
+		return ''
 
 
-def get_latest_mmdvm_log_path() -> Optional[str]:
-	"""Finds and returns the path to the most recent MMDVM log file."""
-	logdir = get_mmdvm_log_dir()
-	log_files = glob.glob(os.path.join(logdir, 'MMDVM-*.log'))
-	if not log_files:
-		return None
-	log_files.sort(key=os.path.getmtime, reverse=True)
-	latest_log = log_files[0]
-	logging.debug('Latest MMDVM log file: %s', latest_log)
-	return latest_log
+class DataManager:
+	"""Central manager for all data sources."""
 
-
-def get_last_line_of_file(file_path: str) -> str:
-	"""Reads the last line of a file using seek for performance."""
-	try:
-		with open(file_path, 'rb') as f:
-			try:
-				f.seek(-4096, os.SEEK_END)
-			except OSError:
-				f.seek(0)
-			lines = f.readlines()
-			for line in reversed(lines):
-				decoded = line.decode('utf-8', errors='replace').strip()
-				if len(decoded) >= 10:
-					return decoded
-	except OSError as e:
-		logging.error('Error reading last line of file %s: %s', file_path, e)
-	return ''
+	def __init__(self):
+		self.dmr_gateway = DMRGatewayManager()
+		self.talkgroups = TalkgroupManager(self.dmr_gateway)
+		self.users = UserManager()
+		self.log_reader = LogFileReader()
 
 
 @dataclass
 class MMDVMLogLine:
-	timestamp: Optional[datetime] = None
+	timestamp: Optional[dt.datetime] = None
 	mode: str = ''
 	callsign: str = ''
 	destination: str = ''
@@ -448,6 +512,7 @@ class MMDVMLogLine:
 	is_kerchunk: bool = False
 	is_network: bool = True
 	is_watchdog: bool = False
+	data_manager: 'DataManager' = field(init=False, repr=False)
 	_TIMESTAMP = r'(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)'
 	_SOURCE = r'(?P<source>network|RF)'
 	_CALLSIGN = r'from (?P<callsign>[\w\d\-/]+)'
@@ -495,7 +560,7 @@ class MMDVMLogLine:
 	)
 
 	@classmethod
-	def from_logline(cls, logline: str) -> 'MMDVMLogLine':
+	def from_logline(cls, logline: str, data_manager: 'DataManager') -> 'MMDVMLogLine':
 		"""Factory method to create an MMDVMLogLine instance from a log line."""
 		parsers = [
 			cls._parse_dmr_voice,
@@ -508,16 +573,18 @@ class MMDVMLogLine:
 		for parser in parsers:
 			instance = parser(logline)
 			if instance:
+				instance.data_manager = data_manager
 				return instance
 		raise ValueError(f'Log line does not match expected format: {logline}')
 
 	@classmethod
 	def _parse_dmr_voice(cls, logline: str) -> Optional['MMDVMLogLine']:
+		"""Parses a DMR voice transmission log line."""
 		match = cls.DMR_GW_PATTERN.match(logline) or cls.DMR_RF_PATTERN.match(logline)
 		if match:
 			obj = cls()
 			obj.mode = 'DMR'
-			obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.slot = int(match.group('slot'))
 			obj.is_network = match.group('source') == 'network'
 			obj.callsign = match.group('callsign').strip()
@@ -535,11 +602,12 @@ class MMDVMLogLine:
 
 	# @classmethod
 	# def _parse_dmr_data(cls, logline: str) -> Optional['MMDVMLogLine']:
+	# 	"""Parses a DMR data transmission log line."""
 	# 	match = cls.DMR_DATA_PATTERN.match(logline)
 	# 	if match:
 	# 		obj = cls()
 	# 		obj.mode = 'DMR-D'
-	# 		obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+	# 		obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 	# 		obj.slot = int(match.group('slot'))
 	# 		obj.is_network = match.group('source') == 'network'
 	# 		obj.is_voice = False
@@ -553,13 +621,14 @@ class MMDVMLogLine:
 
 	@classmethod
 	def _parse_dstar(cls, logline: str) -> Optional['MMDVMLogLine']:
+		"""Parses a D-Star transmission log line."""
 		match = cls.DSTAR_PATTERN.match(logline)
 		if match:
 			obj = cls()
 			obj.mode = 'D-Star'
-			obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
-			obj.callsign = remove_double_spaces(match.group('callsign').strip())
+			obj.callsign = Formatter.remove_double_spaces(match.group('callsign').strip())
 			obj.destination = match.group('destination').strip()
 			obj.duration = float(match.group('duration'))
 			obj.packet_loss = int(match.group('packet_loss'))
@@ -570,11 +639,12 @@ class MMDVMLogLine:
 
 	@classmethod
 	def _parse_dstar_watchdog(cls, logline: str) -> Optional['MMDVMLogLine']:
+		"""Parses a D-Star watchdog log line."""
 		match = cls.DSTAR_WATCHDOG_PATTERN.match(logline)
 		if match:
 			obj = cls()
 			obj.mode = 'D-Star'
-			obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
 			obj.duration = float(match.group('duration'))
 			obj.packet_loss = int(match.group('packet_loss'))
@@ -585,11 +655,12 @@ class MMDVMLogLine:
 
 	@classmethod
 	def _parse_ysf(cls, logline: str) -> Optional['MMDVMLogLine']:
+		"""Parses a YSF transmission log line."""
 		match = cls.YSF_PATTERN.match(logline)
 		if match:
 			obj = cls()
 			obj.mode = 'YSF'
-			obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
 			obj.is_voice = True
 			obj.callsign = match.group('callsign').strip()
@@ -603,11 +674,12 @@ class MMDVMLogLine:
 
 	@classmethod
 	def _parse_ysf_network_data(cls, logline: str) -> Optional['MMDVMLogLine']:
+		"""Parses a YSF network data transmission log line."""
 		match = cls.YSF_NETWORK_DATA_PATTERN.match(logline)
 		if match:
 			obj = cls()
 			obj.mode = 'YSF-D'
-			obj.timestamp = datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
 			obj.is_voice = False
 			obj.callsign = match.group('callsign').strip()
@@ -675,11 +747,11 @@ class MMDVMLogLine:
 		tg_name = ''
 		is_group = self.destination.startswith('TG ')
 		tg_id_str = self.destination.split()[-1] if is_group else self.destination
-		tg_map = get_talkgroup_ids()
+		tg_map = self.data_manager.talkgroups.get_map()
 		name = tg_map.get(tg_id_str)
 		if not name and tg_id_str.isdigit():
 			tg_id = int(tg_id_str)
-			rules = get_dmrgateway_rules()
+			rules = self.data_manager.dmr_gateway.get_rules()
 			required_type = 'TG' if is_group else 'PC'
 			for rule in rules:
 				if rule.get('type', 'TG') != required_type:
@@ -694,7 +766,7 @@ class MMDVMLogLine:
 				mcc = int(tg_id_str[:3])
 				if mcc in MCC_CODES:
 					_, code = MCC_CODES[mcc]
-					name = f'{get_flag_emoji(code)} {code}'
+					name = f'{Formatter.get_flag_emoji(code)} {code}'
 		if name:
 			tg_name = f' ({name})'
 		return tg_name
@@ -702,19 +774,19 @@ class MMDVMLogLine:
 	def get_caller_location(self) -> str:
 		"""Returns the location of the caller based on the callsign."""
 		caller = ''
-		user_map = get_user_csv_data()
+		user_map = self.data_manager.users.get_map()
 		user_info = user_map.get(self.callsign)
 		if user_info:
 			fname, country = user_info
-			code = get_country_code(country)
-			flag = get_flag_emoji(code)
+			code = Formatter.get_country_code(country)
+			flag = Formatter.get_flag_emoji(code)
 			label = code if code else country
 			caller = f' ({fname}) [{flag} {label}]'
 		elif self.callsign.isdigit() and len(self.callsign) >= 7:
 			mcc = int(self.callsign[:3])
 			if mcc in MCC_CODES:
 				_, code = MCC_CODES[mcc]
-				caller = f' [{get_flag_emoji(code)} {code}]'
+				caller = f' [{Formatter.get_flag_emoji(code)} {code}]'
 		return caller
 
 	def get_telegram_message(self) -> str:
@@ -776,31 +848,59 @@ class MMDVMLogLine:
 		return message
 
 
-async def logs_to_telegram(tg_message: str):
-	"""Queues the log line to be sent to the Telegram bot."""
-	if MESSAGE_QUEUE:
-		await MESSAGE_QUEUE.put(tg_message)
+class TelegramBot:
+	"""Manages the Telegram bot application and message queue."""
 
+	def __init__(self, token: str, chat_id: str, topic_id: str, app_name: str):
+		self.token = token
+		self.chat_id = chat_id
+		self.topic_id = topic_id
+		self.app: Optional[TelegramApplication] = None
+		self.app_name = app_name
+		self.queue = asyncio.Queue()
 
-async def telegram_message_worker(stop_event: asyncio.Event):
-	"""Worker to process and send Telegram messages from the queue."""
-	global TG_APP, MESSAGE_QUEUE
-	logging.info('Starting Telegram message worker...')
-	while not stop_event.is_set():
+	async def queue_message(self, message: str):
+		"""Queues a message to be sent."""
+		await self.queue.put(message)
+
+	async def run(self, stop_event: asyncio.Event):
+		"""Runs the Telegram bot and message worker."""
+		if not self.token:
+			logging.error('Telegram token not provided. Bot will not start.')
+			return
+
 		try:
-			if MESSAGE_QUEUE is None:
-				await asyncio.sleep(1)
-				continue
+			self.app = ApplicationBuilder().token(self.token).build()
+			logging.info('Telegram application built successfully.')
+			async with self.app:
+				await self.app.initialize()
+				await self.app.start()
+				logging.info('Telegram bot started successfully.')
+
+				# Run the message worker
+				worker_task = asyncio.create_task(self._worker(stop_event))
+				await stop_event.wait()
+				await worker_task
+
+				await self.app.stop()
+				await self.app.shutdown()
+		except Exception as e:
+			logging.error('Error running Telegram bot: %s', e)
+
+	async def _worker(self, stop_event: asyncio.Event):
+		"""Worker to process and send Telegram messages from the queue."""
+		logging.info('Starting Telegram message worker...')
+		while not stop_event.is_set():
 			try:
-				tg_message = await asyncio.wait_for(MESSAGE_QUEUE.get(), timeout=1.0)
+				tg_message = await asyncio.wait_for(self.queue.get(), timeout=1.0)
 			except asyncio.TimeoutError:
 				continue
-			message = f'{tg_message}\n\n<code>{APP_NAME}</code>'
-			if TG_APP:
+			message = f'{tg_message}\n\n<code>{self.app_name}</code>'
+			if self.app:
 				try:
-					botmsg = await TG_APP.bot.send_message(
-						chat_id=TG_CHATID,
-						message_thread_id=TG_TOPICID,
+					botmsg = await self.app.bot.send_message(
+						chat_id=self.chat_id,
+						message_thread_id=self.topic_id,
 						text=message,
 						parse_mode='HTML',
 						link_preview_options={'is_disabled': True, 'prefer_small_media': True, 'show_above_text': True},
@@ -808,125 +908,133 @@ async def telegram_message_worker(stop_event: asyncio.Event):
 					logging.info('Sent message to Telegram: %s/%s/%s', botmsg.chat_id, botmsg.message_thread_id, botmsg.message_id)
 				except Exception as e:
 					logging.error('Failed to send message to Telegram: %s', e)
-			MESSAGE_QUEUE.task_done()
+			self.queue.task_done()
 			await asyncio.sleep(0.5)
-		except Exception as e:
-			logging.error('Error in Telegram message worker: %s', e)
 
 
-async def mmdvm_logs_observer(stop_event: asyncio.Event):
-	"""Watches the MMDVM logs and sends updates to the Telegram bot."""
-	global TG_APP
-	logging.info('Starting MMDVM log file retrieval...')
-	last_event: Optional[datetime] = None
-	current_log_path: Optional[str] = None
-	while not stop_event.is_set():
-		try:
-			latest_log = get_latest_mmdvm_log_path()
-			if current_log_path != latest_log:
-				logging.info('Switching to new log file: %s', latest_log)
-				if latest_log:
-					if current_log_path:
-						await logs_to_telegram(
-							f'📃 {APP_NAME.split("-")[0]} Log Changed\nOld File: <s>{os.path.basename(current_log_path)}</s>\nNew File: <b>{os.path.basename(latest_log)}</b>'
-						)
-					else:
-						await logs_to_telegram(f'📃 {APP_NAME.split("-")[0]} Monitoring Log\nFile: <b>{os.path.basename(latest_log)}</b>')
-				current_log_path = latest_log
-			if current_log_path:
-				last_line = get_last_line_of_file(current_log_path)
-				logging.debug('Last line of log file: %s', last_line)
-				if any(pattern in last_line for pattern in RELEVANT_LOG_PATTERNS):
-					parsed_line = MMDVMLogLine.from_logline(last_line)
-					logging.debug('Parsed log line: %s', parsed_line)
-					if parsed_line.timestamp and (last_event is None or parsed_line.timestamp > last_event):
-						logging.info('New log entry: %s', parsed_line)
-						last_event = parsed_line.timestamp
-						if not (GW_IGNORE_TIME_MESSAGES and '/TIME' in parsed_line.callsign):
-							tg_message = parsed_line.get_telegram_message()
-							if tg_message and TG_APP:
-								await logs_to_telegram(tg_message)
-						elif GW_IGNORE_TIME_MESSAGES:
-							logging.info('Ignoring time message from gateway.')
-					else:
-						logging.debug('No new log entry found.')
+class LogObserver:
+	"""Watches the MMDVM logs and sends updates via the Telegram bot."""
+
+	def __init__(
+		self,
+		data_manager: DataManager,
+		telegram_bot: TelegramBot,
+		ignore_time_messages: bool = True,
+		app_name_short: str = 'MMDVM_LastHeard',
+		relevant_log_patterns: Optional[list[str]] = None,
+	):
+		self.data_manager = data_manager
+		self.telegram_bot = telegram_bot
+		self.log_reader = data_manager.log_reader
+		self.ignore_time_messages = ignore_time_messages
+		self.app_name_short = app_name_short
+		self.relevant_log_patterns = relevant_log_patterns or []
+
+	async def run(self, stop_event: asyncio.Event):
+		"""Starts the log observation loop."""
+		logging.info('Starting MMDVM log file retrieval...')
+		last_event: Optional[dt.datetime] = None
+		current_log_path: Optional[str] = None
+
+		while not stop_event.is_set():
+			try:
+				latest_log = self.log_reader.get_latest_log_path()
+				if current_log_path != latest_log:
+					logging.info('Switching to new log file: %s', latest_log)
+					if latest_log:
+						msg = f'📃 {self.app_name_short} '
+						if current_log_path:
+							msg += (
+								f'Log Changed\nOld File: <s>{os.path.basename(current_log_path)}</s>\nNew File: <b>{os.path.basename(latest_log)}</b>'
+							)
+						else:
+							msg += f'Monitoring Log\nFile: <b>{os.path.basename(latest_log)}</b>'
+						await self.telegram_bot.queue_message(msg)
+					current_log_path = latest_log
+
+				if current_log_path:
+					await self._process_log_file(current_log_path, last_event)
+					# Update last_event to avoid re-processing if needed,
+					# but currently we just read the last line.
+					# To properly track last_event, we'd need to return it from _process_log_file
+					# or store it as instance state.
+					# For now, let's read the last line and update state if it's new.
+					last_line = self.log_reader.get_last_line(current_log_path)
+					if any(pattern in last_line for pattern in self.relevant_log_patterns):
+						try:
+							parsed_line = MMDVMLogLine.from_logline(last_line, self.data_manager)
+							if parsed_line.timestamp and (last_event is None or parsed_line.timestamp > last_event):
+								last_event = parsed_line.timestamp
+								await self._handle_new_entry(parsed_line)
+						except ValueError:
+							pass
 				else:
-					logging.debug('Line does not contain transmission end marker, skipping.')
-			else:
-				logging.error('No log file path available')
-		except ValueError as e:
-			logging.debug('Could not parse log line: %s', e)
-		except OSError as e:
-			logging.error('File system error reading log file: %s', e)
-		except Exception as e:
-			logging.error('Error in observer loop: %s', e)
-		try:
-			await asyncio.wait_for(stop_event.wait(), timeout=1.0)
-		except asyncio.TimeoutError:
-			pass
+					logging.error('No log file path available')
+			except Exception as e:
+				logging.error('Error in observer loop: %s', e)
+
+			try:
+				await asyncio.wait_for(stop_event.wait(), timeout=1.0)
+			except asyncio.TimeoutError:
+				pass
+
+	async def _process_log_file(self, log_path: str, last_event: Optional[dt.datetime]):
+		"""Processes a log file."""
+		# This method is a placeholder if we wanted to read more than just the last line.
+		# The logic is currently embedded in the run loop for the "last line" approach.
+		pass
+
+	async def _handle_new_entry(self, parsed_line: MMDVMLogLine):
+		"""Handles a new log entry."""
+		logging.info('New log entry: %s', parsed_line)
+		if not (self.ignore_time_messages and '/TIME' in parsed_line.callsign):
+			tg_message = parsed_line.get_telegram_message()
+			if tg_message:
+				await self.telegram_bot.queue_message(tg_message)
+		elif self.ignore_time_messages:
+			logging.info('Ignoring time message from gateway.')
 
 
 async def main():
 	"""Main function to initialize and run the Telegram bot and logs observer."""
-	global TG_APP, MESSAGE_QUEUE
-	load_env_variables()
-	MESSAGE_QUEUE = asyncio.Queue()
+	config = ConfigManager()
+	data_manager = DataManager()
+	telegram_bot = TelegramBot(config.tg_bot_token, config.tg_chat_id, config.tg_topic_id, config.app_name)
+	log_observer = LogObserver(
+		data_manager,
+		telegram_bot,
+		ignore_time_messages=config.gw_ignore_time_messages,
+		app_name_short=config.app_name_short,
+		relevant_log_patterns=config.relevant_log_patterns,
+	)
+
 	stop_event = asyncio.Event()
 	loop = asyncio.get_running_loop()
 	for sig in (signal.SIGINT, signal.SIGTERM):
 		loop.add_signal_handler(sig, lambda: stop_event.set())
-	worker_task = asyncio.create_task(telegram_message_worker(stop_event))
-	tg_app_built = False
+
+	# Start the Telegram bot task
+	bot_task = asyncio.create_task(telegram_bot.run(stop_event))
+
+	# Wait for bot to be ready (optional, but good for startup messages)
+	# Since TelegramBot.run blocks, we run it in a task.
+	# We can send a startup message immediately; it will sit in the queue until the bot connects.
+	await telegram_bot.queue_message(f'🚀 {config.app_name_short} Started')
+
+	# Start the log observer
 	try:
-		while not tg_app_built and not stop_event.is_set():
-			try:
-				TG_APP = ApplicationBuilder().token(TG_BOTTOKEN).build()
-				tg_app_built = True
-				logging.info('Telegram application built successfully.')
-			except Exception as e:
-				logging.error('Error building Telegram application: %s', e)
-				try:
-					await asyncio.wait_for(stop_event.wait(), timeout=5)
-				except asyncio.TimeoutError:
-					pass
-		if tg_app_built:
-			assert TG_APP is not None
-			async with TG_APP:
-				tg_app_started = False
-				while not tg_app_started and not stop_event.is_set():
-					try:
-						logging.info('Starting Telegram bot...')
-						await TG_APP.initialize()
-						await TG_APP.start()
-						tg_app_started = True
-						logging.info('Telegram bot started successfully.')
-					except Exception as e:
-						logging.error('Error starting Telegram bot: %s', e)
-						try:
-							await asyncio.wait_for(stop_event.wait(), timeout=5)
-						except asyncio.TimeoutError:
-							pass
-				if tg_app_started:
-					try:
-						logging.info('Starting MMDVM logs observer...')
-						await logs_to_telegram(f'🚀 {APP_NAME.split("-")[0]} Started')
-						await mmdvm_logs_observer(stop_event)
-					except asyncio.CancelledError:
-						logging.info('MMDVM logs observer cancelled.')
-					finally:
-						try:
-							await logs_to_telegram(f'🛑 {APP_NAME.split("-")[0]} Stopping')
-						except Exception as e:
-							logging.error('Failed to send stop message: %s', e)
-						await TG_APP.stop()
+		await log_observer.run(stop_event)
+	except asyncio.CancelledError:
+		logging.info('Main loop cancelled.')
 	finally:
+		await telegram_bot.queue_message(f'🛑 {config.app_name_short} Stopping')
 		if not stop_event.is_set():
 			stop_event.set()
-		await worker_task
+		await bot_task
 
 
 if __name__ == '__main__':
-	configure_logging()
+	LoggingManager().setup()
 	try:
 		logging.info('Starting the application...')
 		asyncio.run(main())
