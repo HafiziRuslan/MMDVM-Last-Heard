@@ -2,9 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-09T21:20:17+08:00)
+## [beta6] - (2026-03-09T21:46:36+08:00)
 
-- 2 commit(s) contributed to the release.
+- 3 commit(s) contributed to the release.
+
+### 🚀 Features in beta6
+
+- [056a036](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/056a03675d9c4ec6cd0b5e0413da1ef758fe5a14) feat(user): extend UserManager to load user data from user.csv and DMRIds.dat with per-source caches and fallback *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:46:36+08:00*
 
 ### 🚜 Refactor in beta6
 
@@ -405,4 +409,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-09T21:20:54.398558342+08:00
+generated using git-cliff at 2026-03-09T21:47:07.858107474+08:00
