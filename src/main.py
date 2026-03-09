@@ -710,7 +710,7 @@ class MMDVMLogLine:
 			flag = get_flag_emoji(code)
 			label = code if code else country
 			caller = f' ({fname}) [{flag} {label}]'
-		elif self.callsign.isdigit() and len(self.callsign) >= 3:
+		elif self.callsign.isdigit() and len(self.callsign) >= 7:
 			mcc = int(self.callsign[:3])
 			if mcc in MCC_CODES:
 				_, code = MCC_CODES[mcc]
