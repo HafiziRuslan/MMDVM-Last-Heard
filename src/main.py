@@ -272,8 +272,8 @@ def get_talkgroup_ids() -> dict:
 			read_talkgroup_file(tg_file, ';', 0, 1, tg_map, suffix=suffix, overwrite=False)
 	dmr_rules = _DMRGATEWAY_CACHE.get('rules', [])
 	for rule in dmr_rules:
-		if rule.get('type') == 'TG':
-			for target_tg, label in [(4000, 'Disconnect'), (9990, 'Parrot')]:
+		if rule.get('type') == 'TG' or rule.get('type') == 'PC':
+			for target_tg, label in [(4000, 'Disconnect'), (9990, 'Parrot'), (31000, 'Parrot')]:
 				src_tg = target_tg - rule['offset']
 				if rule['start'] <= src_tg <= rule['end']:
 					tg_map[str(src_tg)] = label
