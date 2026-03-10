@@ -2,16 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-09T21:46:36+08:00)
+## [beta6] - (2026-03-11T03:22:31+08:00)
 
-- 3 commit(s) contributed to the release.
+- 5 commit(s) contributed to the release.
+- 1 day(s) passed between the first and last commit.
+- 1 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
+- [efa3718](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/efa37183e8533391c12457af14335e49847a5b3e) feat(main): bootstrap apt dependencies, add command_exists, auto-install uv when online, and use uv venv --clear for cleanup *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-11T03:12:35+08:00*
 - [056a036](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/056a03675d9c4ec6cd0b5e0413da1ef758fe5a14) feat(user): extend UserManager to load user data from user.csv and DMRIds.dat with per-source caches and fallback *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:46:36+08:00*
 
 ### 🚜 Refactor in beta6
 
+- [2d5eda8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2d5eda81f302074052a8053f32b196f43ef765c9) refactor(main.sh): overhaul script with structured initialization, logging, preflight checks, dependency management, repo sync, venv handling, and resilient runner *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-11T03:22:31+08:00*
 - [76e6229](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/76e6229daf33ebc8c0a93eb071d15a3464534563) refactor(app): modularize core components and introduce data-driven architecture for logging, config, and Telegram integration *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:20:17+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta6
@@ -409,4 +413,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-09T21:47:07.858107474+08:00
+generated using git-cliff at 2026-03-11T03:23:13.920187328+08:00
