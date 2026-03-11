@@ -2,26 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1b6] - (2026-03-12T04:11:53+08:00)
+## [beta6] - (2026-03-12T04:51:48+08:00)
 
-- 1 commit(s) contributed to the release.
-
-### 🚀 Features in 0.1b6
-
-- [1b3c30b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b3c30bb603f730211d5bd95023be936e4b5c23a) feat(ci): automate release workflow with dynamic versioning and tagging *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:11:53+08:00*
-
----
-
-## [beta6] - (2026-03-12T01:44:25+08:00)
-
-- 8 commit(s) contributed to the release.
+- 13 commit(s) contributed to the release.
 - 2 day(s) passed between the first and last commit.
 - 2 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
+- [1b3c30b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b3c30bb603f730211d5bd95023be936e4b5c23a) feat(ci): automate release workflow with dynamic versioning and tagging *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:11:53+08:00*
 - [efa3718](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/efa37183e8533391c12457af14335e49847a5b3e) feat(main): bootstrap apt dependencies, add command_exists, auto-install uv when online, and use uv venv --clear for cleanup *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-11T03:12:35+08:00*
 - [056a036](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/056a03675d9c4ec6cd0b5e0413da1ef758fe5a14) feat(user): extend UserManager to load user data from user.csv and DMRIds.dat with per-source caches and fallback *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:46:36+08:00*
+
+### 🐛 Bug Fixes in beta6
+
+- [25c664b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/25c664becd70c7c6de6b09082dded09eb95fcdf1) fix(release): relax version parsing to allow 2-part version numbers *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:47:21+08:00*
 
 ### 💼 Other in beta6
 
@@ -29,6 +24,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta6
 
+- [f34eaa7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f34eaa781575842eea92628beb3a3d20e73fab26) refactor(release): simplify version parsing logic for dynamic tags *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:19:56+08:00*
 - [2fd5e17](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2fd5e1761262201abbbb792c2888d7bfb3f2b8b7) refactor(main): improve virtual environment handling and execution order *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-11T03:39:16+08:00*
 - [2d5eda8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2d5eda81f302074052a8053f32b196f43ef765c9) refactor(main.sh): overhaul script with structured initialization, logging, preflight checks, dependency management, repo sync, venv handling, and resilient runner *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-11T03:22:31+08:00*
 - [76e6229](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/76e6229daf33ebc8c0a93eb071d15a3464534563) refactor(app): modularize core components and introduce data-driven architecture for logging, config, and Telegram integration *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:20:17+08:00*
@@ -39,6 +35,8 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta6
 
+- [64e877b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/64e877be1bf1939ba09f1d778fcbc6ad28812f1b) chore(metadata): update app version and metadata formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:51:48+08:00*
+- [921488e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/921488e85b96f92a273d7ab09c8daaa55e68ba80) chore(ci): add read permission to release workflow *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:23:48+08:00*
 - [e8a4cc1](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e8a4cc116cc7c1575b657dfdef84e06b95c9dfed) chore(release): bump to 0.1b6 across project and release assets *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:13:46+08:00*
 
 ---
@@ -432,4 +430,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-12T04:12:48.120749622+08:00
+generated using git-cliff at 2026-03-12T04:52:35.821738153+08:00
