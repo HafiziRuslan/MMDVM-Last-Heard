@@ -29,13 +29,13 @@ from telegram.ext import ApplicationBuilder
 @lru_cache
 def _get_app_metadata():
 	repo_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-	git_sha = 'unknown'
+	git_sha = ''
 	if shutil.which('git'):
 		try:
 			git_sha = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD^'], cwd=repo_path).decode('ascii').strip()
 		except Exception:
 			pass
-	meta = {'name': 'MMDVM_LastHeard', 'version': '0.0.0', 'github': 'https://git.new/mmdvmlhbot'}
+	meta = {'name': 'MMDVM_LastHeard', 'version': '0.1', 'github': 'https://git.new/mmdvmlhbot'}
 	try:
 		with open(os.path.join(repo_path, 'pyproject.toml'), 'rb') as f:
 			data = tomllib.load(f).get('project', {})
@@ -43,7 +43,7 @@ def _get_app_metadata():
 			meta['github'] = data.get('urls', {}).get('github', meta['github'])
 	except Exception as e:
 		logging.warning('Failed to load project metadata: %s', e)
-	return f'{meta["name"]}-{meta["version"]}-{git_sha}', meta['github']
+	return f'{"-".join([meta["name"], meta["version"], git_sha])}', meta['github']
 
 
 class LoggingManager:
