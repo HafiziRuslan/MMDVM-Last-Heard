@@ -161,7 +161,7 @@ class LoggingManager:
 
 	def _set_library_log_levels(self):
 		"""Sets specific log levels for external libraries."""
-		external_libs = ['asyncio', 'hpack', 'httpx', 'telegram', 'urllib3']
+		external_libs = ['humanize', 'python-dotenv', 'python-telegram-bot', 'httpx', 'hpack', 'urllib3']
 		for lib in external_libs:
 			logging.getLogger(lib).setLevel(self.log_level)
 
@@ -522,6 +522,7 @@ class UserManager:
 				logging.error('Error reading user file %s: %s', self._dmr_ids_path, e)
 				break
 		return {}
+
 
 class LogFileReader:
 	"""Handles finding and reading MMDVM log files."""
