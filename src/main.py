@@ -384,8 +384,8 @@ class UserManager:
 
 	def __init__(self, user_csv_path='/usr/local/etc/user.csv', dmr_ids_path='/usr/local/etc/DMRIds.dat'):
 		"""Initializes the UserManager."""
-		self._user_csv_path = user_csv_path
-		self._dmr_ids_path = dmr_ids_path
+		self._user_csv_path = user_csv_path or '.sample/user.csv'
+		self._dmr_ids_path = dmr_ids_path or '.sample/DMRids.dat'
 		self._cache = {'mtime_csv': 0, 'mtime_dat': 0, 'user_map': {}}
 
 	def get_map(self) -> dict:
@@ -426,11 +426,13 @@ class UserManager:
 					for line in file:
 						parts = line.strip().split(',')
 						if len(parts) >= 3:
+							ccs7 = parts[0].strip()
 							call = parts[1].strip()
 							fname = parts[2].strip()
 							country = parts[-1].strip()
 							if call:
-								user_map[call] = (fname, country)
+								user_map[call] = (ccs7, fname, country)
+								user_map[ccs7] = (call, fname, country)
 				logging.debug('Successfully loaded user data from %s with %s encoding.', self._user_csv_path, encoding)
 				return user_map
 			except UnicodeDecodeError:
@@ -455,16 +457,17 @@ class UserManager:
 							continue
 						parts = line.split('\t')
 						if len(parts) >= 3:
-							dmr_id_str = parts[0].strip()
+							ccs7 = parts[0].strip()
 							call = parts[1].strip()
 							fname = parts[2].strip()
 							country = ''
-							if dmr_id_str.isdigit() and len(dmr_id_str) >= 3:
-								mcc = int(dmr_id_str[:3])
+							if ccs7.isdigit() and len(ccs7) >= 3:
+								mcc = int(ccs7[:3])
 								if mcc in MCC_CODES:
 									country, _ = MCC_CODES[mcc]
 							if call:
-								user_map[call] = (fname, country)
+								user_map[call] = (ccs7, fname, country)
+								user_map[ccs7] = (call, fname, country)
 				logging.debug('Successfully loaded user data from %s with %s encoding.', self._dmr_ids_path, encoding)
 				return user_map
 			except UnicodeDecodeError:
@@ -826,12 +829,12 @@ class MMDVMLogLine:
 		user_map = self.data_manager.users.get_map()
 		user_info = user_map.get(self.callsign)
 		if user_info:
-			fname, country = user_info
+			call, fname, country = user_info
 			code = Formatter.get_country_code(country)
 			flag = Formatter.get_flag_emoji(code)
 			label = code if code else country
-			caller = f' ({fname}) [{flag} {label}]'
-		elif self.callsign.isdigit() and len(self.callsign) >= 7:
+			caller = f'~{call} ({fname}) [{flag} {label}]'
+		elif self.callsign.isdigit() and len(self.callsign) == 7:
 			mcc = int(self.callsign[:3])
 			if mcc in MCC_CODES:
 				_, code = MCC_CODES[mcc]
