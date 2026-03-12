@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-12T21:49:55+08:00)
+## [beta6] - (2026-03-12T23:46:20+08:00)
 
-- 17 commit(s) contributed to the release.
+- 19 commit(s) contributed to the release.
 - 3 day(s) passed between the first and last commit.
 - 3 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
+- [370d145](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/370d145a92274df23b980e3fc696163f64eba1d8) feat(config): add comprehensive configuration management *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T23:46:20+08:00*
 - [1b3c30b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b3c30bb603f730211d5bd95023be936e4b5c23a) feat(ci): automate release workflow with dynamic versioning and tagging *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:11:53+08:00*
 - [efa3718](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/efa37183e8533391c12457af14335e49847a5b3e) feat(main): bootstrap apt dependencies, add command_exists, auto-install uv when online, and use uv venv --clear for cleanup *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-11T03:12:35+08:00*
 - [056a036](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/056a03675d9c4ec6cd0b5e0413da1ef758fe5a14) feat(user): extend UserManager to load user data from user.csv and DMRIds.dat with per-source caches and fallback *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-09T21:46:36+08:00*
@@ -25,6 +26,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta6
 
+- [72f8c94](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/72f8c94900c6e2487074596bc24d9a10c1e75bdf) refactor(logging): disable debug logging for MMDVM log path retrieval *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T23:14:23+08:00*
 - [71680ac](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/71680aca9a8f7c130a6b628f227629575adb7829) refactor(datetime): add milliseconds precision to timestamp formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T17:58:17+08:00*
 - [6ecb0e6](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/6ecb0e6eea0827ac8540480ce8b91b6fd66f902f) refactor(module): optimize module structure and improve code clarity *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T16:57:15+08:00*
 - [f34eaa7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f34eaa781575842eea92628beb3a3d20e73fab26) refactor(release): simplify version parsing logic for dynamic tags *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T04:19:56+08:00*
@@ -434,4 +436,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-12T21:50:47.886360248+08:00
+generated using git-cliff at 2026-03-12T23:47:23.007775907+08:00
