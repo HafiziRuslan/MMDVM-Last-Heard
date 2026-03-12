@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-12T23:46:20+08:00)
+## [beta6] - (2026-03-13T00:03:03+08:00)
 
-- 19 commit(s) contributed to the release.
+- 20 commit(s) contributed to the release.
 - 3 day(s) passed between the first and last commit.
 - 3 day(s) passed between releases.
 
@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 ### 💼 Other in beta6
 
+- [8cc9d41](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/8cc9d41f508b7196da696559401a49bfe5a25825) fis: remerge missing lines from 72f8c94 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T00:03:03+08:00*
 - [cd27612](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/cd276126046778fb0c590082261ae38064b2f8b6) Update funding sources in FUNDING.yml *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T01:30:59+08:00*
 
 ### 🚜 Refactor in beta6
@@ -436,4 +437,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-12T23:47:23.007775907+08:00
+generated using git-cliff at 2026-03-13T00:04:02.914405952+08:00
