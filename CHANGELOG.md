@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-13T00:10:27+08:00)
+## [beta6] - (2026-03-13T01:15:23+08:00)
 
-- 21 commit(s) contributed to the release.
+- 22 commit(s) contributed to the release.
 - 3 day(s) passed between the first and last commit.
 - 3 day(s) passed between releases.
 
@@ -28,6 +28,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta6
 
+- [c71f982](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c71f982a946f7352a1a2e10d01b4f77d07cb6853) refactor(logging): add humanize and python-dotenv to external libs *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T01:15:23+08:00*
 - [72f8c94](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/72f8c94900c6e2487074596bc24d9a10c1e75bdf) refactor(logging): disable debug logging for MMDVM log path retrieval *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T23:14:23+08:00*
 - [71680ac](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/71680aca9a8f7c130a6b628f227629575adb7829) refactor(datetime): add milliseconds precision to timestamp formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T17:58:17+08:00*
 - [6ecb0e6](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/6ecb0e6eea0827ac8540480ce8b91b6fd66f902f) refactor(module): optimize module structure and improve code clarity *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T16:57:15+08:00*
@@ -438,4 +439,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-13T00:11:19.432566816+08:00
+generated using git-cliff at 2026-03-13T01:16:14.573414617+08:00
