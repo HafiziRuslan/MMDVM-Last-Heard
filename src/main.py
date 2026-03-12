@@ -511,7 +511,7 @@ class LogFileReader:
 			return None
 		log_files.sort(key=os.path.getmtime, reverse=True)
 		latest_log = log_files[0]
-		logging.debug('Latest MMDVM log file: %s', latest_log)
+		# logging.debug('Latest MMDVM log file: %s', latest_log)
 		return latest_log
 
 	@staticmethod
