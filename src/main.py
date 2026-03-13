@@ -133,6 +133,15 @@ class LoggingManager:
 		def filter(self, record):
 			return record.levelno == self.level
 
+	class MinLevelFilter(logging.Filter):
+		"""A filter that allows log records at or above a specific level."""
+
+		def __init__(self, level):
+			self.level = level
+
+		def filter(self, record):
+			return record.levelno >= self.level
+
 	def __init__(self, config: 'ConfigManager', log_dir: str = '/var/log/mmdvmlhbot', fallback_log_dir: str = 'logs'):
 		self.log_dir = log_dir
 		if not os.path.exists(self.log_dir) or not os.access(self.log_dir, os.W_OK):
@@ -146,8 +155,12 @@ class LoggingManager:
 
 	def setup(self):
 		"""Sets up the logging configuration."""
-		self._set_library_log_levels()
 		logger = logging.getLogger()
+		# Clear existing handlers to prevent duplicates or leaked debug logs from early init
+		for handler in logger.handlers[:]:
+			logger.removeHandler(handler)
+
+		self._set_library_log_levels()
 		logger.setLevel(self.log_level)
 		self._configure_console_handler(logger)
 		self._configure_file_handlers(logger)
@@ -161,7 +174,9 @@ class LoggingManager:
 	def _configure_console_handler(self, logger: logging.Logger):
 		"""Configures and adds the console log handler."""
 		console_handler = logging.StreamHandler()
-		console_handler.setLevel(logging.WARNING)  # Console handler still shows WARNING by default
+		# Explicitly set and filter for WARNING and above for the console
+		console_handler.setLevel(logging.WARNING)
+		console_handler.addFilter(self.MinLevelFilter(logging.WARNING))
 		console_handler.setFormatter(self._formatter)
 		logger.addHandler(console_handler)
 
