@@ -1051,10 +1051,15 @@ class LogObserver:
 						msg = f'📃 {self.app_name_short} '
 						if current_log_path:
 							msg += (
-								f'Log Changed\nOld Log: <s>{os.path.basename(current_log_path)}</s>\nNew Log: <b>{os.path.basename(latest_log)}</b>'
+								f'Log Changed\n'
+								f'Old Log: <s>{os.path.basename(current_log_path)}</s>\n'
+								f'New Log: <b>{os.path.basename(latest_log)}</b>'
 							)
 						else:
-							msg += f'Monitoring\nLog: <b>{os.path.basename(latest_log)}</b>'
+							msg += (
+								f'Monitoring\n'
+								f'Log: <b>{os.path.basename(latest_log)}</b>'
+							)
 						await self.telegram_bot.queue_message(msg)
 					current_log_path = latest_log
 
