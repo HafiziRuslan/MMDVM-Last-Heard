@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-13T20:50:15+08:00)
+## [beta6] - (2026-03-13T21:24:39+08:00)
 
-- 24 commit(s) contributed to the release.
+- 27 commit(s) contributed to the release.
 - 4 day(s) passed between the first and last commit.
 - 4 day(s) passed between releases.
 
@@ -29,6 +29,8 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta6
 
+- [bf2b848](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bf2b84844095b14653202edbaa0fccc767eb8533) refactor(log): enhance MMDVM log file discovery *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T21:24:39+08:00*
+- [e238e87](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e238e878c79417066ec85fb54f747e5dce8be444) refactor(run): optimize log message formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T20:59:26+08:00*
 - [1098a97](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1098a97978225f6b7e61ba4be4188c7c7cfea088) refactor(logging): centralize logging configuration through ConfigManager *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T20:04:21+08:00*
 - [c71f982](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c71f982a946f7352a1a2e10d01b4f77d07cb6853) refactor(logging): add humanize and python-dotenv to external libs *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T01:15:23+08:00*
 - [72f8c94](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/72f8c94900c6e2487074596bc24d9a10c1e75bdf) refactor(logging): disable debug logging for MMDVM log path retrieval *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T23:14:23+08:00*
@@ -42,6 +44,10 @@ All notable changes to this project will be documented in this file.
 ### 📚 Documentation in beta6
 
 - [faa51df](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/faa51dfcce5ba247fe9089049fba25838f10bd00) docs: update README with donation link and mirror links reorganization *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T01:44:25+08:00*
+
+### 🎨 Styling in beta6
+
+- [a74d2f9](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a74d2f90f5382b811a544221142b394bd1909d0d) style(main): improve message formatting for Telegram notifications *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T21:01:47+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta6
 
@@ -441,4 +447,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-13T20:51:17.535876924+08:00
+generated using git-cliff at 2026-03-13T21:26:44.146678640+08:00
