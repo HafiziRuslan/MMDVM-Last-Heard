@@ -11,7 +11,7 @@ fi
 cd "$(dirname "$0")"
 
 # --- Configuration and Constants ---
-LOG_FILE="/var/log/mmdvmlhbot.log"
+LOG_FILE="/var/log/MMDVM-LastHeard.log"
 REQUIRED_SPACE_MB=100
 RESTART_DELAY=5
 MAX_DELAY=300
@@ -21,10 +21,10 @@ dir_own=$(stat -c '%U' .)
 
 # --- Logging Setup ---
 # Cleanup and create log directory before redirecting output
-# rm -rf /var/tmp/mmdvmlhbot
-rm -rf /var/log/mmdvmlhbot
-mkdir -p /var/log/mmdvmlhbot
-chown -hR "$dir_own:$dir_own" /var/log/mmdvmlhbot
+# rm -rf /var/tmp/MMDVM-LastHeard
+rm -rf /var/log/MMDVM-LastHeard
+mkdir -p /var/log/MMDVM-LastHeard
+chown -hR "$dir_own:$dir_own" /var/log/MMDVM-LastHeard
 
 # Save original stdout to fd 3 for display updates
 exec 3>&1
@@ -151,7 +151,7 @@ update_repository() {
   REMOTE=$(sudo -u "$dir_own" git rev-parse @{u})
 
     if [ "$LOCAL" != "$REMOTE" ]; then
-      log_msg INFO "Updating MMDVM_LastHeard repository"
+      log_msg INFO "Updating MMDVM-LastHeard repository"
       local UPDATE_SUCCESS=false
       if sudo -u "$dir_own" timeout 60 git pull --autostash -q; then
         UPDATE_SUCCESS=true
@@ -166,7 +166,7 @@ update_repository() {
       if [ "$UPDATE_SUCCESS" = true ] && [ "$(sudo -u "$dir_own" git rev-parse HEAD)" = "$REMOTE" ]; then
         if ! sudo -u "$dir_own" git diff --quiet "$LOCAL" HEAD -- pyproject.toml; then
           log_msg INFO "Application updated. Forcing environment recreation."
-          sudo -u "$dir_own" uv venv --clear
+          sudo -u "$dir_own" uv venv -c
         fi
 
         log_msg INFO "Verifying repository integrity..."
@@ -187,7 +187,7 @@ update_repository() {
 sync_dependencies() {
   local action=$1
   if [ "$INTERNET_AVAILABLE" = true ]; then
-    log_msg INFO "$action MMDVM_LastHeard dependencies"
+    log_msg INFO "$action MMDVM-LastHeard dependencies"
     sudo -u "$dir_own" uv tool run pyclean . -d -q
     sudo -u "$dir_own" uv sync -q
   elif [ "$action" = "Installing" ]; then
@@ -199,17 +199,17 @@ manage_venv() {
   if [ -d ".venv" ]; then
     if ! sudo -u "$dir_own" ./.venv/bin/python3 -c "import sys" >/dev/null 2>&1; then
       log_msg WARN "⚠️ Virtual environment appears corrupted. Removing it..."
-      sudo -u "$dir_own" uv venv --clear
+      sudo -u "$dir_own" uv venv -c
     fi
   fi
 
   if [ ! -d ".venv" ]; then
-    log_msg INFO "MMDVM_LastHeard environment not found, creating one."
+    log_msg INFO "MMDVM-LastHeard environment not found, creating one."
     sudo -u "$dir_own" uv venv
-    log_msg INFO "Activating MMDVM_LastHeard environment"
+    log_msg INFO "Activating MMDVM-LastHeard environment"
     sync_dependencies "Installing"
   else
-    log_msg INFO "MMDVM_LastHeard environment exists. -> Activating MMDVM_LastHeard environment"
+    log_msg INFO "MMDVM-LastHeard environment exists. -> Activating MMDVM-LastHeard environment"
     sync_dependencies "Updating"
   fi
 }
@@ -218,13 +218,13 @@ manage_venv() {
 # Group 4: Application Execution
 #
 run_application() {
-  log_msg INFO "Running MMDVM_LastHeard"
+  log_msg INFO "Running MMDVM-LastHeard"
   local retry_count=0
   local restart_delay=$RESTART_DELAY
 
   while true; do
     if [ ! -f .env ]; then
-      log_msg ERROR "❌ .env file not found! Cannot start MMDVM_LastHeard. Exiting."
+      log_msg ERROR "❌ .env file not found! Cannot start MMDVM-LastHeard. Exiting."
       exit 1
     fi
 
@@ -250,7 +250,7 @@ run_application() {
         exit 1
       fi
 
-      log_msg ERROR "MMDVM_LastHeard exited with code $exit_code. Retry $retry_count/$MAX_RETRIES. Re-run in ${restart_delay} seconds."
+      log_msg ERROR "MMDVM-LastHeard exited with code $exit_code. Retry $retry_count/$MAX_RETRIES. Re-run in ${restart_delay} seconds."
       sleep "$restart_delay"
 
       restart_delay=$((restart_delay * 2))
@@ -258,10 +258,10 @@ run_application() {
         restart_delay=$MAX_DELAY
       fi
     elif [ "$exit_code" -eq 0 ]; then
-      log_msg INFO "MMDVM_LastHeard exited normally. Stopping."
+      log_msg INFO "MMDVM-LastHeard exited normally. Stopping."
       break
     else
-      log_msg ERROR "MMDVM_LastHeard exited with unrecoverable code $exit_code. Stopping."
+      log_msg ERROR "MMDVM-LastHeard exited with unrecoverable code $exit_code. Stopping."
       exit "$exit_code"
     fi
   done

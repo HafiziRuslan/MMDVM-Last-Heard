@@ -27,8 +27,8 @@ Mirrors (daily update):
 ## 🛠️ Installation
 
 ```bash
-git clone https://github.com/HafiziRuslan/MMDVM-LastHeard.git mmdvmlhbot
-cd mmdvmlhbot
+git clone https://github.com/HafiziRuslan/MMDVM-LastHeard.git MMDVM-LastHeard
+cd MMDVM-LastHeard
 ```
 
 ## ⚙️ Configuration
@@ -45,7 +45,7 @@ nano .env
 Copy & Paste this line into last line (before blank line) of `/etc/crontab` or any other cron program that you're using.
 
 ```bash
-@reboot pi-star cd /home/pi-star/mmdvmlhbot && ./main.sh > /var/log/lastheard.log 2>&1
+@reboot pi-star cd /home/pi-star/MMDVM-LastHeard && ./main.sh > /var/log/MMDVM-LastHeard.log 2>&1
 ```
 
 change the `pi-star` username into your username
