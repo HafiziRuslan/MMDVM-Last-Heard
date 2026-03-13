@@ -536,31 +536,38 @@ class LogFileReader:
 	"""Handles finding and reading MMDVM log files."""
 
 	def __init__(self):
-		self.log_dir = self._find_log_dir()
+		self.log_dir, self.file_root = self._find_log_config()
 
-	def _find_log_dir(self) -> str:
-		"""Reads the MMDVMHost configuration to find the log directory."""
+	def _find_log_config(self) -> tuple[str, str]:
+		"""Reads the MMDVMHost configuration to find the log directory and file root."""
 		conf_files = ['/etc/mmdvmhost', '/etc/MMDVM.ini', '/opt/MMDVMHost/MMDVM.ini']
+		log_dir = '/var/log/pi-star'
+		file_root = 'MMDVM'
 		for conf_file in conf_files:
 			if os.path.isfile(conf_file):
 				try:
 					config = configparser.ConfigParser()
 					config.read(conf_file)
-					if config.has_section('Log') and config.has_option('Log', 'FilePath'):
-						log_dir = config.get('Log', 'FilePath')
-						if os.path.isdir(log_dir):
-							return log_dir
+					if config.has_section('Log'):
+						if config.has_option('Log', 'FilePath'):
+							path = config.get('Log', 'FilePath')
+							if os.path.isdir(path):
+								log_dir = path
+						if config.has_option('Log', 'FileRoot'):
+							file_root = config.get('Log', 'FileRoot')
+						return log_dir, file_root
 				except Exception:
 					pass
 		default_dirs = ['/var/log/pi-star', '/var/log/mmdvm', '/var/log/MMDVMHost']
-		for log_dir in default_dirs:
-			if os.path.isdir(log_dir):
-				return log_dir
-		return '/var/log/pi-star'
+		for d in default_dirs:
+			if os.path.isdir(d):
+				log_dir = d
+				break
+		return log_dir, file_root
 
 	def get_latest_log_path(self) -> Optional[str]:
 		"""Finds and returns the path to the most recent MMDVM log file."""
-		log_files = glob.glob(os.path.join(self.log_dir, 'MMDVM-*.log'))
+		log_files = glob.glob(os.path.join(self.log_dir, f'{self.file_root}-*.log'))
 		if not log_files:
 			return None
 		log_files.sort(key=os.path.getmtime, reverse=True)
