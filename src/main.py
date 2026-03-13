@@ -133,22 +133,15 @@ class LoggingManager:
 		def filter(self, record):
 			return record.levelno == self.level
 
-	def __init__(
-		self,
-		log_dir: str = '/var/log/mmdvmlhbot',
-		fallback_log_dir: str = 'logs',
-		log_level: int = logging.INFO,
-		log_max_size_mb: int = 1,
-		log_max_count: int = 3,
-	):
+	def __init__(self, config: 'ConfigManager', log_dir: str = '/var/log/mmdvmlhbot', fallback_log_dir: str = 'logs'):
 		self.log_dir = log_dir
 		if not os.path.exists(self.log_dir) or not os.access(self.log_dir, os.W_OK):
 			self.log_dir = fallback_log_dir
 		if not os.path.exists(self.log_dir):
 			os.makedirs(self.log_dir)
-		self.log_level = log_level
-		self.log_max_size_bytes = log_max_size_mb * 1024 * 1024
-		self.log_max_count = log_max_count
+		self.log_level = config.log_level
+		self.log_max_size_bytes = config.log_max_size_mb * 1024 * 1024
+		self.log_max_count = config.log_max_count
 		self._formatter = self.ISO8601Formatter('%(asctime)s | %(levelname)-8s | %(threadName)-12s | %(name)s.%(funcName)s:%(lineno)d | %(message)s')
 
 	def setup(self):
@@ -1132,7 +1125,8 @@ async def main():
 
 
 if __name__ == '__main__':
-	LoggingManager().setup()
+	config = ConfigManager()
+	LoggingManager(config).setup()
 	try:
 		logging.info('Starting the application...')
 		asyncio.run(main())
