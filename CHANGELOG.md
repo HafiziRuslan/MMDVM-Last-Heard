@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-14T12:15:47+08:00)
+## [beta6] - (2026-03-16T21:35:11+08:00)
 
-- 34 commit(s) contributed to the release.
-- 5 day(s) passed between the first and last commit.
-- 5 day(s) passed between releases.
+- 36 commit(s) contributed to the release.
+- 7 day(s) passed between the first and last commit.
+- 7 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
@@ -47,6 +47,7 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation in beta6
 
+- [3465886](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/346588653603f5238347f24a43e364ac89473f58) docs(README): add sponsor badges and support links *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-16T21:35:11+08:00*
 - [faa51df](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/faa51dfcce5ba247fe9089049fba25838f10bd00) docs: update README with donation link and mirror links reorganization *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T01:44:25+08:00*
 
 ### 🎨 Styling in beta6
@@ -56,6 +57,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta6
 
+- [6b2f5ef](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/6b2f5ef4c3f4236e5efa799feacab46cca412946) chore(release): remove sbom from release exclusions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T12:18:26+08:00*
 - [b8712b8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b8712b852844e0958b8f9015d8399c21b632ca28) build(sbom): regenerate SBOM *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T12:15:47+08:00*
 - [58e96b1](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/58e96b15dc0038b0c58eb299e1f7b68080b01c63) chore(ci): add telegram workflow for sending commit notifications *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T22:14:24+08:00*
 - [5699ff7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/5699ff7e3bdc74157561e6f96d4784c0bca4dc0c) chore(funding): update sponsorship usernames *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T10:19:10+08:00*
@@ -454,4 +456,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-14T12:16:35.231909793+08:00
+generated using git-cliff at 2026-03-16T21:36:07.116895798+08:00
