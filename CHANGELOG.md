@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-16T21:35:11+08:00)
+## [beta6] - (2026-03-17T10:15:20+08:00)
 
-- 36 commit(s) contributed to the release.
-- 7 day(s) passed between the first and last commit.
-- 7 day(s) passed between releases.
+- 37 commit(s) contributed to the release.
+- 8 day(s) passed between the first and last commit.
+- 8 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
@@ -54,6 +54,10 @@ All notable changes to this project will be documented in this file.
 
 - [a9f86cb](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a9f86cb4854a747a76a4c8f3c6dbdbe18de95633) style(telegram workflow): update telegram message separator *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T05:17:18+08:00*
 - [a74d2f9](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a74d2f90f5382b811a544221142b394bd1909d0d) style(main): improve message formatting for Telegram notifications *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T21:01:47+08:00*
+
+### 🧪 Testing in beta6
+
+- [9e0059d](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9e0059d3f9f9009b61388c4cae8e5caf0329f8ea) chore(deps): bump python-telegram-bot from 22.6 to 22.7 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-17T10:15:20+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta6
 
@@ -456,4 +460,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-16T21:36:07.116895798+08:00
+generated using git-cliff at 2026-03-17T10:16:16.892011700+08:00
