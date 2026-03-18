@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-18T23:35:38+08:00)
+## [beta6] - (2026-03-18T23:58:00+08:00)
 
-- 40 commit(s) contributed to the release.
+- 41 commit(s) contributed to the release.
 - 9 day(s) passed between the first and last commit.
 - 9 day(s) passed between releases.
 
@@ -32,6 +32,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta6
 
+- [d5ada48](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/d5ada4852320f0850a5faa1fd1bc6e486be6f80b) refactor(main): adjust talkgroup name formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-18T23:58:00+08:00*
 - [f9ff4f7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f9ff4f7dac1250c4e44882ac1ef9e7020f23eecd) docs(project metadata): add project classifiers *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-17T10:38:06+08:00*
 - [66cdc8e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/66cdc8efaa86c842adbbc892ec1d44d8bc3d1fe9) refactor(app): adjust naming conventions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T00:32:40+08:00*
 - [401a6f1](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/401a6f107d1e3a71fc8d71fb3652c53221c480dd) refactor(app): standardize naming and paths *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T00:17:10+08:00*
@@ -463,4 +464,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-18T23:36:26.651736180+08:00
+generated using git-cliff at 2026-03-18T23:58:54.196898506+08:00
