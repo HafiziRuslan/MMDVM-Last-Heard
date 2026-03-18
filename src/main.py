@@ -895,9 +895,32 @@ class MMDVMLogLine:
 			tg_name = name
 		return tg_name
 
+	def _resolve_numeric_id_as_name(self, numeric_id_str: str) -> Optional[str]:
+		"""Resolves a numeric ID string to a human-readable name, potentially a talkgroup name or MCC-based label."""
+		name = None
+		tg_map = self.data_manager.talkgroups.get_map()
+		name = tg_map.get(numeric_id_str)
+		if name is None and numeric_id_str.isdigit():
+			if len(numeric_id_str) >= 3:
+				try:
+					mcc_prefix = int(numeric_id_str[:3])
+					if mcc_prefix in MCC_CODES:
+						mcc_code = MCC_CODES[mcc_prefix][1]
+						if numeric_id_str == f'{mcc_prefix}990':
+							name = f' ({Formatter.get_flag_emoji(mcc_code)} Text Message)'
+						elif numeric_id_str == f'{mcc_prefix}997':
+							name = f' ({Formatter.get_flag_emoji(mcc_code)} Parrot)'
+						elif numeric_id_str == f'{mcc_prefix}999':
+							name = f' ({Formatter.get_flag_emoji(mcc_code)} ARS/RRS/GPS)'
+						if name is None and len(numeric_id_str) > 3:
+							name = f' ({Formatter.get_flag_emoji(mcc_code)} {mcc_code})'
+				except ValueError:
+					pass
+		return name
+
 	def get_caller_location(self) -> str:
 		"""Returns the location of the caller based on the callsign."""
-		caller = ''
+		caller_details = ''
 		user_map = self.data_manager.users.get_map()
 		user_info = user_map.get(self.callsign)
 		if user_info:
@@ -905,13 +928,21 @@ class MMDVMLogLine:
 			code = Formatter.get_country_code(country)
 			flag = Formatter.get_flag_emoji(code)
 			label = code if code else country
-			caller = f'~{call} ({fname}) [{flag} {label}]'
-		elif self.callsign.isdigit() and len(self.callsign) == 7:
-			mcc = int(self.callsign[:3])
-			if mcc in MCC_CODES:
-				_, code = MCC_CODES[mcc]
-				caller = f' [{Formatter.get_flag_emoji(code)} {code}]'
-		return caller
+			caller_details = f'~{call} ({fname}) [{flag} {label}]'
+		elif self.callsign.isdigit():
+			if len(self.callsign) == 7:
+				try:
+					mcc = int(self.callsign[:3])
+					if mcc in MCC_CODES:
+						_, code = MCC_CODES[mcc]
+						caller_details = f' [{Formatter.get_flag_emoji(code)} {code}]'
+				except ValueError:
+					pass
+			if not caller_details:
+				alternative_name = self._resolve_numeric_id_as_name(self.callsign)
+				if alternative_name:
+					caller_details = alternative_name
+		return caller_details
 
 	def get_telegram_message(self) -> str:
 		"""Returns a formatted message for Telegram with emojis."""
@@ -1069,15 +1100,10 @@ class LogObserver:
 						msg = f'📃 {self.app_name_short} '
 						if current_log_path:
 							msg += (
-								f'Log Changed\n'
-								f'Old Log: <s>{os.path.basename(current_log_path)}</s>\n'
-								f'New Log: <b>{os.path.basename(latest_log)}</b>'
+								f'Log Changed\nOld Log: <s>{os.path.basename(current_log_path)}</s>\nNew Log: <b>{os.path.basename(latest_log)}</b>'
 							)
 						else:
-							msg += (
-								f'Monitoring\n'
-								f'Log: <b>{os.path.basename(latest_log)}</b>'
-							)
+							msg += f'Monitoring\nLog: <b>{os.path.basename(latest_log)}</b>'
 						await self.telegram_bot.queue_message(msg)
 					current_log_path = latest_log
 
