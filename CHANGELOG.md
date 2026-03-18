@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-18T21:51:48+08:00)
+## [beta6] - (2026-03-18T23:35:38+08:00)
 
-- 39 commit(s) contributed to the release.
+- 40 commit(s) contributed to the release.
 - 9 day(s) passed between the first and last commit.
 - 9 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
+- [a66a7a9](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a66a7a9ff48a181bc94c555804b0b36796cfd922) feat(target): handle private calls and update target display *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-18T23:35:38+08:00*
 - [5bde88f](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/5bde88fbfb9958e113bb08951b83b44196ef5d6f) feat(telegram): shorten commit SHA in workflow messages *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T05:02:14+08:00*
 - [2fa0abd](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2fa0abdcb354265359c1796e46da8e8abb5d6672) feat(telegram): update workflow to trigger on completed changelog workflow runs *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T00:13:48+08:00*
 - [370d145](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/370d145a92274df23b980e3fc696163f64eba1d8) feat(config): add comprehensive configuration management *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T23:46:20+08:00*
@@ -462,4 +463,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-18T21:52:45.550993219+08:00
+generated using git-cliff at 2026-03-18T23:36:26.651736180+08:00
