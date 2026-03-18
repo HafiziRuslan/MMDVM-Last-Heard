@@ -96,7 +96,7 @@ dependencies = [
 requires-dist = [
     { name = "humanize", specifier = ">=4.15.0" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
-    { name = "python-telegram-bot", specifier = ">=22.6" },
+    { name = "python-telegram-bot", specifier = ">=22.7" },
 ]
 
 [[package]]
