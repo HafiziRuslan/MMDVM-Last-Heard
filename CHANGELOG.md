@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-18T23:58:00+08:00)
+## [beta6] - (2026-03-19T00:37:46+08:00)
 
-- 41 commit(s) contributed to the release.
+- 46 commit(s) contributed to the release.
 - 9 day(s) passed between the first and last commit.
 - 9 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
+- [b645d9e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b645d9e3e138698e449f44e27d55e21853d2647a) feat: enhance caller location resolution and talkgroup name handling *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:28:12+08:00*
 - [a66a7a9](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a66a7a9ff48a181bc94c555804b0b36796cfd922) feat(target): handle private calls and update target display *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-18T23:35:38+08:00*
 - [5bde88f](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/5bde88fbfb9958e113bb08951b83b44196ef5d6f) feat(telegram): shorten commit SHA in workflow messages *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T05:02:14+08:00*
 - [2fa0abd](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2fa0abdcb354265359c1796e46da8e8abb5d6672) feat(telegram): update workflow to trigger on completed changelog workflow runs *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T00:13:48+08:00*
@@ -20,6 +21,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta6
 
+- [9c18b0b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9c18b0b469d41cd2eab02e4a348eb3f198ee9e20) fix(deps): update python-telegram-bot to >=22.7 and refresh sbom.json *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:29:16+08:00*
 - [ae735c3](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ae735c3fcfeba1af8ac551cb5613a6fad66ffc4b) fix(logging): prevent duplicate log handlers *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T20:50:15+08:00*
 - [65dc68a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/65dc68ad71cbea175048d15c8f29f4855b5d1f59) fix: An error occurred: invalid literal for int() with base 10 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T00:10:27+08:00*
 - [c96e1c9](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c96e1c9ad658a6d9faf79a6bc109b0c35a7a756e) refactor(logging): add numeric prefixes and increase maxBytes *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T21:49:55+08:00*
@@ -32,6 +34,8 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta6
 
+- [152e1b1](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/152e1b15bbcc3274c379ecd6f5ee2b7b980a7b45) refactor: remove comments and blank lines *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:37:46+08:00*
+- [91eee81](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/91eee81691ea9f31c6791fb431dcbf6982b3b122) refactor(main): add flag emojis to talkgroup names and update formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:19:03+08:00*
 - [d5ada48](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/d5ada4852320f0850a5faa1fd1bc6e486be6f80b) refactor(main): adjust talkgroup name formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-18T23:58:00+08:00*
 - [f9ff4f7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f9ff4f7dac1250c4e44882ac1ef9e7020f23eecd) docs(project metadata): add project classifiers *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-17T10:38:06+08:00*
 - [66cdc8e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/66cdc8efaa86c842adbbc892ec1d44d8bc3d1fe9) refactor(app): adjust naming conventions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T00:32:40+08:00*
@@ -65,6 +69,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta6
 
+- [fc57dfc](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/fc57dfc0facf3a175b6d4932629d199542955afd) chore: remove lock files from release exclusions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:30:11+08:00*
 - [6b2f5ef](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/6b2f5ef4c3f4236e5efa799feacab46cca412946) chore(release): remove sbom from release exclusions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T12:18:26+08:00*
 - [b8712b8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b8712b852844e0958b8f9015d8399c21b632ca28) build(sbom): regenerate SBOM *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T12:15:47+08:00*
 - [58e96b1](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/58e96b15dc0038b0c58eb299e1f7b68080b01c63) chore(ci): add telegram workflow for sending commit notifications *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T22:14:24+08:00*
@@ -464,4 +469,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-18T23:58:54.196898506+08:00
+generated using git-cliff at 2026-03-19T00:38:37.544889395+08:00
