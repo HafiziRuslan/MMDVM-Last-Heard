@@ -55,36 +55,19 @@ class ConfigManager:
 		self.tg_chat_id = os.getenv('TG_CHATID', '')
 		self.tg_topic_id = os.getenv('TG_TOPICID', '0')
 		self.gw_ignore_time_messages = os.getenv('GW_IGNORE_MESSAGES', 'True').lower() == 'true'
-
-		# Map numeric LOG_LEVEL from environment variable
-		# [0: off, 1: debug, 2: info, 3: warning, 4: error, 5: critical]
-		log_level_map = {
-			0: logging.CRITICAL + 1,  # Effectively 'off' by setting level higher than CRITICAL
-			1: logging.DEBUG,
-			2: logging.INFO,
-			3: logging.WARNING,
-			4: logging.ERROR,
-			5: logging.CRITICAL,
-		}
-
+		log_level_map = {0: logging.CRITICAL + 1, 1: logging.DEBUG, 2: logging.INFO, 3: logging.WARNING, 4: logging.ERROR, 5: logging.CRITICAL}
 		log_level_raw = os.getenv('LOG_LEVEL')
 		try:
 			log_level_int = int(log_level_raw)
 			self.log_level = log_level_map.get(log_level_int, logging.INFO)
 		except (TypeError, ValueError):
-			# Fallback to INFO if LOG_LEVEL is not set or not a valid integer
 			logging.warning('LOG_LEVEL environment variable must be an integer between 0 and 5. Defaulting to INFO.')
 			self.log_level = logging.INFO
-
-		# Parse LOG_MAX_SIZE and LOG_MAX_COUNT as integers, providing string defaults
-		self.log_max_size_mb = float(os.getenv('LOG_MAX_SIZE', '1'))  # Default 1MB
-		self.log_max_count = int(os.getenv('LOG_MAX_COUNT', '3'))  # Default 3 backups
-
+		self.log_max_size_mb = float(os.getenv('LOG_MAX_SIZE', '1'))
+		self.log_max_count = int(os.getenv('LOG_MAX_COUNT', '3'))
 		self.app_name, self.project_url = _get_app_metadata()
 		self.app_name_short = self.app_name.split('-')[0]
-
 		self.relevant_log_patterns = ['end of voice transmission', 'end of transmission', 'watchdog has expired']
-
 		if not self.tg_bot_token or not self.tg_chat_id:
 			logging.warning('TG_BOTTOKEN or TG_CHATID is not set in the environment variables.')
 		if self.gw_ignore_time_messages:
@@ -156,10 +139,8 @@ class LoggingManager:
 	def setup(self):
 		"""Sets up the logging configuration."""
 		logger = logging.getLogger()
-		# Clear existing handlers to prevent duplicates or leaked debug logs from early init
 		for handler in logger.handlers[:]:
 			logger.removeHandler(handler)
-
 		self._set_library_log_levels()
 		logger.setLevel(self.log_level)
 		self._configure_console_handler(logger)
@@ -174,7 +155,6 @@ class LoggingManager:
 	def _configure_console_handler(self, logger: logging.Logger):
 		"""Configures and adds the console log handler."""
 		console_handler = logging.StreamHandler()
-		# Explicitly set and filter for WARNING and above for the console
 		console_handler.setLevel(logging.WARNING)
 		console_handler.addFilter(self.MinLevelFilter(logging.WARNING))
 		console_handler.setFormatter(self._formatter)
@@ -190,7 +170,6 @@ class LoggingManager:
 			logging.CRITICAL: '5-critical.log',
 		}
 		for level, filename in levels_map.items():
-			# Only create handlers for levels at or above the configured log_level
 			if level >= self.log_level:
 				try:
 					handler = self.NumberedRotatingFileHandler(
@@ -452,10 +431,8 @@ class UserManager:
 			mtime_dat = os.path.getmtime(self._dmr_ids_path)
 		except OSError:
 			mtime_dat = 0
-
 		if mtime_csv == self._cache.get('mtime_csv') and mtime_dat == self._cache.get('mtime_dat') and self._cache.get('user_map'):
 			return self._cache['user_map']
-
 		user_map = self._load_data()
 		self._cache = {'mtime_csv': mtime_csv, 'mtime_dat': mtime_dat, 'user_map': user_map}
 		return user_map
@@ -1023,7 +1000,6 @@ class TelegramBot:
 		if not self.token:
 			logging.error('Telegram token not provided. Bot will not start.')
 			return
-
 		try:
 			self.app = ApplicationBuilder().token(self.token).build()
 			logging.info('Telegram application built successfully.')
@@ -1031,12 +1007,9 @@ class TelegramBot:
 				await self.app.initialize()
 				await self.app.start()
 				logging.info('Telegram bot started successfully.')
-
-				# Run the message worker
 				worker_task = asyncio.create_task(self._worker(stop_event))
 				await stop_event.wait()
 				await worker_task
-
 				await self.app.stop()
 				await self.app.shutdown()
 		except Exception as e:
@@ -1090,7 +1063,6 @@ class LogObserver:
 		logging.info('Starting MMDVM log file retrieval...')
 		last_event: Optional[dt.datetime] = None
 		current_log_path: Optional[str] = None
-
 		while not stop_event.is_set():
 			try:
 				latest_log = self.log_reader.get_latest_log_path()
@@ -1106,13 +1078,10 @@ class LogObserver:
 							msg += f'Monitoring\nLog: <b>{os.path.basename(latest_log)}</b>'
 						await self.telegram_bot.queue_message(msg)
 					current_log_path = latest_log
-
 				if current_log_path:
 					await self._process_log_file(current_log_path, last_event)
-					# Update last_event to avoid re-processing if needed,
-					# but currently we just read the last line.
-					# To properly track last_event, we'd need to return it from _process_log_file
-					# or store it as instance state.
+					# Update last_event to avoid re-processing if needed, but currently we just read the last line.
+					# To properly track last_event, we'd need to return it from _process_log_file or store it as instance state.
 					# For now, let's read the last line and update state if it's new.
 					last_line = self.log_reader.get_last_line(current_log_path)
 					if any(pattern in last_line for pattern in self.relevant_log_patterns):
@@ -1127,7 +1096,6 @@ class LogObserver:
 					logging.error('No log file path available')
 			except Exception as e:
 				logging.error('Error in observer loop: %s', e)
-
 			try:
 				await asyncio.wait_for(stop_event.wait(), timeout=1.0)
 			except asyncio.TimeoutError:
@@ -1162,21 +1130,12 @@ async def main():
 		app_name_short=config.app_name_short,
 		relevant_log_patterns=config.relevant_log_patterns,
 	)
-
 	stop_event = asyncio.Event()
 	loop = asyncio.get_running_loop()
 	for sig in (signal.SIGINT, signal.SIGTERM):
 		loop.add_signal_handler(sig, lambda: stop_event.set())
-
-	# Start the Telegram bot task
 	bot_task = asyncio.create_task(telegram_bot.run(stop_event))
-
-	# Wait for bot to be ready (optional, but good for startup messages)
-	# Since TelegramBot.run blocks, we run it in a task.
-	# We can send a startup message immediately; it will sit in the queue until the bot connects.
 	await telegram_bot.queue_message(f'🚀 {config.app_name_short} Started')
-
-	# Start the log observer
 	try:
 		await log_observer.run(stop_event)
 	except asyncio.CancelledError:
