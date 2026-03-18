@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-17T10:38:06+08:00)
+## [beta6] - (2026-03-18T21:51:48+08:00)
 
-- 38 commit(s) contributed to the release.
-- 8 day(s) passed between the first and last commit.
-- 8 day(s) passed between releases.
+- 39 commit(s) contributed to the release.
+- 9 day(s) passed between the first and last commit.
+- 9 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
@@ -48,6 +48,7 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation in beta6
 
+- [849f73a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/849f73a9ced8e86ff33b6569704c46f46efb8c15) style(docs): update sponsorship badges and payment options *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-18T21:51:48+08:00*
 - [3465886](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/346588653603f5238347f24a43e364ac89473f58) docs(README): add sponsor badges and support links *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-16T21:35:11+08:00*
 - [faa51df](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/faa51dfcce5ba247fe9089049fba25838f10bd00) docs: update README with donation link and mirror links reorganization *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T01:44:25+08:00*
 
@@ -461,4 +462,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-17T10:38:48.018461878+08:00
+generated using git-cliff at 2026-03-18T21:52:45.550993219+08:00
