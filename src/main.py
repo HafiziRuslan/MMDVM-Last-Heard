@@ -860,26 +860,37 @@ class MMDVMLogLine:
 		tg_name = ''
 		is_group = self.destination.startswith('TG ')
 		tg_id_str = self.destination.split()[-1] if is_group else self.destination
-		tg_map = self.data_manager.talkgroups.get_map()
-		name = tg_map.get(tg_id_str)
-		if not name and tg_id_str.isdigit():
-			tg_id = int(tg_id_str)
-			rules = self.data_manager.dmr_gateway.get_rules()
-			required_type = 'TG' if is_group else 'PC'
-			for rule in rules:
-				if rule.get('type', 'TG') != required_type:
-					continue
-				if rule['slot'] != 0 and rule['slot'] != self.slot:
-					continue
-				if rule['start'] <= tg_id <= rule['end']:
-					remapped_id = tg_id + rule['offset']
-					name = f'{rule["name"]}: {remapped_id}'
-					break
-			if not name and len(tg_id_str) > 3:
-				mcc = int(tg_id_str[:3])
-				if mcc in MCC_CODES:
-					_, code = MCC_CODES[mcc]
-					name = f'{Formatter.get_flag_emoji(code)} {code}'
+		name = None
+		if not is_group:
+			user_map = self.data_manager.users.get_map()
+			user_info = user_map.get(tg_id_str)
+			if user_info:
+				call, fname, country = user_info
+				code = Formatter.get_country_code(country)
+				flag = Formatter.get_flag_emoji(code)
+				label = code if code else country
+				name = f'~{call} ({fname}) [{flag} {label}]'
+		if name is None:
+			tg_map = self.data_manager.talkgroups.get_map()
+			name = tg_map.get(tg_id_str)
+			if not name and tg_id_str.isdigit():
+				tg_id = int(tg_id_str)
+				rules = self.data_manager.dmr_gateway.get_rules()
+				required_type = 'TG' if is_group else 'PC'
+				for rule in rules:
+					if rule.get('type', 'TG') != required_type:
+						continue
+					if rule['slot'] != 0 and rule['slot'] != self.slot:
+						continue
+					if rule['start'] <= tg_id <= rule['end']:
+						remapped_id = tg_id + rule['offset']
+						name = f'{rule["name"]}: {remapped_id}'
+						break
+				if not name and len(tg_id_str) > 3:
+					mcc = int(tg_id_str[:3])
+					if mcc in MCC_CODES:
+						_, code = MCC_CODES[mcc]
+						name = f'{Formatter.get_flag_emoji(code)} {code}'
 		if name:
 			tg_name = f' ({name})'
 		return tg_name
@@ -925,7 +936,7 @@ class MMDVMLogLine:
 			message += f'\n📡 Caller: <b><a href="{self.url}">{self.callsign}</a>{self.get_caller_location()}</b>'
 		else:
 			message += f'\n📡 Caller: <b>{self.callsign}{self.get_caller_location()}</b>'
-		message += f'\n🎯 Target: <b>{self.destination}{self.get_talkgroup_name()} [{"RF" if not self.is_network else "NET"}]</b>'
+		message += f'\n\tvia: {"RF" if not self.is_network else "NET"}\n🎯 Target: <b>{self.destination}{self.get_talkgroup_name()}</b>'
 		if self.is_voice:
 			message += '\n🗣️ Type: <b>Voice</b>'
 			if self.is_kerchunk:
