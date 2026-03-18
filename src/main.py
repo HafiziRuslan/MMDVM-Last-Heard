@@ -427,10 +427,10 @@ class TalkgroupManager:
 					src_tg = target_tg - rule['offset']
 					if rule['start'] <= src_tg <= rule['end']:
 						tg_map[str(src_tg)] = label
-		for mcc, (country, _) in MCC_CODES.items():
-			tg_map[f'{mcc}990'] = f'{country} Text Message'
-			tg_map[f'{mcc}997'] = f'{country} Parrot'
-			tg_map[f'{mcc}999'] = f'{country} ARS/RRS/GPS'
+		for mcc, (_, code) in MCC_CODES.items():
+			tg_map[f'{mcc}990'] = f'{Formatter.get_flag_emoji(code)} Text Message'
+			tg_map[f'{mcc}997'] = f'{Formatter.get_flag_emoji(code)} Parrot'
+			tg_map[f'{mcc}999'] = f'{Formatter.get_flag_emoji(code)} ARS/RRS/GPS'
 
 
 class UserManager:
@@ -884,7 +884,7 @@ class MMDVMLogLine:
 						continue
 					if rule['start'] <= tg_id <= rule['end']:
 						remapped_id = tg_id + rule['offset']
-						name = f'{rule["name"]}: {remapped_id}'
+						name = f' ({rule["name"]}: {remapped_id})'
 						break
 				if not name and len(tg_id_str) > 3:
 					mcc = int(tg_id_str[:3])
