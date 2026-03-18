@@ -890,9 +890,9 @@ class MMDVMLogLine:
 					mcc = int(tg_id_str[:3])
 					if mcc in MCC_CODES:
 						_, code = MCC_CODES[mcc]
-						name = f'{Formatter.get_flag_emoji(code)} {code}'
+						name = f' ({Formatter.get_flag_emoji(code)} {code})'
 		if name:
-			tg_name = f' ({name})'
+			tg_name = name
 		return tg_name
 
 	def get_caller_location(self) -> str:
