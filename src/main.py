@@ -925,12 +925,12 @@ class MMDVMLogLine:
 		"""Returns a formatted message for Telegram with emojis."""
 		if self.mode == 'DMR':
 			mode_icon = '📻'
-		elif self.mode == 'DMR-D':
-			mode_icon = '📟'
 		elif self.mode == 'D-Star':
 			mode_icon = '⭐'
 		elif self.mode == 'YSF':
 			mode_icon = '📡'
+		elif self.mode == 'DMR-D':
+			mode_icon = '📟'
 		elif self.mode == 'YSF-D':
 			mode_icon = '📟'
 		else:
@@ -941,17 +941,17 @@ class MMDVMLogLine:
 		time = (self.timestamp.replace(tzinfo=dt.timezone.utc) or dt.datetime.now()).astimezone().isoformat(timespec='milliseconds')
 		message += f'\n🕒 Time: <b>{time}</b>'
 		if self.url:
-			message += f'\n📡 Caller: <b><a href="{self.url}">{self.callsign}</a>{self.get_caller_location()}</b>'
+			message += f'\n🎙️ Caller: <b><a href="{self.url}">{self.callsign}</a>{self.get_caller_location()}</b>'
 		else:
-			message += f'\n📡 Caller: <b>{self.callsign}{self.get_caller_location()}</b>'
-		message += f'\n\tvia: {"RF" if not self.is_network else "NET"}\n🎯 Target: <b>{self.destination}{self.get_talkgroup_name()}</b>'
+			message += f'\n🎙️ Caller: <b>{self.callsign}{self.get_caller_location()}</b>'
+		message += f'\n\t🛰️ via: {"RF" if not self.is_network else "NET"}\n🔊 Target: <b>{self.destination}{self.get_talkgroup_name()}</b>'
 		if self.is_voice:
 			message += '\n🗣️ Type: <b>Voice</b>'
 			if self.is_kerchunk:
 				message += ' (Kerchunk)'
 			else:
 				message += (
-					f'\n⏰ Duration: <b>{humanize.precisedelta(dt.timedelta(seconds=self.duration), minimum_unit="seconds", format="%0.0f")}</b>'
+					f'\n⏱️ Duration: <b>{humanize.precisedelta(dt.timedelta(seconds=self.duration), minimum_unit="seconds", format="%0.0f")}</b>'
 				)
 				if self.ber > 0:
 					message += f'\n📊 BER: <b>{self.ber}%</b>'
