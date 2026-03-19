@@ -849,7 +849,7 @@ class MMDVMLogLine:
 				name = f'~{call} ({fname}) [{flag} {label}]'
 		if name is None:
 			tg_map = self.data_manager.talkgroups.get_map()
-			name = tg_map.get(tg_id_str)
+			name = f' ({tg_map.get(tg_id_str)})'
 			if not name and tg_id_str.isdigit():
 				tg_id = int(tg_id_str)
 				rules = self.data_manager.dmr_gateway.get_rules()
@@ -890,7 +890,7 @@ class MMDVMLogLine:
 						elif numeric_id_str == f'{mcc_prefix}999':
 							name = f' ({Formatter.get_flag_emoji(mcc_code)} ARS/RRS/GPS)'
 						if name is None and len(numeric_id_str) > 3:
-							name = f' ({Formatter.get_flag_emoji(mcc_code)} {mcc_code})'
+							name = f' ({Formatter.get_flag_emoji(mcc_code)})'
 				except ValueError:
 					pass
 		return name
