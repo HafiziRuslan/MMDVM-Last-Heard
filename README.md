@@ -11,8 +11,6 @@
 
 This project is a Python-based Telegram bot that monitors MMDVM logs and sends updates to a specified Telegram chat. It uses the `python-telegram-bot` library to interact with Telegram and parses MMDVM log files to extract relevant information.
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/hafiziruslan)
-
 Mirrors (daily update):
 
 - GitLab: <https://gitlab.com/hafiziruslan/MMDVM-LastHeard>
@@ -25,13 +23,25 @@ Mirrors (daily update):
 - Parses log entries and formats them into readable messages.
 - Sends updates to a Telegram chat using a bot.
 - Configurable via environment variables.
+- Compatible Digital Voice log:
+  1. Digital Mobile Radio (*DMR*)
+  2. Digital Smart Technologies for Amateur Radio (*D-STAR*)
+  3. Yaesu System Fusion (*YSF/C4FM*)
+  4. ~~Next Generation Digital Narrowband (*NXDN*)~~
+  5. ~~Project 25 (*P25/APCO-25*)~~
+- Compatible Digital Data log:
+  1. ~~Digital Mobile Radio (*DMR*)~~
+  2. ~~Digital Smart Technologies for Amateur Radio (*D-STAR*)~~
+  3. Yaesu System Fusion (*YSF/C4FM*)
+  4. ~~Next Generation Digital Narrowband (*NXDN*)~~
+  5. ~~Project 25 (*P25/APCO-25*)~~
 
 ## Prerequisites
 
 - Python 3.13 or higher
 - A Telegram bot token (create one using [BotFather](https://core.telegram.org/bots#botfather)).
 - A Telegram chat ID where the bot will send messages.
-- Access to the DStar log files on your Pi-Star system.
+- Access to the MMDVMHost log files on your MMDVM system (Pi-Star/WPSD/etc).
 
 ## 🛠️ Installation
 
