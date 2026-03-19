@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-20T00:48:55+08:00)
+## [beta6] - (2026-03-20T05:39:49+08:00)
 
-- 50 commit(s) contributed to the release.
+- 51 commit(s) contributed to the release.
 - 10 day(s) passed between the first and last commit.
 - 10 day(s) passed between releases.
 
@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta6
 
+- [c5980b3](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c5980b3df205d13ecb537d169173d41b32ecba78) fix(data): add parentheses to formatted name when name not found *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T05:39:49+08:00*
 - [9c18b0b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9c18b0b469d41cd2eab02e4a348eb3f198ee9e20) fix(deps): update python-telegram-bot to >=22.7 and refresh sbom.json *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:29:16+08:00*
 - [ae735c3](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ae735c3fcfeba1af8ac551cb5613a6fad66ffc4b) fix(logging): prevent duplicate log handlers *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T20:50:15+08:00*
 - [65dc68a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/65dc68ad71cbea175048d15c8f29f4855b5d1f59) fix: An error occurred: invalid literal for int() with base 10 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T00:10:27+08:00*
@@ -473,4 +474,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-20T00:49:50.456448737+08:00
+generated using git-cliff at 2026-03-20T05:40:34.851142230+08:00
