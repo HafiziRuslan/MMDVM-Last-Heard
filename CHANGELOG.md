@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-19T00:37:46+08:00)
+## [beta6] - (2026-03-19T22:57:09+08:00)
 
-- 46 commit(s) contributed to the release.
-- 9 day(s) passed between the first and last commit.
-- 9 day(s) passed between releases.
+- 47 commit(s) contributed to the release.
+- 10 day(s) passed between the first and last commit.
+- 10 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
@@ -69,6 +69,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta6
 
+- [8b9eead](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/8b9eeadabbd64aba72588063c26d72abcca9529c) chore(funding): Add Stripe as a funding option *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T22:57:09+08:00*
 - [fc57dfc](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/fc57dfc0facf3a175b6d4932629d199542955afd) chore: remove lock files from release exclusions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:30:11+08:00*
 - [6b2f5ef](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/6b2f5ef4c3f4236e5efa799feacab46cca412946) chore(release): remove sbom from release exclusions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T12:18:26+08:00*
 - [b8712b8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b8712b852844e0958b8f9015d8399c21b632ca28) build(sbom): regenerate SBOM *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T12:15:47+08:00*
@@ -469,4 +470,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-19T00:38:37.544889395+08:00
+generated using git-cliff at 2026-03-19T22:58:03.671323551+08:00
