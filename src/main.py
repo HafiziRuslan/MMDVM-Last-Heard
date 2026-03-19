@@ -876,7 +876,7 @@ class MMDVMLogLine:
 		"""Resolves a numeric ID string to a human-readable name, potentially a talkgroup name or MCC-based label."""
 		name = None
 		tg_map = self.data_manager.talkgroups.get_map()
-		name = tg_map.get(numeric_id_str)
+		name = f' ({tg_map.get(numeric_id_str)})'
 		if name is None and numeric_id_str.isdigit():
 			if len(numeric_id_str) >= 3:
 				try:
