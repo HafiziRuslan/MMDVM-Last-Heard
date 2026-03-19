@@ -407,9 +407,9 @@ class TalkgroupManager:
 					if rule['start'] <= src_tg <= rule['end']:
 						tg_map[str(src_tg)] = label
 		for mcc, (_, code) in MCC_CODES.items():
-			tg_map[f'{mcc}990'] = f'{Formatter.get_flag_emoji(code)} Text Message'
-			tg_map[f'{mcc}997'] = f'{Formatter.get_flag_emoji(code)} Parrot'
-			tg_map[f'{mcc}999'] = f'{Formatter.get_flag_emoji(code)} ARS/RRS/GPS'
+			tg_map[f'{mcc}990'] = f'{Formatter.get_flag_emoji(code)} {code} Text Message'
+			tg_map[f'{mcc}997'] = f'{Formatter.get_flag_emoji(code)} {code} Parrot'
+			tg_map[f'{mcc}999'] = f'{Formatter.get_flag_emoji(code)} {code} ARS/RRS/GPS'
 
 
 class UserManager:
@@ -882,15 +882,15 @@ class MMDVMLogLine:
 				try:
 					mcc_prefix = int(numeric_id_str[:3])
 					if mcc_prefix in MCC_CODES:
-						mcc_code = MCC_CODES[mcc_prefix][1]
+						country, code = MCC_CODES[mcc_prefix]
 						if numeric_id_str == f'{mcc_prefix}990':
-							name = f' ({Formatter.get_flag_emoji(mcc_code)} Text Message)'
+							name = f' ({Formatter.get_flag_emoji(code)} {code} Text Message)'
 						elif numeric_id_str == f'{mcc_prefix}997':
-							name = f' ({Formatter.get_flag_emoji(mcc_code)} Parrot)'
+							name = f' ({Formatter.get_flag_emoji(code)} {code} Parrot)'
 						elif numeric_id_str == f'{mcc_prefix}999':
-							name = f' ({Formatter.get_flag_emoji(mcc_code)} ARS/RRS/GPS)'
+							name = f' ({Formatter.get_flag_emoji(code)} {code} ARS/RRS/GPS)'
 						if name is None and len(numeric_id_str) > 3:
-							name = f' ({Formatter.get_flag_emoji(mcc_code)})'
+							name = f' ({Formatter.get_flag_emoji(code)} {country})'
 				except ValueError:
 					pass
 		return name
