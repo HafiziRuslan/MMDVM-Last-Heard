@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-19T23:47:25+08:00)
+## [beta6] - (2026-03-20T00:48:55+08:00)
 
-- 48 commit(s) contributed to the release.
+- 50 commit(s) contributed to the release.
 - 10 day(s) passed between the first and last commit.
 - 10 day(s) passed between releases.
 
@@ -54,12 +54,14 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation in beta6
 
+- [b4029b5](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b4029b5244ad89403bbdefd5c5d7841069e66d9b) docs(readme): update readme with new log support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T00:48:55+08:00*
 - [849f73a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/849f73a9ced8e86ff33b6569704c46f46efb8c15) style(docs): update sponsorship badges and payment options *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-18T21:51:48+08:00*
 - [3465886](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/346588653603f5238347f24a43e364ac89473f58) docs(README): add sponsor badges and support links *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-16T21:35:11+08:00*
 - [faa51df](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/faa51dfcce5ba247fe9089049fba25838f10bd00) docs: update README with donation link and mirror links reorganization *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-12T01:44:25+08:00*
 
 ### 🎨 Styling in beta6
 
+- [5c82fdd](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/5c82fdd0b7ed6cbd9240abc0c1cee46aa4f5cbe6) style(ui): improve Telegram message formatting and icons *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T00:47:21+08:00*
 - [aee6c3e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/aee6c3ec56a7a8da7ae48d536ffc08ffeba25362) style(dmr): adjust identifier display formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T23:47:25+08:00*
 - [a9f86cb](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a9f86cb4854a747a76a4c8f3c6dbdbe18de95633) style(telegram workflow): update telegram message separator *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-14T05:17:18+08:00*
 - [a74d2f9](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a74d2f90f5382b811a544221142b394bd1909d0d) style(main): improve message formatting for Telegram notifications *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-13T21:01:47+08:00*
@@ -471,4 +473,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-19T23:48:27.400755508+08:00
+generated using git-cliff at 2026-03-20T00:49:50.456448737+08:00
