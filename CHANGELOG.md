@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta6] - (2026-03-20T05:49:29+08:00)
+## [beta6] - (2026-03-20T09:52:35+08:00)
 
-- 52 commit(s) contributed to the release.
-- 10 day(s) passed between the first and last commit.
-- 10 day(s) passed between releases.
+- 53 commit(s) contributed to the release.
+- 11 day(s) passed between the first and last commit.
+- 11 day(s) passed between releases.
 
 ### 🚀 Features in beta6
 
@@ -73,6 +73,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta6
 
+- [de643bd](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/de643bd4d895c6ae6e896d4ee2541eb2949ada4b) chore(sbom): update sbom metadata *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T09:52:35+08:00*
 - [2e0470e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2e0470ef0e7d449244cfeed4a46d81371fab71a1) i18n: add country code to message labels *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T05:49:29+08:00*
 - [8b9eead](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/8b9eeadabbd64aba72588063c26d72abcca9529c) chore(funding): Add Stripe as a funding option *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T22:57:09+08:00*
 - [fc57dfc](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/fc57dfc0facf3a175b6d4932629d199542955afd) chore: remove lock files from release exclusions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-19T00:30:11+08:00*
@@ -475,4 +476,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-20T05:50:11.921929811+08:00
+generated using git-cliff at 2026-03-20T09:53:43.394375298+08:00
