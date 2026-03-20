@@ -14,12 +14,15 @@ import shutil
 import signal
 import subprocess
 import tomllib
+import io
+from safezip import SafeZipFile
 from dataclasses import dataclass
 from dataclasses import field
 from functools import lru_cache
 from typing import Optional
 
 import humanize
+import httpx
 from dotenv import load_dotenv
 from codes import COUNTRY_CODES, MCC_CODES
 from telegram.ext import Application as TelegramApplication
@@ -412,19 +415,83 @@ class TalkgroupManager:
 			tg_map[f'{mcc}999'] = f'{Formatter.get_flag_emoji(code)} {code} ARS/RRS/GPS'
 
 
+class DataUpdater:
+	"""Handles downloading and updating the user database."""
+
+	def __init__(self, telegram_bot: 'TelegramBot', target_dir: str = '.temp'):
+		self.telegram_bot = telegram_bot
+		self.target_dir = target_dir
+		self.url = 'https://kf5iw.com/contactdb.php'
+		if not os.path.exists(self.target_dir):
+			os.makedirs(self.target_dir)
+
+	async def update_user_csv(self):
+		"""Downloads and extracts the user.csv file safely by finding the correct zip."""
+		logging.info('Searching for user database on %s', self.url)
+		try:
+			async with httpx.AsyncClient(headers={'User-Agent': self.telegram_bot.app_name}) as client:
+				page_response = await client.get(self.url, follow_redirects=True)
+				page_response.raise_for_status()
+				pattern = r'https://kf5iw\.com/data/Anytone/D868UV/ALL/contacts_ALL_.*?\.zip'
+				match = re.search(pattern, page_response.text)
+				if not match:
+					logging.error('Could not find the user database on %s', self.url)
+					return
+				zip_url = match.group(0)
+				logging.info('Found zip link: %s. Downloading...', zip_url)
+				await self.telegram_bot.queue_message('ℹ️ Downloading user database from <i>%s</i>...', zip_url)
+				response = await client.get(zip_url, follow_redirects=True)
+				response.raise_for_status()
+				with SafeZipFile(io.BytesIO(response.content)) as z:
+					for file_info in z.infolist():
+						if file_info.filename.lower().endswith('.csv'):
+							file_info.filename = 'user.csv'
+							z.extract(file_info, self.target_dir)
+							logging.info('Successfully updated user.csv in %s', self.target_dir)
+							await self.telegram_bot.queue_message('✔️ User database update <b>success</b>')
+							return
+		except Exception as e:
+			logging.error('Failed to update user.csv: %s', e)
+			await self.telegram_bot.queue_message('❌ User database update <b>failed</b>')
+
+	async def run(self, stop_event: asyncio.Event):
+		"""Schedules the update task daily at 06:00 UTC."""
+		if not os.path.exists(os.path.join(self.target_dir, 'user.csv')):
+			await self.update_user_csv()
+		while not stop_event.is_set():
+			now = dt.datetime.now(dt.timezone.utc)
+			target_time = now.replace(hour=6, minute=0, second=0, microsecond=0)
+			if now >= target_time:
+				target_time += dt.timedelta(days=1)
+			wait_seconds = (target_time - now).total_seconds()
+			logging.info('Next user.csv update scheduled at %s', target_time.astimezone().isoformat(timespec='seconds'))
+			await self.telegram_bot.queue_message(
+				'ℹ️ Next user database update scheduled at <i>%s</i>...', target_time.astimezone().isoformat(timespec='seconds')
+			)
+			try:
+				await asyncio.wait_for(stop_event.wait(), timeout=wait_seconds)
+			except asyncio.TimeoutError:
+				await self.update_user_csv()
+
+
 class UserManager:
 	"""Manages loading and caching of user data from user.csv and DMRIds.dat."""
 
 	def __init__(self, user_csv_path='/usr/local/etc/user.csv', dmr_ids_path='/usr/local/etc/DMRIds.dat'):
 		"""Initializes the UserManager."""
-		self._user_csv_path = user_csv_path or '.sample/user.csv'
-		self._dmr_ids_path = dmr_ids_path or '.sample/DMRids.dat'
+		self._user_csv_path = user_csv_path
+		self._dmr_ids_path = dmr_ids_path or '.temp/DMRids.dat'
+		self._temp_path = '.temp/user.csv'
 		self._cache = {'mtime_csv': 0, 'mtime_dat': 0, 'user_map': {}}
 
 	def get_map(self) -> dict:
 		"""Returns the user map, reloading from file if it has changed."""
+		active_csv = self._user_csv_path
+		if os.path.exists(self._temp_path):
+			if not os.path.exists(self._user_csv_path) or os.path.getmtime(self._temp_path) > os.path.getmtime(self._user_csv_path):
+				active_csv = self._temp_path
 		try:
-			mtime_csv = os.path.getmtime(self._user_csv_path)
+			mtime_csv = os.path.getmtime(active_csv)
 		except OSError:
 			mtime_csv = 0
 		try:
@@ -433,27 +500,27 @@ class UserManager:
 			mtime_dat = 0
 		if mtime_csv == self._cache.get('mtime_csv') and mtime_dat == self._cache.get('mtime_dat') and self._cache.get('user_map'):
 			return self._cache['user_map']
-		user_map = self._load_data()
+		user_map = self._load_data(active_csv)
 		self._cache = {'mtime_csv': mtime_csv, 'mtime_dat': mtime_dat, 'user_map': user_map}
 		return user_map
 
-	def _load_data(self) -> dict:
+	def _load_data(self, csv_path: str) -> dict:
 		"""Loads user data, preferring user.csv and falling back to DMRIds.dat."""
-		user_map = self._load_from_user_csv()
+		user_map = self._load_from_user_csv(csv_path)
 		if not user_map:
-			logging.warning('Could not load user data from %s, falling back to %s.', self._user_csv_path, self._dmr_ids_path)
+			logging.warning('Could not load user data from %s, falling back to %s.', csv_path, self._dmr_ids_path)
 			user_map = self._load_from_dmr_ids()
 		return user_map
 
-	def _load_from_user_csv(self) -> dict:
+	def _load_from_user_csv(self, csv_path: str) -> dict:
 		"""Loads user data from the user.csv file."""
-		if not os.path.isfile(self._user_csv_path):
+		if not os.path.isfile(csv_path):
 			return {}
 		encodings = ['utf-8', 'latin-1']
 		for encoding in encodings:
 			try:
 				user_map = {}
-				with open(self._user_csv_path, 'r', encoding=encoding, errors='replace') as file:
+				with open(csv_path, 'r', encoding=encoding, errors='replace') as file:
 					for line in file:
 						parts = line.strip().split(',')
 						if len(parts) >= 3:
@@ -464,12 +531,12 @@ class UserManager:
 							if call:
 								user_map[call] = (ccs7, fname, country)
 								user_map[ccs7] = (call, fname, country)
-				logging.debug('Successfully loaded user data from %s with %s encoding.', self._user_csv_path, encoding)
+				logging.debug('Successfully loaded user data from %s with %s encoding.', csv_path, encoding)
 				return user_map
 			except UnicodeDecodeError:
-				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', self._user_csv_path)
+				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, csv_path)
 			except Exception as e:
-				logging.error('Error reading user file %s: %s', self._user_csv_path, e)
+				logging.error('Error reading user file %s: %s', csv_path, e)
 				break
 		return {}
 
@@ -1123,6 +1190,7 @@ async def main():
 	config = ConfigManager()
 	data_manager = DataManager()
 	telegram_bot = TelegramBot(config.tg_bot_token, config.tg_chat_id, config.tg_topic_id, config.app_name)
+	data_updater = DataUpdater(telegram_bot)
 	log_observer = LogObserver(
 		data_manager,
 		telegram_bot,
@@ -1135,6 +1203,7 @@ async def main():
 	for sig in (signal.SIGINT, signal.SIGTERM):
 		loop.add_signal_handler(sig, lambda: stop_event.set())
 	bot_task = asyncio.create_task(telegram_bot.run(stop_event))
+	updater_task = asyncio.create_task(data_updater.run(stop_event))
 	await telegram_bot.queue_message(f'🚀 {config.app_name_short} Started')
 	try:
 		await log_observer.run(stop_event)
@@ -1144,7 +1213,7 @@ async def main():
 		await telegram_bot.queue_message(f'🛑 {config.app_name_short} Stopping')
 		if not stop_event.is_set():
 			stop_event.set()
-		await bot_task
+		await asyncio.gather(bot_task, updater_task, return_exceptions=True)
 
 
 if __name__ == '__main__':
