@@ -2,12 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-20T12:51:24+08:00)
+## [beta7] - (2026-03-20T12:56:23+08:00)
 
-- 4 commit(s) contributed to the release.
+- 5 commit(s) contributed to the release.
 
 ### 🐛 Bug Fixes in beta7
 
+- [1b06786](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b06786b686f0ce3376beca3c33def34e9eb9684) fix(main): fix string quoting in zip URL *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:56:23+08:00*
 - [42c66b2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/42c66b2e98215cff79c4aa65071bd8febf8239b7) fix(main): correct user CSV download pattern matching *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:38:57+08:00*
 
 ### 🚜 Refactor in beta7
@@ -498,4 +499,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-20T12:52:15.918043453+08:00
+generated using git-cliff at 2026-03-20T12:57:55.077432534+08:00
