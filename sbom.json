@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:ce2dd93a-993a-4633-a1e4-6ec8921783a1",
+  "serialNumber": "urn:uuid:4b701b04-c6d7-427f-9d70-2ebc7f1ccd60",
   "metadata": {
-    "timestamp": "2026-03-20T01:51:56.701583500Z",
+    "timestamp": "2026-03-20T03:34:50.356026300Z",
     "tools": [
       {
         "vendor": "Astral Software Inc.",
@@ -14,9 +14,9 @@
     ],
     "component": {
       "type": "library",
-      "bom-ref": "mmdvm-lastheard-1@0.1b6",
+      "bom-ref": "mmdvm-lastheard-1@0.1b7",
       "name": "mmdvm-lastheard",
-      "version": "0.1b6",
+      "version": "0.1b7",
       "properties": [
         {
           "name": "uv:package:is_project_root",
@@ -88,6 +88,13 @@
       "name": "python-telegram-bot",
       "version": "22.7",
       "purl": "pkg:pypi/python-telegram-bot@22.7"
+    },
+    {
+      "type": "library",
+      "bom-ref": "safezip-11@0.1.6",
+      "name": "safezip",
+      "version": "0.1.6",
+      "purl": "pkg:pypi/safezip@0.1.6"
     }
   ],
   "dependencies": [
@@ -130,11 +137,13 @@
       "dependsOn": []
     },
     {
-      "ref": "mmdvm-lastheard-1@0.1b6",
+      "ref": "mmdvm-lastheard-1@0.1b7",
       "dependsOn": [
+        "httpx-6@0.28.1",
         "humanize-7@4.15.0",
         "python-dotenv-9@1.2.2",
-        "python-telegram-bot-10@22.7"
+        "python-telegram-bot-10@22.7",
+        "safezip-11@0.1.6"
       ]
     },
     {
@@ -147,6 +156,10 @@
         "httpcore-5@1.0.9",
         "httpx-6@0.28.1"
       ]
+    },
+    {
+      "ref": "safezip-11@0.1.6",
+      "dependsOn": []
     }
   ]
 }

@@ -1,6 +1,6 @@
 [project]
 name = 'MMDVM_LastHeard'
-version = '0.1b6'
+version = '0.1b7'
 description = 'Telegram bot to monitor the last transmissions of a MMDVM gateway'
 keywords = ['amateur-radio', 'mmdvm', 'pi-star', 'wpsd']
 readme = 'README.md'
@@ -33,9 +33,11 @@ urls.history = 'https://github.com/HafiziRuslan/MMDVM-LastHeard/blob/master/CHAN
 urls.issuetracker = 'https://github.com/HafiziRuslan/MMDVM-LastHeard/issues'
 requires-python = '>=3.13'
 dependencies = [
+  "httpx>=0.28.1",
   'humanize>=4.15.0',
   'python-dotenv>=1.2.2',
   'python-telegram-bot>=22.7',
+  "safezip>=0.1.6",
 ]
 
 [tool.ruff]
