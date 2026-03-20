@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-20T12:38:57+08:00)
+## [beta7] - (2026-03-20T12:51:24+08:00)
 
-- 3 commit(s) contributed to the release.
+- 4 commit(s) contributed to the release.
 
 ### 🐛 Bug Fixes in beta7
 
@@ -13,6 +13,10 @@ All notable changes to this project will be documented in this file.
 ### 🚜 Refactor in beta7
 
 - [7c42cd5](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/7c42cd59bec4f9af307376c9aba10dd6ec962bff) refactor(main.py): introduce DataUpdater for user database updates *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:15:36+08:00*
+
+### 🎨 Styling in beta7
+
+- [4ae41f2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/4ae41f29a2e873ddf2802f1d5f03a9a9c5137f34) style(telegram): improve telegram message formatting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:51:24+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
@@ -494,4 +498,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-20T12:39:50.891513662+08:00
+generated using git-cliff at 2026-03-20T12:52:15.918043453+08:00
