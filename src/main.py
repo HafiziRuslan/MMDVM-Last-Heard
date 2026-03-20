@@ -437,7 +437,7 @@ class DataUpdater:
 				if not match:
 					logging.error('Could not find user database at %s', self.url)
 					return
-				zip_url = f'https://kf5iw.com/{match.group('url')}'
+				zip_url = f'https://kf5iw.com/{match.group("url")}'
 				logging.info('Found zip link: %s. Downloading...', zip_url)
 				await self.telegram_bot.queue_message(f'ℹ️ Downloading user database from <i>{zip_url}</i>...')
 				response = await client.get(zip_url, follow_redirects=True)
@@ -464,8 +464,10 @@ class DataUpdater:
 			if now >= target_time:
 				target_time += dt.timedelta(days=1)
 			wait_seconds = (target_time - now).total_seconds()
-			logging.info('Next user.csv update scheduled at %s', target_time.astimezone().isoformat(timespec='seconds'))
-			await self.telegram_bot.queue_message(f'ℹ️ Next user database update scheduled at <i>{target_time.astimezone().isoformat(timespec='seconds')}</i>...')
+			logging.info('Next user database update at %s', target_time.astimezone().isoformat(timespec='seconds'))
+			await self.telegram_bot.queue_message(
+				f'ℹ️ Next user database update at <i>{target_time.astimezone().isoformat(timespec="seconds")}</i>...'
+			)
 			try:
 				await asyncio.wait_for(stop_event.wait(), timeout=wait_seconds)
 			except asyncio.TimeoutError:
