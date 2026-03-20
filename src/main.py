@@ -427,17 +427,17 @@ class DataUpdater:
 
 	async def update_user_csv(self):
 		"""Downloads and extracts the user.csv file safely by finding the correct zip."""
-		logging.info('Searching for user database on %s', self.url)
 		try:
+			logging.info('Searching for user database at %s', self.url)
 			async with httpx.AsyncClient(headers={'User-Agent': self.telegram_bot.app_name}) as client:
 				page_response = await client.get(self.url, follow_redirects=True)
 				page_response.raise_for_status()
-				pattern = r'https://kf5iw\.com/data/Anytone/D868UV/ALL/contacts_ALL_.*?\.zip'
+				pattern = r'href="(?P<url>data/Anytone/D868UV/ALL/contacts_ALL_.*?\.zip)"'
 				match = re.search(pattern, page_response.text)
 				if not match:
-					logging.error('Could not find the user database on %s', self.url)
+					logging.error('Could not find user database at %s', self.url)
 					return
-				zip_url = match.group(0)
+				zip_url = f'https://kf5iw.com/{match.group('url')}'
 				logging.info('Found zip link: %s. Downloading...', zip_url)
 				await self.telegram_bot.queue_message('ℹ️ Downloading user database from <i>%s</i>...', zip_url)
 				response = await client.get(zip_url, follow_redirects=True)
@@ -447,11 +447,11 @@ class DataUpdater:
 						if file_info.filename.lower().endswith('.csv'):
 							file_info.filename = 'user.csv'
 							z.extract(file_info, self.target_dir)
-							logging.info('Successfully updated user.csv in %s', self.target_dir)
+							logging.info('Successfully updated user database in %s', self.target_dir)
 							await self.telegram_bot.queue_message('✔️ User database update <b>success</b>')
 							return
 		except Exception as e:
-			logging.error('Failed to update user.csv: %s', e)
+			logging.error('Failed to update user database: %s', e)
 			await self.telegram_bot.queue_message('❌ User database update <b>failed</b>')
 
 	async def run(self, stop_event: asyncio.Event):
