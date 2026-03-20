@@ -3,6 +3,7 @@
 
 import asyncio
 import configparser
+import csv
 import datetime as dt
 import difflib
 import glob
@@ -450,12 +451,32 @@ class DataUpdater:
 						if file_info.filename.lower().endswith('.csv'):
 							file_info.filename = 'user.csv'
 							z.extract(file_info, self.target_dir)
+							self._process_csv(os.path.join(self.target_dir, 'user.csv'))
 							logging.info('Successfully updated user database in %s', self.target_dir)
 							await self.telegram_bot.queue_message('✔️ User database update <b>success</b>.')
 							return
 		except Exception as e:
 			logging.error('Failed to update user database: %s', e)
 			await self.telegram_bot.queue_message(f'❌ User database update <b>failed</b>.\nErr: {e}')
+
+	def _process_csv(self, file_path: str):
+		"""Removes specific columns and all double quotes from the CSV."""
+		cols_to_remove = {'No.', 'Remarks', 'Call Type', 'Call Alert'}
+		try:
+			temp_file = file_path + '.tmp'
+			with open(file_path, 'r', encoding='utf-8', errors='replace') as f_in, open(temp_file, 'w', encoding='utf-8') as f_out:
+				reader = csv.reader(f_in)
+				headers = next(reader, None)
+				if not headers:
+					return
+				indices = [i for i, h in enumerate(headers) if h not in cols_to_remove]
+				f_out.write(','.join([headers[i].replace('"', '') for i in indices]) + '\n')
+				for row in reader:
+					if len(row) > max(indices):
+						f_out.write(','.join([row[i].replace('"', '') for i in indices]) + '\n')
+			os.replace(temp_file, file_path)
+		except Exception as e:
+			logging.error('Failed to process CSV %s: %s', file_path, e)
 
 	async def run(self, stop_event: asyncio.Event):
 		"""Schedules the update task daily at 06:00 UTC with a random offset."""
