@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [beta7] - (2026-03-20T12:15:36+08:00)
+
+- 2 commit(s) contributed to the release.
+
+### 🚜 Refactor in beta7
+
+- [7c42cd5](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/7c42cd59bec4f9af307376c9aba10dd6ec962bff) refactor(main.py): introduce DataUpdater for user database updates *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:15:36+08:00*
+
+### ⚙️ Miscellaneous Tasks in beta7
+
+- [22af4f2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/22af4f2cdfa89c3f44db220a98a092fd27f9cf3d) chore(version): bump version to 0.1b7 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T11:39:03+08:00*
+
+---
+
 ## [beta6] - (2026-03-20T09:52:35+08:00)
 
 - 53 commit(s) contributed to the release.
@@ -476,4 +490,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-20T09:53:43.394375298+08:00
+generated using git-cliff at 2026-03-20T12:16:39.767743186+08:00
