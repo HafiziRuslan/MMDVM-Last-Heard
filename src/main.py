@@ -226,7 +226,7 @@ class DMRGatewayManager:
 	"""Manages loading and caching of DMRGateway configuration."""
 
 	def __init__(self, config_files: list[str] = None):
-		self._cache = {'path': None, 'mtime': 0, 'rules': [], 'networks': []}
+		self._cache = {'path': None, 'mtime': 0, 'rules': [], 'networks': [], 'xlx_tgs': {}}
 		self._conf_files = config_files or ['/etc/dmrgateway', '/etc/DMRGateway.ini', '/opt/DMRGateway/DMRGateway.ini']
 
 	def get_rules(self) -> list:
@@ -238,6 +238,11 @@ class DMRGatewayManager:
 		"""Returns the list of configured networks."""
 		self._update_cache()
 		return self._cache['networks']
+
+	def get_xlx_tgs(self) -> dict:
+		"""Returns the mapping of XLX talkgroups to names."""
+		self._update_cache()
+		return self._cache['xlx_tgs']
 
 	def _update_cache(self):
 		"""Updates the cache if the configuration file has changed."""
@@ -255,6 +260,7 @@ class DMRGatewayManager:
 					return
 				rules = []
 				networks = []
+				xlx_tgs = {}
 				config = configparser.ConfigParser(strict=False, interpolation=None)
 				config.read(config_path)
 				for section in config.sections():
@@ -288,7 +294,15 @@ class DMRGatewayManager:
 										)
 									except ValueError:
 										continue
-				self._cache = {'path': config_path, 'mtime': mtime, 'rules': rules, 'networks': networks}
+					elif section.startswith('XLX Network'):
+						if config.getint(section, 'Enabled', fallback=0) == 1:
+							startup = config.get(section, 'Startup', fallback='')
+							module = config.get(section, 'Module', fallback='')
+							tg = config.get(section, 'TG', fallback='')
+							slot = config.getint(section, 'Slot', fallback=0)
+							if tg and startup and module:
+								xlx_tgs[tg] = {'name': f'XLX{startup}{module}', 'slot': slot}
+				self._cache = {'path': config_path, 'mtime': mtime, 'rules': rules, 'networks': networks, 'xlx_tgs': xlx_tgs}
 			except Exception as e:
 				logging.error('Error reading DMRGateway config %s: %s', config_path, e)
 
@@ -407,7 +421,7 @@ class TalkgroupManager:
 		"""Applies special talkgroup rules for DMRGateway and MCCs."""
 		for rule in self._dmr_gateway_manager.get_rules():
 			if rule.get('type') in ('TG', 'PC'):
-				for target_tg, label in [(4000, 'Disconnect'), (9990, 'Parrot'), (31000, 'Parrot')]:
+				for target_tg, label in [(4000, 'Disconnect'), (5004000, 'TGIF:DISCONNECT'), (9990, 'Parrot'), (31000, 'Parrot')]:
 					src_tg = target_tg - rule['offset']
 					if rule['start'] <= src_tg <= rule['end']:
 						tg_map[str(src_tg)] = label
@@ -939,26 +953,34 @@ class MMDVMLogLine:
 				label = code if code else country
 				name = f'~{call} ({fname}) [{flag} {label}]'
 		if name is None:
+			xlx_tgs = self.data_manager.dmr_gateway.get_xlx_tgs()
+			if tg_id_str in xlx_tgs:
+				xlx_info = xlx_tgs[tg_id_str]
+				if xlx_info['slot'] == 0 or xlx_info['slot'] == self.slot:
+					name = f' ({xlx_info["name"]})'
+		if name is None:
 			tg_map = self.data_manager.talkgroups.get_map()
-			name = f' ({tg_map.get(tg_id_str)})'
-			if not name and tg_id_str.isdigit():
-				tg_id = int(tg_id_str)
-				rules = self.data_manager.dmr_gateway.get_rules()
-				required_type = 'TG' if is_group else 'PC'
-				for rule in rules:
-					if rule.get('type', 'TG') != required_type:
-						continue
-					if rule['slot'] != 0 and rule['slot'] != self.slot:
-						continue
-					if rule['start'] <= tg_id <= rule['end']:
-						remapped_id = tg_id + rule['offset']
-						name = f' ({rule["name"]}: {remapped_id})'
-						break
-				if not name and len(tg_id_str) > 3:
-					mcc = int(tg_id_str[:3])
-					if mcc in MCC_CODES:
-						_, code = MCC_CODES[mcc]
-						name = f' ({Formatter.get_flag_emoji(code)} {code})'
+			tg_label = tg_map.get(tg_id_str)
+			if tg_label:
+				name = f' ({tg_label})'
+		if name is None and tg_id_str.isdigit():
+			tg_id = int(tg_id_str)
+			rules = self.data_manager.dmr_gateway.get_rules()
+			required_type = 'TG' if is_group else 'PC'
+			for rule in rules:
+				if rule.get('type', 'TG') != required_type:
+					continue
+				if rule['slot'] != 0 and rule['slot'] != self.slot:
+					continue
+				if rule['start'] <= tg_id <= rule['end']:
+					remapped_id = tg_id + rule['offset']
+					name = f' ({rule["name"]}: {remapped_id})'
+					break
+			if not name and len(tg_id_str) > 3:
+				mcc = int(tg_id_str[:3])
+				if mcc in MCC_CODES:
+					_, code = MCC_CODES[mcc]
+					name = f' ({Formatter.get_flag_emoji(code)} {code})'
 		if name:
 			tg_name = name
 		return tg_name
