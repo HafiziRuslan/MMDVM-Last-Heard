@@ -9,6 +9,7 @@ import glob
 import logging
 import logging.handlers
 import os
+import random
 import re
 import shutil
 import signal
@@ -438,8 +439,10 @@ class DataUpdater:
 					logging.error('Could not find user database at %s', self.url)
 					return
 				zip_url = f'https://kf5iw.com/{match.group("url")}'
-				logging.info('Found zip link: %s. Downloading...', zip_url)
-				await self.telegram_bot.queue_message(f'ℹ️ Downloading user database from <i>{zip_url}</i>...')
+				logging.info('Found zip link: %s. Extracting...', zip_url)
+				await self.telegram_bot.queue_message(
+					f'ℹ️ Fetching user database from <a href="{zip_url}">kf5iw.com</a>...\n🗄️ File: {zip_url.split("/")[-1]}'
+				)
 				response = await client.get(zip_url, follow_redirects=True)
 				response.raise_for_status()
 				with SafeZipFile(io.BytesIO(response.content)) as z:
@@ -455,12 +458,12 @@ class DataUpdater:
 			await self.telegram_bot.queue_message(f'❌ User database update <b>failed</b>.\nErr: {e}')
 
 	async def run(self, stop_event: asyncio.Event):
-		"""Schedules the update task daily at 06:00 UTC."""
+		"""Schedules the update task daily at 06:00 UTC with a random offset."""
 		if not os.path.exists(os.path.join(self.target_dir, 'user.csv')):
 			await self.update_user_csv()
 		while not stop_event.is_set():
 			now = dt.datetime.now(dt.timezone.utc)
-			target_time = now.replace(hour=6, minute=0, second=0, microsecond=0)
+			target_time = now.replace(hour=6, minute=random.randint(0, 59), second=random.randint(0, 59), microsecond=0)
 			if now >= target_time:
 				target_time += dt.timedelta(days=1)
 			wait_seconds = (target_time - now).total_seconds()
