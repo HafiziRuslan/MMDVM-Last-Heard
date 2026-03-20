@@ -439,7 +439,7 @@ class DataUpdater:
 					return
 				zip_url = f'https://kf5iw.com/{match.group('url')}'
 				logging.info('Found zip link: %s. Downloading...', zip_url)
-				await self.telegram_bot.queue_message('ℹ️ Downloading user database from <i>%s</i>...', zip_url)
+				await self.telegram_bot.queue_message(f'ℹ️ Downloading user database from <i>{zip_url}</i>...')
 				response = await client.get(zip_url, follow_redirects=True)
 				response.raise_for_status()
 				with SafeZipFile(io.BytesIO(response.content)) as z:
@@ -448,11 +448,11 @@ class DataUpdater:
 							file_info.filename = 'user.csv'
 							z.extract(file_info, self.target_dir)
 							logging.info('Successfully updated user database in %s', self.target_dir)
-							await self.telegram_bot.queue_message('✔️ User database update <b>success</b>')
+							await self.telegram_bot.queue_message('✔️ User database update <b>success</b>.')
 							return
 		except Exception as e:
 			logging.error('Failed to update user database: %s', e)
-			await self.telegram_bot.queue_message('❌ User database update <b>failed</b>')
+			await self.telegram_bot.queue_message(f'❌ User database update <b>failed</b>.\nErr: {e}')
 
 	async def run(self, stop_event: asyncio.Event):
 		"""Schedules the update task daily at 06:00 UTC."""
@@ -465,9 +465,7 @@ class DataUpdater:
 				target_time += dt.timedelta(days=1)
 			wait_seconds = (target_time - now).total_seconds()
 			logging.info('Next user.csv update scheduled at %s', target_time.astimezone().isoformat(timespec='seconds'))
-			await self.telegram_bot.queue_message(
-				'ℹ️ Next user database update scheduled at <i>%s</i>...', target_time.astimezone().isoformat(timespec='seconds')
-			)
+			await self.telegram_bot.queue_message(f'ℹ️ Next user database update scheduled at <i>{target_time.astimezone().isoformat(timespec='seconds')}</i>...')
 			try:
 				await asyncio.wait_for(stop_event.wait(), timeout=wait_seconds)
 			except asyncio.TimeoutError:
