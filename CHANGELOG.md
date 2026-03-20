@@ -2,12 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-20T13:19:43+08:00)
+## [beta7] - (2026-03-20T14:59:24+08:00)
 
-- 6 commit(s) contributed to the release.
+- 7 commit(s) contributed to the release.
 
 ### 🚀 Features in beta7
 
+- [744ed5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/744ed5eea4c2dabe1c7ef6dd546910cbda4aab61) feat(user): clean user csv during update *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T14:59:24+08:00*
 - [299ba12](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/299ba121f35389c79f71fc7d02e06c7845a5b080) feat(random_offset): add random offset to schedule *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T13:19:43+08:00*
 
 ### 🐛 Bug Fixes in beta7
@@ -503,4 +504,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-20T13:20:48.840682812+08:00
+generated using git-cliff at 2026-03-20T15:00:12.525432032+08:00
