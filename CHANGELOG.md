@@ -2,9 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-20T15:40:29+08:00)
+## [beta7] - (2026-03-24T01:57:52+08:00)
 
-- 8 commit(s) contributed to the release.
+- 11 commit(s) contributed to the release.
+- 3 day(s) passed between the first and last commit.
+- 3 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
@@ -14,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta7
 
+- [f4d5358](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f4d535849975d93f237dee903bd0959f95ba4dc7) fix(main): fix app name inconsistency *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-24T01:57:52+08:00*
 - [1b06786](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b06786b686f0ce3376beca3c33def34e9eb9684) fix(main): fix string quoting in zip URL *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:56:23+08:00*
 - [42c66b2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/42c66b2e98215cff79c4aa65071bd8febf8239b7) fix(main): correct user CSV download pattern matching *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:38:57+08:00*
 
@@ -27,6 +30,8 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
+- [dff7c5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/dff7c5e350edea0f9808bb76cb89c902a31139e4) ci(telegram): update telegram workflow name and message format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T22:52:24+08:00*
+- [52691a8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/52691a839ba1d5271c95f842f223de98cb5e60c9) ci(workflow): update telegram message link format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T21:03:27+08:00*
 - [22af4f2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/22af4f2cdfa89c3f44db220a98a092fd27f9cf3d) chore(version): bump version to 0.1b7 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T11:39:03+08:00*
 
 ---
@@ -505,4 +510,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-20T15:41:14.122895226+08:00
+generated using git-cliff at 2026-03-24T01:59:01.244164516+08:00
