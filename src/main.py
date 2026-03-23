@@ -40,7 +40,7 @@ def _get_app_metadata():
 			git_sha = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD^'], cwd=repo_path).decode('ascii').strip()
 		except Exception:
 			pass
-	meta = {'name': 'MMDVM_LastHeard', 'version': '0.1', 'github': 'https://git.new/MMDVM-LastHeard'}
+	meta = {'name': 'MMDVM-LastHeard', 'version': '0.1', 'github': 'https://git.new/MMDVM-LastHeard'}
 	try:
 		with open(os.path.join(repo_path, 'pyproject.toml'), 'rb') as f:
 			data = tomllib.load(f).get('project', {})
@@ -48,7 +48,7 @@ def _get_app_metadata():
 			meta['github'] = data.get('urls', {}).get('github', meta['github'])
 	except Exception as e:
 		logging.warning('Failed to load project metadata: %s', e)
-	return f'{"-".join(filter(None, [meta["name"], meta["version"], git_sha]))}', meta['github']
+	return f'{"/".join(filter(None, [meta["name"], meta["version"], git_sha]))}', meta['github']
 
 
 class ConfigManager:
@@ -71,7 +71,6 @@ class ConfigManager:
 		self.log_max_size_mb = float(os.getenv('LOG_MAX_SIZE', '1'))
 		self.log_max_count = int(os.getenv('LOG_MAX_COUNT', '3'))
 		self.app_name, self.project_url = _get_app_metadata()
-		self.app_name_short = self.app_name.split('-')[0]
 		self.relevant_log_patterns = ['end of voice transmission', 'end of transmission', 'watchdog has expired']
 		if not self.tg_bot_token or not self.tg_chat_id:
 			logging.warning('TG_BOTTOKEN or TG_CHATID is not set in the environment variables.')
@@ -434,8 +433,9 @@ class TalkgroupManager:
 class DataUpdater:
 	"""Handles downloading and updating the user database."""
 
-	def __init__(self, telegram_bot: 'TelegramBot', target_dir: str = '.temp'):
+	def __init__(self, telegram_bot: 'TelegramBot', project_url: str, target_dir: str = '.temp'):
 		self.telegram_bot = telegram_bot
+		self.project_url = project_url
 		self.target_dir = target_dir
 		self.url = 'https://kf5iw.com/contactdb.php'
 		if not os.path.exists(self.target_dir):
@@ -445,7 +445,8 @@ class DataUpdater:
 		"""Downloads and extracts the user.csv file safely by finding the correct zip."""
 		try:
 			logging.info('Searching for user database at %s', self.url)
-			async with httpx.AsyncClient(headers={'User-Agent': self.telegram_bot.app_name}) as client:
+			user_agent = f'{self.telegram_bot.app_name} (+{self.project_url})'
+			async with httpx.AsyncClient(headers={'User-Agent': user_agent}) as client:
 				page_response = await client.get(self.url, follow_redirects=True)
 				page_response.raise_for_status()
 				pattern = r'href="(?P<url>data/Anytone/D868UV/ALL/contacts_ALL_.*?\.zip)"'
@@ -1161,14 +1162,12 @@ class LogObserver:
 		data_manager: DataManager,
 		telegram_bot: TelegramBot,
 		ignore_time_messages: bool = True,
-		app_name_short: str = 'MMDVM_LastHeard',
 		relevant_log_patterns: Optional[list[str]] = None,
 	):
 		self.data_manager = data_manager
 		self.telegram_bot = telegram_bot
 		self.log_reader = data_manager.log_reader
 		self.ignore_time_messages = ignore_time_messages
-		self.app_name_short = app_name_short
 		self.relevant_log_patterns = relevant_log_patterns or []
 
 	async def run(self, stop_event: asyncio.Event):
@@ -1182,7 +1181,8 @@ class LogObserver:
 				if current_log_path != latest_log:
 					logging.info('Switching to new log file: %s', latest_log)
 					if latest_log:
-						msg = f'📃 {self.app_name_short} '
+						app_name_short = self.telegram_bot.app_name.split('/')[0]
+						msg = f'📃 {app_name_short} '
 						if current_log_path:
 							msg += (
 								f'Log Changed\nOld Log: <s>{os.path.basename(current_log_path)}</s>\nNew Log: <b>{os.path.basename(latest_log)}</b>'
@@ -1236,13 +1236,9 @@ async def main():
 	config = ConfigManager()
 	data_manager = DataManager()
 	telegram_bot = TelegramBot(config.tg_bot_token, config.tg_chat_id, config.tg_topic_id, config.app_name)
-	data_updater = DataUpdater(telegram_bot)
+	data_updater = DataUpdater(telegram_bot, config.project_url)
 	log_observer = LogObserver(
-		data_manager,
-		telegram_bot,
-		ignore_time_messages=config.gw_ignore_time_messages,
-		app_name_short=config.app_name_short,
-		relevant_log_patterns=config.relevant_log_patterns,
+		data_manager, telegram_bot, ignore_time_messages=config.gw_ignore_time_messages, relevant_log_patterns=config.relevant_log_patterns
 	)
 	stop_event = asyncio.Event()
 	loop = asyncio.get_running_loop()
@@ -1250,13 +1246,14 @@ async def main():
 		loop.add_signal_handler(sig, lambda: stop_event.set())
 	bot_task = asyncio.create_task(telegram_bot.run(stop_event))
 	updater_task = asyncio.create_task(data_updater.run(stop_event))
-	await telegram_bot.queue_message(f'🚀 {config.app_name_short} Started')
+	app_name_short = config.app_name.split('/')[0]
+	await telegram_bot.queue_message(f'🚀 {app_name_short} Started')
 	try:
 		await log_observer.run(stop_event)
 	except asyncio.CancelledError:
 		logging.info('Main loop cancelled.')
 	finally:
-		await telegram_bot.queue_message(f'🛑 {config.app_name_short} Stopping')
+		await telegram_bot.queue_message(f'🛑 {app_name_short} Stopping')
 		if not stop_event.is_set():
 			stop_event.set()
 		await asyncio.gather(bot_task, updater_task, return_exceptions=True)
