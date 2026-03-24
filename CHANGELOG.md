@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-25T02:31:05+08:00)
+## [beta7] - (2026-03-25T03:14:05+08:00)
 
-- 13 commit(s) contributed to the release.
+- 14 commit(s) contributed to the release.
 - 4 day(s) passed between the first and last commit.
 - 4 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
+- [bd4db52](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bd4db528505c95fd2a09602787eef501059ee493) feat(database): add JSON file processing support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T03:14:05+08:00*
 - [ee39607](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ee396076a0faccd10bce65ce62d8c3e2dd0286b9) feat(DMRGateway): add XLX Talkgroup support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T15:40:29+08:00*
 - [744ed5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/744ed5eea4c2dabe1c7ef6dd546910cbda4aab61) feat(user): clean user csv during update *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T14:59:24+08:00*
 - [299ba12](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/299ba121f35389c79f71fc7d02e06c7845a5b080) feat(random_offset): add random offset to schedule *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T13:19:43+08:00*
@@ -515,4 +516,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-25T02:32:00.711515610+08:00
+generated using git-cliff at 2026-03-25T03:15:08.869267780+08:00
