@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-25T03:16:11+08:00)
+## [beta7] - (2026-03-25T03:57:01+08:00)
 
-- 15 commit(s) contributed to the release.
+- 16 commit(s) contributed to the release.
 - 4 day(s) passed between the first and last commit.
 - 4 day(s) passed between releases.
 
@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta7
 
+- [f93b261](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f93b26155a842066080228a3dd387ce24a627abd) refactor(telegram): show filename prefix in telegram message *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T03:57:01+08:00*
 - [f4d5358](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f4d535849975d93f237dee903bd0959f95ba4dc7) fix(main): fix app name inconsistency *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-24T01:57:52+08:00*
 - [1b06786](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b06786b686f0ce3376beca3c33def34e9eb9684) fix(main): fix string quoting in zip URL *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:56:23+08:00*
 - [42c66b2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/42c66b2e98215cff79c4aa65071bd8febf8239b7) fix(main): correct user CSV download pattern matching *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:38:57+08:00*
@@ -517,4 +518,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-25T03:17:36.926645415+08:00
+generated using git-cliff at 2026-03-25T03:57:58.833439060+08:00
