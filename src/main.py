@@ -475,7 +475,6 @@ class DataUpdater:
 					try:
 						rid_url = f'https://database.radioid.net/static/{rid_file}'
 						logging.info('Fetching %s from radioid.net', rid_file)
-						await self.telegram_bot.queue_message(f'ℹ️ Fetching {rid_file} from <a href="{rid_url}">radioid.net</a>')
 						rid_resp = await client.get(rid_url, follow_redirects=True)
 						rid_resp.raise_for_status()
 						file_path = os.path.join(self.target_dir, rid_file)
@@ -484,6 +483,7 @@ class DataUpdater:
 						self._process_file(file_path)
 					except Exception as rid_err:
 						logging.error('Failed to download %s from radioid.net: %s', rid_file, rid_err)
+						await self.telegram_bot.queue_message(f'❌ {rid_file} download <b>failed</b>.\nError: {rid_err}')
 				page_response = await client.get(self.url, follow_redirects=True)
 				page_response.raise_for_status()
 				pattern = r'href="(?P<url>data/Anytone/D868UV/ALL/contacts_ALL_.*?\.zip)"'
@@ -491,9 +491,8 @@ class DataUpdater:
 				if not match:
 					logging.error('Could not find user database at %s', self.url)
 					return
-				zip_url = f'https://kf5iw.com/{match.group("url")}'
+				zip_url = f'{self.url.rsplit("/", 1)}/{match.group("url")}'
 				logging.info('Found zip link: %s. Extracting...', zip_url)
-				await self.telegram_bot.queue_message(f'ℹ️ Fetching {"_".join(zip_url.split("/")[-1].split("_")[:2])} from <a href="{zip_url}">kf5iw.com</a>')
 				response = await client.get(zip_url, follow_redirects=True)
 				response.raise_for_status()
 				with SafeZipFile(io.BytesIO(response.content)) as z:
@@ -503,12 +502,12 @@ class DataUpdater:
 							file_path = os.path.join(self.target_dir, 'user.csv')
 							z.extract(file_info, self.target_dir)
 							self._process_file(file_path)
-							logging.info('Successfully updated user database in %s', self.target_dir)
-							await self.telegram_bot.queue_message('✔️ User database update <b>success</b>.')
 							return
+				logging.info('Successfully updated user databases in %s', self.target_dir)
+				await self.telegram_bot.queue_message('✔️ User databases update <b>success</b>!')
 		except Exception as e:
-			logging.error('Failed to update user database: %s', e)
-			await self.telegram_bot.queue_message(f'❌ User database update <b>failed</b>.\nErr: {e}')
+			logging.error('Failed to update user databases: %s', e)
+			await self.telegram_bot.queue_message(f'❌ User databases update <b>failed</b>.\nError: {e}')
 
 	def _process_file(self, file_path: str):
 		"""Processes downloaded files: prettifies JSON and filters CSV."""
@@ -536,7 +535,7 @@ class DataUpdater:
 							f_out.write(','.join([row[i].replace('"', '') for i in indices]) + '\n')
 				os.replace(temp_file, file_path)
 			except Exception as e:
-				logging.error('Failed to process CSV %s: %s', file_path, e)
+				logging.error('Failed to process %s: %s', file_path, e)
 
 	async def run(self, stop_event: asyncio.Event):
 		"""Schedules the update task daily at 05:15+ UTC with a random offset."""
