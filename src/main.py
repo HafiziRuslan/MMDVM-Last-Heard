@@ -20,6 +20,7 @@ import asyncio
 import configparser
 import csv
 import datetime as dt
+import json
 import difflib
 import glob
 import logging
@@ -457,7 +458,7 @@ class DataUpdater:
 			os.makedirs(self.target_dir)
 
 	async def update_user_db(self):
-		"""Downloads and extracts the user.csv file safely by finding the correct zip."""
+		"""Downloads, extracts, and process the user database files."""
 		try:
 			logging.info('Searching for user database at %s', self.url)
 			user_agent = f'{self.telegram_bot.app_name} (+{self.project_url})'
@@ -474,11 +475,13 @@ class DataUpdater:
 					try:
 						rid_url = f'https://database.radioid.net/static/{rid_file}'
 						logging.info('Fetching %s from radioid.net', rid_file)
-						await self.telegram_bot.queue_message(f'ℹ️ Fetching {rid_file} from <a href"{rid_url}">radioid.net</a>')
+						await self.telegram_bot.queue_message(f'ℹ️ Fetching {rid_file} from <a href="{rid_url}">radioid.net</a>')
 						rid_resp = await client.get(rid_url, follow_redirects=True)
 						rid_resp.raise_for_status()
-						with open(os.path.join(self.target_dir, rid_file), 'wb') as f:
+						file_path = os.path.join(self.target_dir, rid_file)
+						with open(file_path, 'wb') as f:
 							f.write(rid_resp.content)
+						self._process_file(file_path)
 					except Exception as rid_err:
 						logging.error('Failed to download %s from radioid.net: %s', rid_file, rid_err)
 				page_response = await client.get(self.url, follow_redirects=True)
@@ -490,15 +493,16 @@ class DataUpdater:
 					return
 				zip_url = f'https://kf5iw.com/{match.group("url")}'
 				logging.info('Found zip link: %s. Extracting...', zip_url)
-				await self.telegram_bot.queue_message(f'ℹ️ Fetching {zip_url.split("/")[-1]} from <a href="{zip_url}">kf5iw.com</a>')
+				await self.telegram_bot.queue_message(f'ℹ️ Fetching {zip_url.split("/")[-2]} from <a href="{zip_url}">kf5iw.com</a>')
 				response = await client.get(zip_url, follow_redirects=True)
 				response.raise_for_status()
 				with SafeZipFile(io.BytesIO(response.content)) as z:
 					for file_info in z.infolist():
 						if file_info.filename.lower().endswith('.csv'):
 							file_info.filename = 'user.csv'
+							file_path = os.path.join(self.target_dir, 'user.csv')
 							z.extract(file_info, self.target_dir)
-							self._process_csv(os.path.join(self.target_dir, 'user.csv'))
+							self._process_file(file_path)
 							logging.info('Successfully updated user database in %s', self.target_dir)
 							await self.telegram_bot.queue_message('✔️ User database update <b>success</b>.')
 							return
@@ -506,24 +510,33 @@ class DataUpdater:
 			logging.error('Failed to update user database: %s', e)
 			await self.telegram_bot.queue_message(f'❌ User database update <b>failed</b>.\nErr: {e}')
 
-	def _process_csv(self, file_path: str):
-		"""Removes specific columns and all double quotes from the CSV."""
-		cols_to_remove = {'No.', 'Remarks', 'Call Type', 'Call Alert'}
-		try:
-			temp_file = file_path + '.tmp'
-			with open(file_path, 'r', encoding='utf-8', errors='replace') as f_in, open(temp_file, 'w', encoding='utf-8') as f_out:
-				reader = csv.reader(f_in)
-				headers = next(reader, None)
-				if not headers:
-					return
-				indices = [i for i, h in enumerate(headers) if h not in cols_to_remove]
-				f_out.write(','.join([headers[i].replace('"', '') for i in indices]) + '\n')
-				for row in reader:
-					if len(row) > max(indices):
-						f_out.write(','.join([row[i].replace('"', '') for i in indices]) + '\n')
-			os.replace(temp_file, file_path)
-		except Exception as e:
-			logging.error('Failed to process %s: %s', file_path, e)
+	def _process_file(self, file_path: str):
+		"""Processes downloaded files: prettifies JSON and filters CSV."""
+		if file_path.lower().endswith('.json'):
+			try:
+				with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+					data = json.load(f)
+				with open(file_path, 'w', encoding='utf-8') as f:
+					json.dump(data, f, indent=4)
+			except Exception as e:
+				logging.error('Failed to prettify %s: %s', file_path, e)
+		elif file_path.lower().endswith('.csv'):
+			cols_to_remove = {'No.', 'Remarks', 'Call Type', 'Call Alert'}
+			try:
+				temp_file = file_path + '.tmp'
+				with open(file_path, 'r', encoding='utf-8', errors='replace') as f_in, open(temp_file, 'w', encoding='utf-8') as f_out:
+					reader = csv.reader(f_in)
+					headers = next(reader, None)
+					if not headers:
+						return
+					indices = [i for i, h in enumerate(headers) if h not in cols_to_remove]
+					f_out.write(','.join([headers[i].replace('"', '') for i in indices]) + '\n')
+					for row in reader:
+						if len(row) > max(indices):
+							f_out.write(','.join([row[i].replace('"', '') for i in indices]) + '\n')
+				os.replace(temp_file, file_path)
+			except Exception as e:
+				logging.error('Failed to process CSV %s: %s', file_path, e)
 
 	async def run(self, stop_event: asyncio.Event):
 		"""Schedules the update task daily at 05:15+ UTC with a random offset."""
