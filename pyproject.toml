@@ -4,7 +4,8 @@ version = '0.1b7'
 description = 'Telegram bot to monitor the last transmissions of a MMDVM gateway'
 keywords = ['amateur-radio', 'mmdvm', 'pi-star', 'wpsd']
 readme = 'README.md'
-license = 'BSD-3-Clause'
+license = 'GPL-3.0-or-later'
+license-files = ['LICENSE']
 authors = [
   { name = 'Luca', email = '61653175+iu2frl@users.noreply.github.com' },
   { name = 'Hafizi Ruslan', email = '9w2lgx@mhrtech.my' },
@@ -15,7 +16,7 @@ classifiers = [
   'Intended Audience :: Other Audience',
   'License :: Freeware',
   'License :: OSI Approved',
-  'License :: OSI Approved :: BSD License',
+  'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
   'Natural Language :: English',
   'Natural Language :: Malay',
   'Operating System :: POSIX :: Linux',

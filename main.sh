@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+echo "        RasPiAPRS  Copyright (C) 2026  HafiziRuslan"
+echo "        This program comes with ABSOLUTELY NO WARRANTY."
+echo "        This is free software, and you are welcome to redistribute it under certain conditions."
+
 # --- Initial Setup ---
 if [ "$EUID" -ne 0 ]; then
   echo "Please run as root" >&2
