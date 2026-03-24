@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-24T20:16:42+08:00)
+## [beta7] - (2026-03-25T02:31:05+08:00)
 
-- 12 commit(s) contributed to the release.
+- 13 commit(s) contributed to the release.
 - 4 day(s) passed between the first and last commit.
 - 4 day(s) passed between releases.
 
@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta7
 
+- [9a01a92](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9a01a9269747ea2367cd158c683ba28902027861) refactor: rename update_user_csv to update_user_db *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T02:31:05+08:00*
 - [7c42cd5](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/7c42cd59bec4f9af307376c9aba10dd6ec962bff) refactor(main.py): introduce DataUpdater for user database updates *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:15:36+08:00*
 
 ### 📚 Documentation in beta7
@@ -514,4 +515,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-24T20:17:39.600083547+08:00
+generated using git-cliff at 2026-03-25T02:32:00.711515610+08:00
