@@ -493,7 +493,7 @@ class DataUpdater:
 					return
 				zip_url = f'https://kf5iw.com/{match.group("url")}'
 				logging.info('Found zip link: %s. Extracting...', zip_url)
-				await self.telegram_bot.queue_message(f'ℹ️ Fetching {zip_url.split("/")[-2]} from <a href="{zip_url}">kf5iw.com</a>')
+				await self.telegram_bot.queue_message(f'ℹ️ Fetching {"_".join(zip_url.split("/")[-1].split("_")[:2])} from <a href="{zip_url}">kf5iw.com</a>')
 				response = await client.get(zip_url, follow_redirects=True)
 				response.raise_for_status()
 				with SafeZipFile(io.BytesIO(response.content)) as z:
@@ -517,7 +517,7 @@ class DataUpdater:
 				with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
 					data = json.load(f)
 				with open(file_path, 'w', encoding='utf-8') as f:
-					json.dump(data, f, indent=4)
+					json.dump(data, f, indent=2)
 			except Exception as e:
 				logging.error('Failed to prettify %s: %s', file_path, e)
 		elif file_path.lower().endswith('.csv'):
