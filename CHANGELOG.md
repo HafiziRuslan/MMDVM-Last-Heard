@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-25T03:14:05+08:00)
+## [beta7] - (2026-03-25T03:16:11+08:00)
 
-- 14 commit(s) contributed to the release.
+- 15 commit(s) contributed to the release.
 - 4 day(s) passed between the first and last commit.
 - 4 day(s) passed between releases.
 
@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta7
 
+- [9742e8d](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9742e8d6c3e3b8c5484b00ae1ee6a3d68bd9c642) refactor(main.sh): increase required space to 250 MB *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T03:16:11+08:00*
 - [9a01a92](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/9a01a9269747ea2367cd158c683ba28902027861) refactor: rename update_user_csv to update_user_db *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T02:31:05+08:00*
 - [7c42cd5](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/7c42cd59bec4f9af307376c9aba10dd6ec962bff) refactor(main.py): introduce DataUpdater for user database updates *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T12:15:36+08:00*
 
@@ -516,4 +517,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-25T03:15:08.869267780+08:00
+generated using git-cliff at 2026-03-25T03:17:36.926645415+08:00
