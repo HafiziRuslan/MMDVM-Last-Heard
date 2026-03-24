@@ -351,6 +351,7 @@ class TalkgroupManager:
 				suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
 				self._read_talkgroup_file(tg_file, ';', 0, 1, tg_map, suffix=suffix, overwrite=False)
 		self._apply_special_rules(tg_map)
+		# tg_map = dict(sorted(tg_map.items(), key=lambda x: int(x[0]) if x[0].isdigit() else x[0]))
 		self._cache = {'mtimes': current_mtimes, 'tg_map': tg_map}
 		return tg_map
 
@@ -617,7 +618,7 @@ class UserManager:
 								user_map[call] = (ccs7, fname, country)
 								user_map[ccs7] = (call, fname, country)
 				logging.debug('Successfully loaded user data from %s with %s encoding.', csv_path, encoding)
-				return user_map
+				return dict(sorted(user_map.items(), key=lambda x: x[0] if x[0].isdigit() else x[1][0]))
 			except UnicodeDecodeError:
 				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, csv_path)
 			except Exception as e:
@@ -652,7 +653,7 @@ class UserManager:
 								user_map[call] = (ccs7, fname, country)
 								user_map[ccs7] = (call, fname, country)
 				logging.debug('Successfully loaded user data from %s with %s encoding.', self._dmr_ids_path, encoding)
-				return user_map
+				return dict(sorted(user_map.items(), key=lambda x: x[0] if x[0].isdigit() else x[1][0]))
 			except UnicodeDecodeError:
 				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, self._dmr_ids_path)
 			except Exception as e:
