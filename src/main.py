@@ -456,12 +456,31 @@ class DataUpdater:
 		if not os.path.exists(self.target_dir):
 			os.makedirs(self.target_dir)
 
-	async def update_user_csv(self):
+	async def update_user_db(self):
 		"""Downloads and extracts the user.csv file safely by finding the correct zip."""
 		try:
 			logging.info('Searching for user database at %s', self.url)
 			user_agent = f'{self.telegram_bot.app_name} (+{self.project_url})'
 			async with httpx.AsyncClient(headers={'User-Agent': user_agent}) as client:
+				for rid_file in [
+					'dmrid.dat',
+					'dstar_repeaters.json',
+					'nxdn.csv',
+					'nxdn_repeaters.json',
+					'p25_repeaters.json',
+					'rptrs.json',
+					'users.json',
+				]:
+					try:
+						rid_url = f'https://database.radioid.net/static/{rid_file}'
+						logging.info('Fetching %s from radioid.net', rid_file)
+						await self.telegram_bot.queue_message(f'ℹ️ Fetching {rid_file} from <a href"{rid_url}">radioid.net</a>')
+						rid_resp = await client.get(rid_url, follow_redirects=True)
+						rid_resp.raise_for_status()
+						with open(os.path.join(self.target_dir, rid_file), 'wb') as f:
+							f.write(rid_resp.content)
+					except Exception as rid_err:
+						logging.error('Failed to download %s from radioid.net: %s', rid_file, rid_err)
 				page_response = await client.get(self.url, follow_redirects=True)
 				page_response.raise_for_status()
 				pattern = r'href="(?P<url>data/Anytone/D868UV/ALL/contacts_ALL_.*?\.zip)"'
@@ -471,9 +490,7 @@ class DataUpdater:
 					return
 				zip_url = f'https://kf5iw.com/{match.group("url")}'
 				logging.info('Found zip link: %s. Extracting...', zip_url)
-				await self.telegram_bot.queue_message(
-					f'ℹ️ Fetching user database from <a href="{zip_url}">kf5iw.com</a>...\n🗄️ File: {zip_url.split("/")[-1]}'
-				)
+				await self.telegram_bot.queue_message(f'ℹ️ Fetching {zip_url.split("/")[-1]} from <a href="{zip_url}">kf5iw.com</a>')
 				response = await client.get(zip_url, follow_redirects=True)
 				response.raise_for_status()
 				with SafeZipFile(io.BytesIO(response.content)) as z:
@@ -506,15 +523,17 @@ class DataUpdater:
 						f_out.write(','.join([row[i].replace('"', '') for i in indices]) + '\n')
 			os.replace(temp_file, file_path)
 		except Exception as e:
-			logging.error('Failed to process CSV %s: %s', file_path, e)
+			logging.error('Failed to process %s: %s', file_path, e)
 
 	async def run(self, stop_event: asyncio.Event):
-		"""Schedules the update task daily at 06:00 UTC with a random offset."""
-		if not os.path.exists(os.path.join(self.target_dir, 'user.csv')):
-			await self.update_user_csv()
+		"""Schedules the update task daily at 05:15+ UTC with a random offset."""
+		radioid_files = ['dmrid.dat', 'dstar_repeaters.json', 'nxdn.csv', 'nxdn_repeaters.json', 'p25_repeaters.json', 'rptrs.json', 'users.json']
+		missing_radioid = any(not os.path.exists(os.path.join(self.target_dir, f)) for f in radioid_files)
+		if not os.path.exists(os.path.join(self.target_dir, 'user.csv')) or missing_radioid:
+			await self.update_user_db()
 		while not stop_event.is_set():
 			now = dt.datetime.now(dt.timezone.utc)
-			target_time = now.replace(hour=6, minute=random.randint(0, 59), second=random.randint(0, 59), microsecond=0)
+			target_time = now.replace(hour=5, minute=random.randint(15, 59), second=random.randint(0, 59), microsecond=0)
 			if now >= target_time:
 				target_time += dt.timedelta(days=1)
 			wait_seconds = (target_time - now).total_seconds()
@@ -525,16 +544,16 @@ class DataUpdater:
 			try:
 				await asyncio.wait_for(stop_event.wait(), timeout=wait_seconds)
 			except asyncio.TimeoutError:
-				await self.update_user_csv()
+				await self.update_user_db()
 
 
 class UserManager:
-	"""Manages loading and caching of user data from user.csv and DMRIds.dat."""
+	"""Manages loading and caching of user data from user.csv and dmrid.dat."""
 
 	def __init__(self, user_csv_path='/usr/local/etc/user.csv', dmr_ids_path='/usr/local/etc/DMRIds.dat'):
 		"""Initializes the UserManager."""
 		self._user_csv_path = user_csv_path
-		self._dmr_ids_path = dmr_ids_path or '.temp/DMRids.dat'
+		self._dmr_ids_path = dmr_ids_path or '.temp/dmrid.dat'
 		self._temp_path = '.temp/user.csv'
 		self._cache = {'mtime_csv': 0, 'mtime_dat': 0, 'user_map': {}}
 
