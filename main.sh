@@ -16,7 +16,7 @@ cd "$(dirname "$0")"
 
 # --- Configuration and Constants ---
 LOG_FILE="/var/log/MMDVM-LastHeard.log"
-REQUIRED_SPACE_MB=100
+REQUIRED_SPACE_MB=250
 RESTART_DELAY=5
 MAX_DELAY=300
 MAX_RETRIES=10
