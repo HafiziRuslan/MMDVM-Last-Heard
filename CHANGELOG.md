@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-25T12:47:20+08:00)
+## [beta7] - (2026-03-26T02:51:50+08:00)
 
-- 21 commit(s) contributed to the release.
+- 31 commit(s) contributed to the release.
 - 5 day(s) passed between the first and last commit.
 - 5 day(s) passed between releases.
 
@@ -33,6 +33,7 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation in beta7
 
+- [c733827](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c733827c9cca9ab74015c26ae353a2239009aedd) docs: add sponsor badges and mirrors section *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-26T02:51:50+08:00*
 - [c6ee6ab](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c6ee6aba1f0ea26fbbe47c1d37fbcf9e2d64b61b) docs(license): update project to GNU GPL v3 license *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-24T20:16:42+08:00*
 
 ### 🎨 Styling in beta7
@@ -41,6 +42,12 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
+- [017993b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/017993b345a61329ab11452bda3a2d4d8e8489bf) ci(codeql): remove advance codeql config *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T13:21:24+08:00*
+- [bfad176](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bfad1768a5176751bf92eccce8bade2ac9a5795c) ci(codeql): set checkout to use main branch *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T13:04:48+08:00*
+- [2859c6a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2859c6a0de9feed51b057f247c95a7b219ec1a4a) chore(deps): bump github/codeql-action from 3 to 4 *by [@dependabot[bot]](https://github.com/dependabot[bot]) on 2026-03-25T12:52:52+08:00*
+- [c6d2e99](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c6d2e994bc5b3978b549f64af4001e4b7cb9f6e7) chore(deps): bump actions/checkout from 4 to 6 *by [@dependabot[bot]](https://github.com/dependabot[bot]) on 2026-03-25T12:52:46+08:00*
+- [128a99a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/128a99a9ab71608cc4e149eba2f58ff34d83d0ef) chore(deps): bump actions/github-script from 7 to 8 *by [@dependabot[bot]](https://github.com/dependabot[bot]) on 2026-03-25T12:52:41+08:00*
+- [0884a23](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/0884a2321765ccb37b07d54ad0693f385d7417d3) chore(config): add wildcard patterns to dependabot updates *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T12:51:35+08:00*
 - [939411f](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/939411f71a2e8f5eb8586c338578485b4f878c92) build(sbom): update SBOM with new serial number and uv version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T12:47:20+08:00*
 - [b6ddc67](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b6ddc674b439858343881b44d203eee8185bc0a4) build(deps): update anyio from 4.12.1 to 4.13.0 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T10:38:32+08:00*
 - [dff7c5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/dff7c5e350edea0f9808bb76cb89c902a31139e4) ci(telegram): update telegram workflow name and message format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T22:52:24+08:00*
@@ -523,4 +530,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-25T12:48:35.261109039+08:00
+generated using git-cliff at 2026-03-26T02:52:43.033646636+08:00
