@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-25T06:58:41+08:00)
+## [beta7] - (2026-03-25T12:47:20+08:00)
 
-- 18 commit(s) contributed to the release.
-- 4 day(s) passed between the first and last commit.
-- 4 day(s) passed between releases.
+- 21 commit(s) contributed to the release.
+- 5 day(s) passed between the first and last commit.
+- 5 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
+- [a7acda7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a7acda7a8e4fa449b867dff4e3f143e32ac2508d) feat(.github): add CodeQL analysis and update Dependabot config *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T10:38:06+08:00*
 - [bd4db52](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bd4db528505c95fd2a09602787eef501059ee493) feat(database): add JSON file processing support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T03:14:05+08:00*
 - [ee39607](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ee396076a0faccd10bce65ce62d8c3e2dd0286b9) feat(DMRGateway): add XLX Talkgroup support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T15:40:29+08:00*
 - [744ed5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/744ed5eea4c2dabe1c7ef6dd546910cbda4aab61) feat(user): clean user csv during update *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T14:59:24+08:00*
@@ -40,6 +41,8 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
+- [939411f](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/939411f71a2e8f5eb8586c338578485b4f878c92) build(sbom): update SBOM with new serial number and uv version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T12:47:20+08:00*
+- [b6ddc67](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b6ddc674b439858343881b44d203eee8185bc0a4) build(deps): update anyio from 4.12.1 to 4.13.0 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T10:38:32+08:00*
 - [dff7c5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/dff7c5e350edea0f9808bb76cb89c902a31139e4) ci(telegram): update telegram workflow name and message format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T22:52:24+08:00*
 - [52691a8](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/52691a839ba1d5271c95f842f223de98cb5e60c9) ci(workflow): update telegram message link format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T21:03:27+08:00*
 - [22af4f2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/22af4f2cdfa89c3f44db220a98a092fd27f9cf3d) chore(version): bump version to 0.1b7 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T11:39:03+08:00*
@@ -520,4 +523,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-25T06:59:24.773556238+08:00
+generated using git-cliff at 2026-03-25T12:48:35.261109039+08:00
