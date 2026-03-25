@@ -1,110 +1,116 @@
 # MMDVM Last Heard Bot
 
+<div style="text-align: center;">
+
+![MMDVM Last Heard Logo](misc/mmdvm-lastheard_16x9.png)
+
 ![Ko-Fi sponsors](https://img.shields.io/badge/kofi-tip-FF6433?style=for-the-badge&logo=kofi&logoColor=FF6433&logoSize=auto&link=https%3A%2F%2Fko-fi.com%2Fhafiziruslan)
 ![Buy me a Coffee sponsors](https://img.shields.io/badge/buymeacoffee-tip-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=FFDD00&logoSize=auto&link=https%3A%2F%2Fwww.buymeacoffee.com%2Fhafiziruslan)
 ![PayPal sponsors](https://img.shields.io/badge/paypal-tip-002991?style=for-the-badge&logo=paypal&logoColor=002991&logoSize=auto&link=https%3A%2F%2Fpaypal.me%2FHafiziRuslan)
 ![Stripe sponsors](https://img.shields.io/badge/stripe-tip-635BFF?style=for-the-badge&logo=stripe&logoColor=635BFF&logoSize=auto&link=https%3A%2F%2Fdonate.stripe.com%2F5kA9CJg7S1J8bx64gg)
-
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/hafiziruslan?style=for-the-badge&logo=githubsponsors&logoColor=EA4AAA&logoSize=auto&color=EA4AAA&link=https%3A%2F%2Fgithub.com%2Fsponsors%2FHafiziRuslan)
 ![Open Collective sponsors](https://img.shields.io/opencollective/sponsors/hafiziruslan?style=for-the-badge&logo=opencollective&logoColor=7FADF2&logoSize=auto&link=https%3A%2F%2Fopencollective.com%2Fhafiziruslan)
 ![thanks.dev sponsors](https://img.shields.io/badge/sponsors-thanks.dev-black?style=for-the-badge&logoSize=auto&link=https%3A%2F%2Fthanks.dev%2F%2Fgh%2Fhafiziruslan)
 
-This project is a Python-based Telegram bot that monitors MMDVM logs and sends updates to a specified Telegram chat. It uses the `python-telegram-bot` library to interact with Telegram and parses MMDVM log files to extract relevant information.
+</div>
 
-Mirrors (daily update):
+<table style="margin-left: auto; margin-right: auto;">
+  <tr><th colspan="2" style="text-align: center;">Mirrors (daily update)</th></tr>
+  <tr><td style="text-align: end;">GitLab</td><td><a href="https://gitlab.com/hafiziruslan/MMDVM-LastHeard">hafiziruslan/MMDVM-LastHeard</a></td></tr>
+  <tr><td style="text-align: end;">Codeberg</td><td><a href="https://codeberg.org/hafiziruslan/MMDVM-LastHeard">hafiziruslan/MMDVM-LastHeard</a></td></tr>
+  <tr><td style="text-align: end;">Gitea</td><td><a href="https://gitea.com/HafiziRuslan/MMDVM-LastHeard">HafiziRuslan/MMDVM-LastHeard</a></td></tr>
+</table>
 
-- GitLab: <https://gitlab.com/hafiziruslan/MMDVM-LastHeard>
-- Codeberg: <https://codeberg.org/hafiziruslan/MMDVM-LastHeard>
-- Gitea: <https://gitea.com/HafiziRuslan/MMDVM-LastHeard>
+## About
+
+**MMDVM Last Heard Bot** is a Python-based utility designed for amateur radio operators to monitor their digital voice activity remotely. The bot tracks MMDVMHost log files in real-time, parses transmission data from various digital modes (DMR, D-STAR, YSF), and sends formatted "Last Heard" notifications to a specified Telegram chat. This allows hotspot and repeater owners to stay updated on local activity without needing to access the physical dashboard.
 
 ## Features
 
-- Monitors MMDVM log files for new entries.
-- Parses log entries and formats them into readable messages.
-- Sends updates to a Telegram chat using a bot.
-- Configurable via environment variables.
-- Compatible Digital Voice log:
-  1. Digital Mobile Radio (*DMR*)
-  2. Digital Smart Technologies for Amateur Radio (*D-STAR*)
-  3. Yaesu System Fusion (*YSF/C4FM*)
-  4. ~~Next Generation Digital Narrowband (*NXDN*)~~
-  5. ~~Project 25 (*P25/APCO-25*)~~
-- Compatible Digital Data log:
-  1. ~~Digital Mobile Radio (*DMR*)~~
-  2. ~~Digital Smart Technologies for Amateur Radio (*D-STAR*)~~
-  3. Yaesu System Fusion (*YSF/C4FM*)
-  4. ~~Next Generation Digital Narrowband (*NXDN*)~~
-  5. ~~Project 25 (*P25/APCO-25*)~~
+### Current Features
+
+- **Real-time Monitoring**: Automatically tracks MMDVMHost log files for new activity.
+- **Multi-Mode Support**: Parses and formats transmission data for:
+  - **Digital Voice**: DMR, D-STAR, and YSF (C4FM).
+  - **Digital Data**: YSF (C4FM).
+- **Telegram Integration**: Sends instant notifications to a specific Telegram chat or group.
+- **Easy Configuration**: Managed via simple environment variables in a `.env` file.
+- **Automated Maintenance**: The `main.sh` script handles system dependencies, repository updates, and virtual environment management.
+- **Lightweight**: Uses `uv` for fast and efficient Python environment handling.
+
+### Upcoming Features
+
+- **Extended Mode Support**: Adding compatibility for NXDN and P25 (Voice & Data).
+- **Expanded Data Logging**: Support for DMR, D-STAR, NXDN, and P25 digital data.
+- **Multi-Platform Notifications**: Support for Discord webhooks and Matrix bots.
+- **Filtering Options**: Filter notifications by specific TalkGroups or Callsigns.
 
 ## Prerequisites
 
-- Python 3.13 or higher
-- A Telegram bot token (create one using [BotFather](https://core.telegram.org/bots#botfather)).
-- A Telegram chat ID where the bot will send messages.
-- Access to the MMDVMHost log files on your MMDVM system (Pi-Star/WPSD/etc).
+- **Linux OS**: A system running Pi-Star, WPSD, or a standard Debian-based distribution.
+- **Python 3.11+**: While the script manages environments, a base Python installation is required.
+- **Telegram Bot**:
+  - A Bot Token from [@BotFather](https://t.me/botfather).
+  - Your Telegram Chat ID (or Group ID).
+- **Log Access**: Read permissions for MMDVMHost log files (usually in `/var/log/pi-star/` or `/var/log/mmdvm/`).
 
-## 🛠️ Installation
+### Dependencies
 
-```bash
-git clone https://github.com/HafiziRuslan/MMDVM-LastHeard.git MMDVM-LastHeard
-cd MMDVM-LastHeard
-```
+The following system packages are required for the bot and its environment manager to function correctly:
 
-## ⚙️ Configuration
+- `curl`: Required for downloading `uv` and other setup components.
+- `git`: Required for repository management and automatic updates.
+- `gcc` & `python3-dev`: Required for compiling certain Python dependencies.
+- `uv`: Fast Python package and environment manager.
+- `lsb-release`: Required for identifying the distribution during setup.
 
-Copy the file `default.env` into `.env`, and edit the configuration using your favorite editor.
+The `main.sh` script will attempt to install these automatically if they are missing.
 
-```bash
-cp default.env .env
-nano .env
-```
-
-## AutoStart
-
-Copy & Paste this line into last line (before blank line) of `/etc/crontab` or any other cron program that you're using.
-
-```bash
-@reboot pi-star cd /home/pi-star/MMDVM-LastHeard && ./main.sh 2>&1
-```
-
-change the `pi-star` username into your username
-
-## Update
-
-Manual update are **NOT REQUIRED** as it has integrated into `main.sh`.
-
-Use this command for manual update:-
-
-```bash
-git pull --autostash
-```
-
-## 🚀 Usage
-
-Run the main script with root privileges. This script automatically:
-
-- Checks for and installs system dependencies (`gcc`, `git`, `python3-dev`, `curl`).
-- Installs `uv` and sets up the Python virtual environment.
-- Updates the repository to the latest version.
-- Runs the application in a monitoring loop.
-
-```bash
-sudo ./main.sh
-```
-
-Note: to install uv using `apt`, you may use `debian.griffo.io` repository.
+Note: to install `uv` using `apt`, you may use the `debian.griffo.io` repository:
 
 ```bash
 curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | sudo gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
-
 echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null) main" | sudo tee /etc/apt/sources.list.d/debian.griffo.io.list
-
 sudo apt update && sudo apt install uv
 ```
 
-## Logging
+## 🛠️ Installation & Configuration
 
-The bot uses Python's `logging` module to log events and errors. Logs are displayed in the console for easy debugging.
+1. **Clone the repository**:
+
+   ```bash
+   git clone https://github.com/HafiziRuslan/MMDVM-LastHeard.git
+   cd MMDVM-LastHeard
+   ```
+
+2. **Setup environment variables**:
+   Copy the template and fill in your Telegram Bot token, Chat ID, and log paths.
+
+   ```bash
+   cp .env.sample .env
+   nano .env
+   ```
+
+## 🚀 Usage
+
+Run the main script with root privileges. This script automatically manages system dependencies, installs `uv`, sets up the virtual environment, and handles updates.
+
+```bash
+sudo chmod +x main.sh
+sudo ./main.sh
+```
+
+## ⏰ AutoStart
+
+To run the bot automatically on system boot, add the following entry to your `/etc/crontab` (change `pi-star` to your actual username and verify the path):
+
+```bash
+@reboot pi-star cd /home/pi-star/MMDVM-LastHeard && ./main.sh > /dev/null 2>&1
+```
+
+## 🔄 Update
+
+Manual updates are **not required**. The `main.sh` script checks for and applies updates from the repository automatically upon execution.
 
 ### Source
 
