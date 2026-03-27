@@ -474,7 +474,7 @@ class DataUpdater:
 					'users.json',
 				]:
 					try:
-						rid_url = f'https://database.radioid.net/static/{rid_file}'
+						rid_url = f'https://radioid.net/static/{rid_file}'
 						logging.info('Fetching %s from radioid.net', rid_file)
 						rid_resp = await client.get(rid_url, follow_redirects=True)
 						rid_resp.raise_for_status()
