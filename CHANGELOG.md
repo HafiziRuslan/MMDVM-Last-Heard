@@ -2,14 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-27T10:52:17+08:00)
+## [beta7] - (2026-03-27T11:14:12+08:00)
 
-- 32 commit(s) contributed to the release.
+- 33 commit(s) contributed to the release.
 - 7 day(s) passed between the first and last commit.
 - 7 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
+- [2782404](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/27824048eb2f847c84d3d4704524643d7ff71274) feat(db): enhance database update logic and validation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-27T11:14:12+08:00*
 - [a7acda7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a7acda7a8e4fa449b867dff4e3f143e32ac2508d) feat(.github): add CodeQL analysis and update Dependabot config *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T10:38:06+08:00*
 - [bd4db52](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bd4db528505c95fd2a09602787eef501059ee493) feat(database): add JSON file processing support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T03:14:05+08:00*
 - [ee39607](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ee396076a0faccd10bce65ce62d8c3e2dd0286b9) feat(DMRGateway): add XLX Talkgroup support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-20T15:40:29+08:00*
@@ -531,4 +532,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-27T10:53:08.922367857+08:00
+generated using git-cliff at 2026-03-27T11:15:03.938184500+08:00
