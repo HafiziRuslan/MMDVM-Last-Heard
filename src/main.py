@@ -492,7 +492,7 @@ class DataUpdater:
 				if not match:
 					logging.error('Could not find user database at %s', self.url)
 					return
-				zip_url = f'{self.url.rsplit("/", 1)}/{match.group("url")}'
+				zip_url = f'{self.url.rsplit("/", 1)[0]}/{match.group("url")}'
 				logging.info('Found zip link: %s. Extracting...', zip_url)
 				response = await client.get(zip_url, follow_redirects=True)
 				response.raise_for_status()
