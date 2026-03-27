@@ -504,8 +504,8 @@ class DataUpdater:
 							z.extract(file_info, self.target_dir)
 							self._process_file(file_path)
 							return
-				logging.info('Successfully updated user databases in %s', self.target_dir)
-				await self.telegram_bot.queue_message('✔️ User databases update <b>success</b>!')
+					logging.info('Successfully updated user databases in %s', self.target_dir)
+					await self.telegram_bot.queue_message('✔️ User databases update <b>success</b>!')
 		except Exception as e:
 			logging.error('Failed to update user databases: %s', e)
 			await self.telegram_bot.queue_message(f'❌ User databases update <b>failed</b>.\nError: {e}')
@@ -540,13 +540,29 @@ class DataUpdater:
 
 	async def run(self, stop_event: asyncio.Event):
 		"""Schedules the update task daily at 05:15+ UTC with a random offset."""
-		radioid_files = ['dmrid.dat', 'dstar_repeaters.json', 'nxdn.csv', 'nxdn_repeaters.json', 'p25_repeaters.json', 'rptrs.json', 'users.json']
-		missing_radioid = any(not os.path.exists(os.path.join(self.target_dir, f)) for f in radioid_files)
-		if not os.path.exists(os.path.join(self.target_dir, 'user.csv')) or missing_radioid:
+		db_files = [
+			'dmrid.dat',
+			'dstar_repeaters.json',
+			'nxdn.csv',
+			'nxdn_repeaters.json',
+			'p25_repeaters.json',
+			'rptrs.json',
+			'user.csv',
+			'users.json',
+		]
+
+		def is_outdated(file_path: str) -> bool:
+			if not os.path.exists(file_path):
+				return True
+			mtime = dt.datetime.fromtimestamp(os.path.getmtime(file_path), dt.timezone.utc)
+			return (dt.datetime.now(dt.timezone.utc) - mtime) > dt.timedelta(days=1)
+
+		needs_update = any(is_outdated(os.path.join(self.target_dir, f)) for f in db_files)
+		if needs_update:
 			await self.update_user_db()
 		while not stop_event.is_set():
 			now = dt.datetime.now(dt.timezone.utc)
-			target_time = now.replace(hour=5, minute=random.randint(15, 59), second=random.randint(0, 59), microsecond=0)
+			target_time = now.replace(hour=5, minute=random.randint(15, 45), second=random.randint(0, 59), microsecond=0)
 			if now >= target_time:
 				target_time += dt.timedelta(days=1)
 			wait_seconds = (target_time - now).total_seconds()
