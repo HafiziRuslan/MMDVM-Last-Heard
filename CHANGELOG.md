@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-27T20:42:52+08:00)
+## [beta7] - (2026-03-28T06:20:32+08:00)
 
-- 34 commit(s) contributed to the release.
+- 35 commit(s) contributed to the release.
 - 7 day(s) passed between the first and last commit.
 - 7 day(s) passed between releases.
 
@@ -45,6 +45,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
+- [e778ef2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e778ef26c880fdd90e84f66569f6c6a91ac86f1c) build(sbom): update SBOM metadata *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-28T06:20:32+08:00*
 - [017993b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/017993b345a61329ab11452bda3a2d4d8e8489bf) ci(codeql): remove advance codeql config *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T13:21:24+08:00*
 - [bfad176](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bfad1768a5176751bf92eccce8bade2ac9a5795c) ci(codeql): set checkout to use main branch *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T13:04:48+08:00*
 - [2859c6a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2859c6a0de9feed51b057f247c95a7b219ec1a4a) chore(deps): bump github/codeql-action from 3 to 4 *by [@dependabot[bot]](https://github.com/dependabot[bot]) on 2026-03-25T12:52:52+08:00*
@@ -533,4 +534,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-27T20:43:48.161566344+08:00
+generated using git-cliff at 2026-03-28T06:21:17.606866352+08:00
