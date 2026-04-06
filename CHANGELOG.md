@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-03-28T06:20:32+08:00)
+## [beta7] - (2026-04-06T16:50:50+08:00)
 
-- 35 commit(s) contributed to the release.
-- 7 day(s) passed between the first and last commit.
-- 7 day(s) passed between releases.
+- 38 commit(s) contributed to the release.
+- 17 day(s) passed between the first and last commit.
+- 17 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta7
 
+- [974e3da](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/974e3daa253f3a51980db8e5890b7139a3e05921) docs(env): fix typo in environment variable documentation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:48:12+08:00*
 - [e90e6e0](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e90e6e0d6a3cd8d44b29339925a827cfee95918a) fix(db): update radioid.net URL for fetching static files *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-27T20:42:52+08:00*
 - [f0c0bfd](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f0c0bfdc5adfac28eaf3bff7f790b6ccd1500bf8) fix(update_user_db): correct zip URL path handling *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-27T10:52:17+08:00*
 - [f93b261](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f93b26155a842066080228a3dd387ce24a627abd) refactor(telegram): show filename prefix in telegram message *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T03:57:01+08:00*
@@ -45,6 +46,8 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
+- [932d890](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/932d890821744c93199ef5097305e91fd9fb0721) chore(sbom.json): update serial number and uv tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:50:50+08:00*
+- [026cc4a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/026cc4afee3e11168c42d91fe6936f0559d385a2) chore(metadata): adjust keywords and dependency quoting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:49:47+08:00*
 - [e778ef2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e778ef26c880fdd90e84f66569f6c6a91ac86f1c) build(sbom): update SBOM metadata *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-28T06:20:32+08:00*
 - [017993b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/017993b345a61329ab11452bda3a2d4d8e8489bf) ci(codeql): remove advance codeql config *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T13:21:24+08:00*
 - [bfad176](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bfad1768a5176751bf92eccce8bade2ac9a5795c) ci(codeql): set checkout to use main branch *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-25T13:04:48+08:00*
@@ -534,4 +537,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-03-28T06:21:17.606866352+08:00
+generated using git-cliff at 2026-04-06T16:52:33.148536652+08:00
