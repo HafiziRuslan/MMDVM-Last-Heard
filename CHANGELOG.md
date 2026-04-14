@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-04-06T16:50:50+08:00)
+## [beta7] - (2026-04-14T15:25:18+08:00)
 
-- 38 commit(s) contributed to the release.
-- 17 day(s) passed between the first and last commit.
-- 17 day(s) passed between releases.
+- 39 commit(s) contributed to the release.
+- 25 day(s) passed between the first and last commit.
+- 25 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
@@ -37,6 +37,7 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation in beta7
 
+- [2b7617e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2b7617e7a7182263ac947c12f8a76ad21e39602d) docs(sbom.json): update serial number and tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-14T15:25:18+08:00*
 - [c733827](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c733827c9cca9ab74015c26ae353a2239009aedd) docs: add sponsor badges and mirrors section *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-26T02:51:50+08:00*
 - [c6ee6ab](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/c6ee6aba1f0ea26fbbe47c1d37fbcf9e2d64b61b) docs(license): update project to GNU GPL v3 license *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-24T20:16:42+08:00*
 
@@ -537,4 +538,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-04-06T16:52:33.148536652+08:00
+generated using git-cliff at 2026-04-14T15:26:40.443842175+08:00
