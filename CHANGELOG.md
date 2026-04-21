@@ -2,11 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-04-14T15:25:18+08:00)
+## [beta7] - (2026-04-21T17:26:31+08:00)
 
-- 39 commit(s) contributed to the release.
-- 25 day(s) passed between the first and last commit.
-- 25 day(s) passed between releases.
+- 40 commit(s) contributed to the release.
+- 32 day(s) passed between the first and last commit.
+- 32 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
@@ -47,6 +47,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
+- [2aa94a3](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2aa94a3269abf614a8afaa0171db6ec053a7302f) build(sbom): update software bill of materials *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-21T17:26:31+08:00*
 - [932d890](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/932d890821744c93199ef5097305e91fd9fb0721) chore(sbom.json): update serial number and uv tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:50:50+08:00*
 - [026cc4a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/026cc4afee3e11168c42d91fe6936f0559d385a2) chore(metadata): adjust keywords and dependency quoting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:49:47+08:00*
 - [e778ef2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e778ef26c880fdd90e84f66569f6c6a91ac86f1c) build(sbom): update SBOM metadata *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-28T06:20:32+08:00*
@@ -538,4 +539,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-04-14T15:26:40.443842175+08:00
+generated using git-cliff at 2026-04-21T17:27:49.502441445+08:00
