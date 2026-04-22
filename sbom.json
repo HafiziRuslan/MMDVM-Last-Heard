@@ -2,9 +2,9 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:e6a19f91-0848-4531-a737-eec7542ac341",
+  "serialNumber": "urn:uuid:34bb271c-20f0-455e-a4cb-72b0070d1d31",
   "metadata": {
-    "timestamp": "2026-04-21T09:24:11.371857400Z",
+    "timestamp": "2026-04-22T13:33:15.920825000Z",
     "tools": [
       {
         "vendor": "Astral Software Inc.",
@@ -35,10 +35,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "certifi-3@2026.2.25",
+      "bom-ref": "certifi-3@2026.4.22",
       "name": "certifi",
-      "version": "2026.2.25",
-      "purl": "pkg:pypi/certifi@2026.2.25"
+      "version": "2026.4.22",
+      "purl": "pkg:pypi/certifi@2026.4.22"
     },
     {
       "type": "library",
@@ -70,10 +70,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "idna-8@3.11",
+      "bom-ref": "idna-8@3.12",
       "name": "idna",
-      "version": "3.11",
-      "purl": "pkg:pypi/idna@3.11"
+      "version": "3.12",
+      "purl": "pkg:pypi/idna@3.12"
     },
     {
       "type": "library",
@@ -101,11 +101,11 @@
     {
       "ref": "anyio-2@4.13.0",
       "dependsOn": [
-        "idna-8@3.11"
+        "idna-8@3.12"
       ]
     },
     {
-      "ref": "certifi-3@2026.2.25",
+      "ref": "certifi-3@2026.4.22",
       "dependsOn": []
     },
     {
@@ -115,7 +115,7 @@
     {
       "ref": "httpcore-5@1.0.9",
       "dependsOn": [
-        "certifi-3@2026.2.25",
+        "certifi-3@2026.4.22",
         "h11-4@0.16.0"
       ]
     },
@@ -123,9 +123,9 @@
       "ref": "httpx-6@0.28.1",
       "dependsOn": [
         "anyio-2@4.13.0",
-        "certifi-3@2026.2.25",
+        "certifi-3@2026.4.22",
         "httpcore-5@1.0.9",
-        "idna-8@3.11"
+        "idna-8@3.12"
       ]
     },
     {
@@ -133,7 +133,7 @@
       "dependsOn": []
     },
     {
-      "ref": "idna-8@3.11",
+      "ref": "idna-8@3.12",
       "dependsOn": []
     },
     {
