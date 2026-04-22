@@ -1,6 +1,6 @@
 [project]
 name = 'MMDVM-LastHeard'
-version = '0.1b7'
+version = '0.1b8'
 description = 'Telegram bot to monitor the last transmissions of a MMDVM gateway'
 keywords = ['amateur-radio', 'mmdvm', 'digital-voice', 'pi-star', 'wpsd', 'dvswitch']
 readme = 'README.md'
