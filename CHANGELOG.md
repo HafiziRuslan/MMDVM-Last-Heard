@@ -2,11 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta7] - (2026-04-21T17:26:31+08:00)
+## [beta8] - (2026-04-26T23:56:53+08:00)
 
-- 40 commit(s) contributed to the release.
-- 32 day(s) passed between the first and last commit.
-- 32 day(s) passed between releases.
+- 7 commit(s) contributed to the release.
+- 4 day(s) passed between releases.
+
+### 🚜 Refactor in beta8
+
+- [a4c0966](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a4c0966dbc8c324e8eda8a4748a99ba49d80a4a0) refactor: remove unused commit timespan stats from cliff.toml *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:57:50+08:00*
+- [e6e7cc7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e6e7cc7e163298ad203c88d5a2f8daa5d000b7ad) refactor(cliff): remove unnecessary commits_timespan condition checks *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:54:03+08:00*
+
+### 📚 Documentation in beta8
+
+- [b325a3a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b325a3a1ac6d0d82185901d87601d1379b3026c3) docs(env): Add Telegram configuration and clean up duplicated environment variables *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:56:27+08:00*
+- [2ee4c5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2ee4c5e3f2fa4e4d077498e85d7b81b2e7f9fbb6) docs: optimize commit timespan condition *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:41:17+08:00*
+
+### ⚙️ Miscellaneous Tasks in beta8
+
+- [cf2079d](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/cf2079d55efc973c025b6aead8fa43ae643ce00d) chore(config): update idna dependency to version 3.13 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-26T23:56:53+08:00*
+- [1b8dc34](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b8dc34f060e3081c5f189360896afa59cd1f234) build: bump version to 0.1b8 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:47:56+08:00*
+- [0f4a957](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/0f4a957f4d9b61735226397871f446505a3004c8) chore(release): adjust release notes condition *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:43:39+08:00*
+
+---
+
+## [beta7] - (2026-04-22T21:35:01+08:00)
+
+- 42 commit(s) contributed to the release.
+- 33 day(s) passed between releases.
 
 ### 🚀 Features in beta7
 
@@ -19,6 +41,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta7
 
+- [43deb67](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/43deb6763e438f5cd483cbf4f871b789b744095b) chore(deps): bump certifi and idna *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:35:01+08:00*
 - [974e3da](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/974e3daa253f3a51980db8e5890b7139a3e05921) docs(env): fix typo in environment variable documentation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:48:12+08:00*
 - [e90e6e0](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e90e6e0d6a3cd8d44b29339925a827cfee95918a) fix(db): update radioid.net URL for fetching static files *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-27T20:42:52+08:00*
 - [f0c0bfd](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/f0c0bfdc5adfac28eaf3bff7f790b6ccd1500bf8) fix(update_user_db): correct zip URL path handling *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-03-27T10:52:17+08:00*
@@ -47,6 +70,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta7
 
+- [90ee647](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/90ee6474caacf2c8a01f5649974f220bdf2d3589) chore(cliff): tweak time span condition *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:31:18+08:00*
 - [2aa94a3](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2aa94a3269abf614a8afaa0171db6ec053a7302f) build(sbom): update software bill of materials *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-21T17:26:31+08:00*
 - [932d890](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/932d890821744c93199ef5097305e91fd9fb0721) chore(sbom.json): update serial number and uv tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:50:50+08:00*
 - [026cc4a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/026cc4afee3e11168c42d91fe6936f0559d385a2) chore(metadata): adjust keywords and dependency quoting *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-06T16:49:47+08:00*
@@ -68,7 +92,6 @@ All notable changes to this project will be documented in this file.
 ## [beta6] - (2026-03-20T09:52:35+08:00)
 
 - 53 commit(s) contributed to the release.
-- 11 day(s) passed between the first and last commit.
 - 11 day(s) passed between releases.
 
 ### 🚀 Features in beta6
@@ -153,7 +176,6 @@ All notable changes to this project will be documented in this file.
 ## [beta5] - (2026-03-09T19:50:56+08:00)
 
 - 44 commit(s) contributed to the release.
-- 12 day(s) passed between the first and last commit.
 - 13 day(s) passed between releases.
 
 ### 🚀 Features in beta5
@@ -226,7 +248,6 @@ All notable changes to this project will be documented in this file.
 ## [beta4] - (2026-02-25T05:33:44+08:00)
 
 - 49 commit(s) contributed to the release.
-- 35 day(s) passed between the first and last commit.
 - 35 day(s) passed between releases.
 
 ### 🚀 Features in beta4
@@ -288,7 +309,6 @@ All notable changes to this project will be documented in this file.
 ## [beta3] - (2026-01-20T09:06:34+08:00)
 
 - 30 commit(s) contributed to the release.
-- 27 day(s) passed between the first and last commit.
 - 27 day(s) passed between releases.
 
 ### 🚀 Features in beta3
@@ -349,7 +369,6 @@ All notable changes to this project will be documented in this file.
 ## [beta] - (2025-12-24T15:26:30+08:00)
 
 - 169 commit(s) contributed to the release.
-- 232 day(s) passed between the first and last commit.
 
 ### 🚀 Features in beta
 
@@ -539,4 +558,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-04-21T17:27:49.502441445+08:00
+generated using git-cliff at 2026-04-26T23:57:50.055512151+08:00
