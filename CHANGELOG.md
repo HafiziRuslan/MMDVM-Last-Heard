@@ -2,10 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta8] - (2026-04-26T23:56:53+08:00)
+## [beta8] - (2026-04-28T18:02:33+08:00)
 
-- 7 commit(s) contributed to the release.
-- 4 day(s) passed between releases.
+- 8 commit(s) contributed to the release.
+- 6 day(s) passed between releases.
 
 ### 🚜 Refactor in beta8
 
@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta8
 
+- [af19e2e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/af19e2ea6e0f82516f80d2261811ff81de81ecee) chore(sbom): update serial number, timestamp, and tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-28T18:02:33+08:00*
 - [cf2079d](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/cf2079d55efc973c025b6aead8fa43ae643ce00d) chore(config): update idna dependency to version 3.13 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-26T23:56:53+08:00*
 - [1b8dc34](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b8dc34f060e3081c5f189360896afa59cd1f234) build: bump version to 0.1b8 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:47:56+08:00*
 - [0f4a957](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/0f4a957f4d9b61735226397871f446505a3004c8) chore(release): adjust release notes condition *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:43:39+08:00*
@@ -558,4 +559,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-04-26T23:57:50.055512151+08:00
+generated using git-cliff at 2026-04-28T18:03:36.941244855+08:00
