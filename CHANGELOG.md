@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta8] - (2026-05-06T13:46:12+08:00)
+## [beta8] - (2026-05-07T06:20:35+08:00)
 
-- 10 commit(s) contributed to the release.
+- 13 commit(s) contributed to the release.
 - 14 day(s) passed between releases.
 
 ### 🚜 Refactor in beta8
@@ -23,7 +23,9 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta8
 
+- [15a1303](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/15a13036c0f3dfa44bf14e4727b6cb2df162cfc4) chore(sbom): update serial number and timestamp *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-07T06:20:35+08:00*
 - [ff80dd9](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ff80dd90dd6169052e2523243dd346251b5ad1b1) build(sbom): update SBOM metadata and tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-06T01:34:25+08:00*
+- [3cc76ad](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/3cc76ad22292fe8b3bb47ed6a1496fdf590dbb0d) chore(deps): bump actions/github-script from 8 to 9 *by [@dependabot[bot]](https://github.com/dependabot[bot]) on 2026-05-01T01:10:36+08:00*
 - [af19e2e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/af19e2ea6e0f82516f80d2261811ff81de81ecee) chore(sbom): update serial number, timestamp, and tool version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-28T18:02:33+08:00*
 - [cf2079d](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/cf2079d55efc973c025b6aead8fa43ae643ce00d) chore(config): update idna dependency to version 3.13 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-26T23:56:53+08:00*
 - [1b8dc34](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/1b8dc34f060e3081c5f189360896afa59cd1f234) build: bump version to 0.1b8 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:47:56+08:00*
@@ -564,4 +566,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-06T13:47:04.617668610+08:00
+generated using git-cliff at 2026-05-07T06:21:25.893879887+08:00
