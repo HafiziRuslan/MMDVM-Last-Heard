@@ -2,10 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta8] - (2026-05-06T01:34:25+08:00)
+## [beta8] - (2026-05-06T13:46:12+08:00)
 
-- 9 commit(s) contributed to the release.
-- 13 day(s) passed between releases.
+- 10 commit(s) contributed to the release.
+- 14 day(s) passed between releases.
 
 ### 🚜 Refactor in beta8
 
@@ -16,6 +16,10 @@ All notable changes to this project will be documented in this file.
 
 - [b325a3a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b325a3a1ac6d0d82185901d87601d1379b3026c3) docs(env): Add Telegram configuration and clean up duplicated environment variables *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:56:27+08:00*
 - [2ee4c5e](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2ee4c5e3f2fa4e4d077498e85d7b81b2e7f9fbb6) docs: optimize commit timespan condition *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:41:17+08:00*
+
+### 🧪 Testing in beta8
+
+- [006d2ed](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/006d2eddf31730599c96730c8cc29bdac200b4ee) chore(bom): bump serialNumber, timestamp, uv *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-06T13:46:12+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta8
 
@@ -560,4 +564,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-06T01:35:29.495207001+08:00
+generated using git-cliff at 2026-05-06T13:47:04.617668610+08:00
