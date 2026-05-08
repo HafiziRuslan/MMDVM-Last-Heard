@@ -686,7 +686,7 @@ class LogFileReader:
 
 	def _find_log_config(self) -> tuple[str, str]:
 		"""Reads the MMDVMHost configuration to find the log directory and file root."""
-		conf_files = ['/etc/mmdvmhost', '/etc/MMDVM.ini', '/opt/MMDVMHost/MMDVM.ini']
+		conf_files = ['/etc/mmdvmhost', '/etc/MMDVM.ini', '/opt/MMDVMHost/MMDVM.ini', '/opt/MMDVM_Bridge/MMDVM_Bridge.ini']
 		log_dir = '/var/log/pi-star'
 		file_root = 'MMDVM'
 		for conf_file in conf_files:
@@ -817,6 +817,11 @@ class MMDVMLogLine:
 		rf'^M: {_TIMESTAMP} YSF, received network data '
 		rf'{_CALLSIGN}\s+{_YSF_DESTINATION} at (?P<location>\S+)'
 	)
+	DVS_PATTERN = re.compile(
+		rf'^M: {_TIMESTAMP} (?P<mode>DVS(?:witch)?), received {_SOURCE} end of transmission '
+		rf'{_CALLSIGN} {_DMR_DESTINATION}'
+		rf'(?:, {_DURATION}, {_PACKET_LOSS}, {_BER})'
+	)
 
 	@classmethod
 	def from_logline(cls, logline: str, data_manager: 'DataManager') -> 'MMDVMLogLine':
@@ -828,6 +833,7 @@ class MMDVMLogLine:
 			cls._parse_dstar_watchdog,
 			cls._parse_ysf,
 			cls._parse_ysf_network_data,
+			cls._parse_dvs,
 		]
 		for parser in parsers:
 			instance = parser(logline)
@@ -944,6 +950,24 @@ class MMDVMLogLine:
 			obj.callsign = match.group('callsign').strip()
 			obj.destination = f'DG-ID {match.group("dgid")} at {match.group("location").strip()}'
 			obj._set_url(obj.callsign.split('-')[0].strip())
+			return obj
+		return None
+
+	@classmethod
+	def _parse_dvs(cls, logline: str) -> Optional['MMDVMLogLine']:
+		"""Parses a DVS transmission log line."""
+		match = cls.DVS_PATTERN.match(logline)
+		if match:
+			obj = cls()
+			obj.mode = match.group('mode')
+			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
+			obj.is_network = match.group('source') == 'network'
+			obj.callsign = match.group('callsign').strip()
+			obj.destination = match.group('destination').strip()
+			obj.duration = float(match.group('duration'))
+			obj.packet_loss = int(match.group('packet_loss'))
+			obj.ber = float(match.group('ber'))
+			obj._set_url(obj.callsign)
 			return obj
 		return None
 
@@ -1100,19 +1124,23 @@ class MMDVMLogLine:
 
 	def get_telegram_message(self) -> str:
 		"""Returns a formatted message for Telegram with emojis."""
+		display_mode = self.mode
 		if self.mode == 'DMR':
 			mode_icon = '📻'
 		elif self.mode == 'D-Star':
 			mode_icon = '⭐'
 		elif self.mode == 'YSF':
 			mode_icon = '📡'
+		elif self.mode in ('DVS', 'DVSwitch'):
+			mode_icon = '📱'
+			display_mode = 'DVSwitch'
 		elif self.mode == 'DMR-D':
 			mode_icon = '📟'
 		elif self.mode == 'YSF-D':
 			mode_icon = '📟'
 		else:
 			mode_icon = '📶'
-		message = f'{mode_icon} Mode: <b>{self.mode}</b>'
+		message = f'{mode_icon} Mode: <b>{display_mode}</b>'
 		if self.mode == 'DMR' or self.mode == 'DMR-D':
 			message += f' (Slot {self.slot})'
 		time = (self.timestamp.replace(tzinfo=dt.timezone.utc) or dt.datetime.now()).astimezone().isoformat(timespec='milliseconds')
