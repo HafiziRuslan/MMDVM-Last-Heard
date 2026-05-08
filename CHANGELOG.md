@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta8] - (2026-05-07T06:20:35+08:00)
+## [beta8] - (2026-05-09T04:28:11+08:00)
 
-- 13 commit(s) contributed to the release.
-- 14 day(s) passed between releases.
+- 14 commit(s) contributed to the release.
+- 16 day(s) passed between releases.
+
+### 🚀 Features in beta8
+
+- [11b7033](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/11b70331c816563cced936dd56437df1d130eb8f) chore(config): add MMDVM_Bridge config file support *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-09T04:28:11+08:00*
 
 ### 🚜 Refactor in beta8
 
@@ -566,4 +570,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-07T06:21:25.893879887+08:00
+generated using git-cliff at 2026-05-09T04:29:54.179435911+08:00
