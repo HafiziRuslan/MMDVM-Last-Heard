@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta8] - (2026-05-13T01:15:19+08:00)
+## [beta8] - (2026-05-13T01:53:51+08:00)
 
-- 15 commit(s) contributed to the release.
+- 16 commit(s) contributed to the release.
 - 20 day(s) passed between releases.
 
 ### 🚀 Features in beta8
@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta8
 
+- [bd2189b](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/bd2189b157fe3133ba60f7fe36f50add0957bd56) refactor(core): improve memory usage and caching *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T01:53:51+08:00*
 - [a4c0966](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a4c0966dbc8c324e8eda8a4748a99ba49d80a4a0) refactor: remove unused commit timespan stats from cliff.toml *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:57:50+08:00*
 - [e6e7cc7](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/e6e7cc7e163298ad203c88d5a2f8daa5d000b7ad) refactor(cliff): remove unnecessary commits_timespan condition checks *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-04-22T21:54:03+08:00*
 
@@ -571,4 +572,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T01:16:34.697809950+08:00
+generated using git-cliff at 2026-05-13T01:54:47.716587159+08:00
