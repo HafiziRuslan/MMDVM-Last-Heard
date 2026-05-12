@@ -2,10 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta8] - (2026-05-09T04:28:11+08:00)
+## [beta8] - (2026-05-13T01:15:19+08:00)
 
-- 14 commit(s) contributed to the release.
-- 16 day(s) passed between releases.
+- 15 commit(s) contributed to the release.
+- 20 day(s) passed between releases.
 
 ### 🚀 Features in beta8
 
@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🧪 Testing in beta8
 
+- [1937983](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/19379832a0d740ad3e3c98ed1fa3d2d22b361bb7) build(deps): update dependencies to latest versions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T01:15:19+08:00*
 - [006d2ed](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/006d2eddf31730599c96730c8cc29bdac200b4ee) chore(bom): bump serialNumber, timestamp, uv *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-06T13:46:12+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta8
@@ -570,4 +571,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-09T04:29:54.179435911+08:00
+generated using git-cliff at 2026-05-13T01:16:34.697809950+08:00
