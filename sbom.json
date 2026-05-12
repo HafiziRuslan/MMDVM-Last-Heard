@@ -2,14 +2,14 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:7b11bf3e-0148-4f31-8486-4e27a90b03d4",
+  "serialNumber": "urn:uuid:bc29306c-7249-42fa-bcf2-c724226df184",
   "metadata": {
-    "timestamp": "2026-05-06T22:15:33.333579500Z",
+    "timestamp": "2026-05-12T17:14:19.701417200Z",
     "tools": [
       {
         "vendor": "Astral Software Inc.",
         "name": "uv",
-        "version": "0.11.11"
+        "version": "0.11.13"
       }
     ],
     "component": {
@@ -70,10 +70,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "idna-8@3.13",
+      "bom-ref": "idna-8@3.14",
       "name": "idna",
-      "version": "3.13",
-      "purl": "pkg:pypi/idna@3.13"
+      "version": "3.14",
+      "purl": "pkg:pypi/idna@3.14"
     },
     {
       "type": "library",
@@ -101,7 +101,7 @@
     {
       "ref": "anyio-2@4.13.0",
       "dependsOn": [
-        "idna-8@3.13"
+        "idna-8@3.14"
       ]
     },
     {
@@ -125,7 +125,7 @@
         "anyio-2@4.13.0",
         "certifi-3@2026.4.22",
         "httpcore-5@1.0.9",
-        "idna-8@3.13"
+        "idna-8@3.14"
       ]
     },
     {
@@ -133,7 +133,7 @@
       "dependsOn": []
     },
     {
-      "ref": "idna-8@3.13",
+      "ref": "idna-8@3.14",
       "dependsOn": []
     },
     {
