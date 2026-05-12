@@ -20,7 +20,6 @@ import asyncio
 import configparser
 import csv
 import datetime as dt
-import json
 import difflib
 import glob
 import logging
@@ -31,8 +30,9 @@ import re
 import shutil
 import signal
 import subprocess
+import sys
 import tomllib
-import io
+import gc
 from safezip import SafeZipFile
 from dataclasses import dataclass
 from dataclasses import field
@@ -216,7 +216,9 @@ class Formatter:
 	@staticmethod
 	@lru_cache(maxsize=128)
 	def get_country_code(country_name: str) -> str:
-		"""Returns the country code for a given country name."""
+		"""Returns the country code for a given country name, cached to save lookups."""
+		if not country_name:
+			return ''
 		code = COUNTRY_CODES.get(country_name)
 		if not code:
 			for name, c in COUNTRY_CODES.items():
@@ -331,11 +333,14 @@ class TalkgroupManager:
 		self._cache = {'mtimes': {}, 'tg_map': {}}
 
 	def get_map(self) -> dict:
-		"""Reads and caches the talkgroup list from files, reloading if files change."""
+		"""Reads and caches the talkgroup list from files, reloading if files change in-place."""
 		current_mtimes, expanded_configs, catch_all_files = self._collect_files_and_mtimes()
 		if current_mtimes == self._cache.get('mtimes') and self._cache.get('tg_map'):
 			return self._cache['tg_map']
-		tg_map = {}
+
+		tg_map = self._cache.setdefault('tg_map', {})
+		tg_map.clear()
+
 		processed_files = set()
 		for files, delimiter, id_idx, name_idx in expanded_configs:
 			for tg_file in files:
@@ -351,8 +356,8 @@ class TalkgroupManager:
 				suffix = name_part[7:] if name_part.startswith('TGList_') else name_part
 				self._read_talkgroup_file(tg_file, ';', 0, 1, tg_map, suffix=suffix, overwrite=False)
 		self._apply_special_rules(tg_map)
-		# tg_map = dict(sorted(tg_map.items(), key=lambda x: int(x[0]) if x[0].isdigit() else x[0]))
-		self._cache = {'mtimes': current_mtimes, 'tg_map': tg_map}
+		self._cache['mtimes'] = current_mtimes
+		gc.collect()
 		return tg_map
 
 	def _read_talkgroup_file(
@@ -362,6 +367,7 @@ class TalkgroupManager:
 		if not os.path.isfile(file_path):
 			return
 		try:
+			suffix = sys.intern(suffix) if suffix else ''
 			with open(file_path, 'r', encoding='UTF-8', errors='replace') as file:
 				for line in file:
 					line = line.strip()
@@ -370,10 +376,10 @@ class TalkgroupManager:
 					parts = line.split(maxsplit=1) if delimiter == ' ' else line.split(delimiter)
 					try:
 						if len(parts) > max(id_idx, name_idx):
-							tgid = parts[id_idx].strip()
+							tgid = sys.intern(parts[id_idx].strip())
 							name = parts[name_idx].strip()
 							if tgid and name:
-								display_name = f'{suffix}: {name}' if suffix else name
+								display_name = sys.intern(f'{suffix}: {name}' if suffix else name)
 								if overwrite or tgid not in tg_map:
 									tg_map[tgid] = display_name
 					except IndexError:
@@ -459,7 +465,7 @@ class DataUpdater:
 			os.makedirs(self.target_dir)
 
 	async def update_user_db(self):
-		"""Downloads, extracts, and process the user database files."""
+		"""Downloads, extracts, and process the user database files using streaming."""
 		try:
 			logging.info('Searching for user database at %s', self.url)
 			user_agent = f'{self.telegram_bot.app_name} (+{self.project_url})'
@@ -476,11 +482,12 @@ class DataUpdater:
 					try:
 						rid_url = f'https://radioid.net/static/{rid_file}'
 						logging.info('Fetching %s from radioid.net', rid_file)
-						rid_resp = await client.get(rid_url, follow_redirects=True)
-						rid_resp.raise_for_status()
 						file_path = os.path.join(self.target_dir, rid_file)
-						with open(file_path, 'wb') as f:
-							f.write(rid_resp.content)
+						async with client.stream('GET', rid_url, follow_redirects=True) as response:
+							response.raise_for_status()
+							with open(file_path, 'wb') as f:
+								async for chunk in response.aiter_bytes():
+									f.write(chunk)
 						self._process_file(file_path)
 					except Exception as rid_err:
 						logging.error('Failed to download %s from radioid.net: %s', rid_file, rid_err)
@@ -494,33 +501,30 @@ class DataUpdater:
 					return
 				zip_url = f'{self.url.rsplit("/", 1)[0]}/{match.group("url")}'
 				logging.info('Found zip link: %s. Extracting...', zip_url)
-				response = await client.get(zip_url, follow_redirects=True)
-				response.raise_for_status()
-				with SafeZipFile(io.BytesIO(response.content)) as z:
+				zip_path = os.path.join(self.target_dir, 'update.zip')
+				async with client.stream('GET', zip_url, follow_redirects=True) as response:
+					response.raise_for_status()
+					with open(zip_path, 'wb') as f:
+						async for chunk in response.aiter_bytes():
+							f.write(chunk)
+				with SafeZipFile(zip_path) as z:
 					for file_info in z.infolist():
 						if file_info.filename.lower().endswith('.csv'):
 							file_info.filename = 'user.csv'
 							file_path = os.path.join(self.target_dir, 'user.csv')
 							z.extract(file_info, self.target_dir)
 							self._process_file(file_path)
-							return
-					logging.info('Successfully updated user databases in %s', self.target_dir)
-					await self.telegram_bot.queue_message('✔️ User databases update <b>success</b>!')
+							break
+				os.remove(zip_path)
+				logging.info('Successfully updated user databases in %s', self.target_dir)
+				await self.telegram_bot.queue_message('✔️ User databases update <b>success</b>!')
 		except Exception as e:
 			logging.error('Failed to update user databases: %s', e)
 			await self.telegram_bot.queue_message(f'❌ User databases update <b>failed</b>.\nError: {e}')
 
 	def _process_file(self, file_path: str):
-		"""Processes downloaded files: prettifies JSON and filters CSV."""
-		if file_path.lower().endswith('.json'):
-			try:
-				with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
-					data = json.load(f)
-				with open(file_path, 'w', encoding='utf-8') as f:
-					json.dump(data, f, indent=2)
-			except Exception as e:
-				logging.error('Failed to prettify %s: %s', file_path, e)
-		elif file_path.lower().endswith('.csv'):
+		"""Processes downloaded files: filters CSV. JSON prettification is skipped to save memory."""
+		if file_path.lower().endswith('.csv'):
 			cols_to_remove = {'No.', 'Remarks', 'Call Type', 'Call Alert'}
 			try:
 				temp_file = file_path + '.tmp'
@@ -587,7 +591,7 @@ class UserManager:
 		self._cache = {'mtime_csv': 0, 'mtime_dat': 0, 'user_map': {}}
 
 	def get_map(self) -> dict:
-		"""Returns the user map, reloading from file if it has changed."""
+		"""Returns the user map, reloading in-place from file if it has changed."""
 		active_csv = self._user_csv_path
 		if os.path.exists(self._temp_path):
 			if not os.path.exists(self._user_csv_path) or os.path.getmtime(self._temp_path) > os.path.getmtime(self._user_csv_path):
@@ -602,80 +606,72 @@ class UserManager:
 			mtime_dat = 0
 		if mtime_csv == self._cache.get('mtime_csv') and mtime_dat == self._cache.get('mtime_dat') and self._cache.get('user_map'):
 			return self._cache['user_map']
-		user_map = self._load_data(active_csv)
-		self._cache = {'mtime_csv': mtime_csv, 'mtime_dat': mtime_dat, 'user_map': user_map}
+		user_map = self._cache.setdefault('user_map', {})
+		user_map.clear()
+		self._load_data(active_csv, user_map)
+		self._cache['mtime_csv'] = mtime_csv
+		self._cache['mtime_dat'] = mtime_dat
+		gc.collect()
 		return user_map
 
-	def _load_data(self, csv_path: str) -> dict:
-		"""Loads user data, preferring user.csv and falling back to DMRIds.dat."""
-		user_map = self._load_from_user_csv(csv_path)
-		if not user_map:
+	def _load_data(self, csv_path: str, target_map: dict):
+		"""Loads user data into the target map, preferring user.csv."""
+		if not self._load_from_user_csv(csv_path, target_map):
 			logging.warning('Could not load user data from %s, falling back to %s.', csv_path, self._dmr_ids_path)
-			user_map = self._load_from_dmr_ids()
-		return user_map
+			self._load_from_dmr_ids(target_map)
 
-	def _load_from_user_csv(self, csv_path: str) -> dict:
-		"""Loads user data from the user.csv file."""
+	def _load_from_user_csv(self, csv_path: str, user_map: dict) -> bool:
+		"""Loads user data from the user.csv file into the provided dict using optimized tuple storage."""
 		if not os.path.isfile(csv_path):
-			return {}
-		encodings = ['utf-8', 'latin-1']
-		for encoding in encodings:
+			return False
+		for encoding in ['utf-8', 'latin-1']:
 			try:
-				user_map = {}
 				with open(csv_path, 'r', encoding=encoding, errors='replace') as file:
 					for line in file:
-						parts = line.strip().split(',')
+						parts = [p.strip() for p in line.split(',')]
 						if len(parts) >= 3:
-							ccs7 = parts[0].strip()
-							call = parts[1].strip()
-							fname = parts[2].strip()
-							country = parts[-1].strip()
+							ccs7 = parts[0]
+							call = parts[1]
+							# Store only name and country code to save tuple slots
+							# Intern names and codes as they repeat across users/countries
+							country_code = sys.intern(Formatter.get_country_code(parts[-1]))
+							user_info = (sys.intern(parts[2]), country_code)
 							if call:
-								user_map[call] = (ccs7, fname, country)
-								user_map[ccs7] = (call, fname, country)
-				logging.debug('Successfully loaded user data from %s with %s encoding.', csv_path, encoding)
-				return dict(sorted(user_map.items(), key=lambda x: x[0] if x[0].isdigit() else x[1][0]))
-			except UnicodeDecodeError:
-				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, csv_path)
+								user_map[call] = user_info
+								user_map[ccs7] = user_info
+				logging.debug('Successfully loaded user data from %s.', csv_path)
+				return True
 			except Exception as e:
-				logging.error('Error reading user file %s: %s', csv_path, e)
+				logging.error('Error reading %s: %s', csv_path, e)
 				break
-		return {}
+		return False
 
-	def _load_from_dmr_ids(self) -> dict:
-		"""Loads user data from the DMRIds.dat file."""
+	def _load_from_dmr_ids(self, user_map: dict) -> bool:
+		"""Loads user data from the DMRIds.dat file into the provided dict."""
 		if not os.path.isfile(self._dmr_ids_path):
-			return {}
-		encodings = ['utf-8', 'latin-1']
-		for encoding in encodings:
-			try:
-				user_map = {}
-				with open(self._dmr_ids_path, 'r', encoding=encoding, errors='replace') as file:
-					for line in file:
-						line = line.strip()
-						if not line or line.startswith('#'):
-							continue
-						parts = line.split('\t')
-						if len(parts) >= 3:
-							ccs7 = parts[0].strip()
-							call = parts[1].strip()
-							fname = parts[2].strip()
-							country = ''
-							if ccs7.isdigit() and len(ccs7) >= 3:
-								mcc = int(ccs7[:3])
-								if mcc in MCC_CODES:
-									country, _ = MCC_CODES[mcc]
-							if call:
-								user_map[call] = (ccs7, fname, country)
-								user_map[ccs7] = (call, fname, country)
-				logging.debug('Successfully loaded user data from %s with %s encoding.', self._dmr_ids_path, encoding)
-				return dict(sorted(user_map.items(), key=lambda x: x[0] if x[0].isdigit() else x[1][0]))
-			except UnicodeDecodeError:
-				logging.warning('UnicodeDecodeError with %s for %s. Trying next.', encoding, self._dmr_ids_path)
-			except Exception as e:
-				logging.error('Error reading user file %s: %s', self._dmr_ids_path, e)
-				break
-		return {}
+			return False
+		try:
+			with open(self._dmr_ids_path, 'r', encoding='utf-8', errors='replace') as file:
+				for line in file:
+					line = line.strip()
+					if not line or line.startswith('#'):
+						continue
+					parts = [p.strip() for p in line.split('\t')]
+					if len(parts) >= 3:
+						ccs7, call = parts[0], parts[1]
+						code = ''
+						if ccs7.isdigit() and len(ccs7) >= 3:
+							mcc = int(ccs7[:3])
+							if mcc in MCC_CODES:
+								_, code = MCC_CODES[mcc]
+						user_info = (sys.intern(parts[2]), sys.intern(code))
+						if call:
+							user_map[call] = user_info
+							user_map[ccs7] = user_info
+			return True
+		except Exception as e:
+			logging.error('Error reading %s: %s', self._dmr_ids_path, e)
+		return False
 
 
 class LogFileReader:
@@ -723,18 +719,20 @@ class LogFileReader:
 
 	@staticmethod
 	def get_last_line(file_path: str) -> str:
-		"""Reads the last line of a file using seek for performance."""
+		"""Reads only the last line of a file using splitlines on a buffer to avoid list overhead."""
 		try:
 			with open(file_path, 'rb') as f:
-				try:
-					f.seek(-4096, os.SEEK_END)
-				except OSError:
-					f.seek(0)
-				lines = f.readlines()
-				for line in reversed(lines):
-					decoded = line.decode('utf-8', errors='replace').strip()
-					if len(decoded) >= 10:
-						return decoded
+				f.seek(0, os.SEEK_END)
+				size = f.tell()
+				if size == 0:
+					return ''
+				offset = min(size, 4096)
+				f.seek(-offset, os.SEEK_END)
+				buffer = f.read(offset)
+				lines = buffer.splitlines()
+				if not lines:
+					return ''
+				return lines[-1].decode('utf-8', errors='replace').strip()
 		except OSError as e:
 			logging.error('Error reading last line of file %s: %s', file_path, e)
 		return ''
@@ -752,6 +750,25 @@ class DataManager:
 
 @dataclass
 class MMDVMLogLine:
+	__slots__ = (
+		'timestamp',
+		'mode',
+		'callsign',
+		'destination',
+		'data_type',
+		'block',
+		'duration',
+		'packet_loss',
+		'ber',
+		'rssi',
+		'url',
+		'slot',
+		'is_voice',
+		'is_kerchunk',
+		'is_network',
+		'is_watchdog',
+		'data_manager',
+	)
 	timestamp: Optional[dt.datetime] = None
 	mode: str = ''
 	callsign: str = ''
@@ -772,6 +789,9 @@ class MMDVMLogLine:
 	is_network: bool = True
 	is_watchdog: bool = False
 	data_manager: 'DataManager' = field(init=False, repr=False)
+
+	_ICONS = {'DMR': '📻', 'D-Star': '⭐', 'YSF': '📡', 'DVS': '📱', 'DVSwitch': '📱', 'DMR-D': '📟', 'YSF-D': '📟'}
+
 	_TIMESTAMP = r'(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)'
 	_SOURCE = r'(?P<source>network|RF)'
 	_CALLSIGN = r'from (?P<callsign>[\w\d\-/]+)'
@@ -823,24 +843,33 @@ class MMDVMLogLine:
 		rf'(?:, {_DURATION}, {_PACKET_LOSS}, {_BER})'
 	)
 
+	_PARSED = None
+
 	@classmethod
 	def from_logline(cls, logline: str, data_manager: 'DataManager') -> 'MMDVMLogLine':
-		"""Factory method to create an MMDVMLogLine instance from a log line."""
-		parsers = [
-			cls._parse_dmr_voice,
-			# cls._parse_dmr_data,
-			cls._parse_dstar,
-			cls._parse_dstar_watchdog,
-			cls._parse_ysf,
-			cls._parse_ysf_network_data,
-			cls._parse_dvs,
-		]
-		for parser in parsers:
+		"""Factory method using a cached class-level tuple for parsers."""
+		if cls._PARSERS is None:
+			cls._PARSERS = (
+				cls._parse_dmr_voice,
+				cls._parse_dstar,
+				cls._parse_dstar_watchdog,
+				cls._parse_ysf,
+				cls._parse_ysf_network_data,
+				cls._parse_dvs,
+			)
+		for parser in cls._PARSERS:
 			instance = parser(logline)
 			if instance:
 				instance.data_manager = data_manager
 				return instance
-		raise ValueError(f'Log line does not match expected format: {logline}')
+		raise ValueError('Log line does not match any known format')
+
+	@staticmethod
+	@lru_cache(maxsize=256)
+	def _get_formatted_rssi(rssi_val: int) -> str:
+		"""Combines calculation and formatting with caching to minimize string allocations."""
+		s = ('🔴S0', '🔴S1', '🟡S2', '🟡S3', '🟠S4', '🟠S5', '🟠S6', '🟢S7', '🟢S8', '🟢S9')[max(0, min(9, (rssi_val + 147) // 6))]
+		return sys.intern(f'{s} ({rssi_val}dBm)')
 
 	@classmethod
 	def _parse_dmr_voice(cls, logline: str) -> Optional['MMDVMLogLine']:
@@ -848,41 +877,22 @@ class MMDVMLogLine:
 		match = cls.DMR_GW_PATTERN.match(logline) or cls.DMR_RF_PATTERN.match(logline)
 		if match:
 			obj = cls()
-			obj.mode = 'DMR'
+			obj.mode = sys.intern('DMR')
 			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.slot = int(match.group('slot'))
-			obj.is_network = match.group('source') == 'network'
-			obj.callsign = match.group('callsign').strip()
-			obj.destination = match.group('destination').strip()
+			is_net = match.group('source') == 'network'
+			obj.is_network = is_net
+			obj.callsign = sys.intern(match.group('callsign').strip())
+			obj.destination = sys.intern(match.group('destination').strip())
 			obj.duration = float(match.group('duration'))
 			obj.ber = float(match.group('ber'))
 			obj._set_url(obj.callsign)
-			if obj.is_network:
+			if is_net:
 				obj.packet_loss = int(match.group('packet_loss'))
 			else:
-				obj.rssi3 = int(match.group('rssi3'))
-				obj._format_rssi_string()
+				obj.rssi = cls._get_formatted_rssi(int(match.group('rssi3')))
 			return obj
 		return None
-
-	# @classmethod
-	# def _parse_dmr_data(cls, logline: str) -> Optional['MMDVMLogLine']:
-	# 	"""Parses a DMR data transmission log line."""
-	# 	match = cls.DMR_DATA_PATTERN.match(logline)
-	# 	if match:
-	# 		obj = cls()
-	# 		obj.mode = 'DMR-D'
-	# 		obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
-	# 		obj.slot = int(match.group('slot'))
-	# 		obj.is_network = match.group('source') == 'network'
-	# 		obj.is_voice = False
-	# 		obj.data_type = 'header'
-	# 		obj.callsign = match.group('callsign').strip()
-	# 		obj._set_url(obj.callsign)
-	# 		obj.destination = match.group('destination').strip()
-	# 		obj.block = int(match.group('block'))
-	# 		return obj
-	# 	return None
 
 	@classmethod
 	def _parse_dstar(cls, logline: str) -> Optional['MMDVMLogLine']:
@@ -890,11 +900,11 @@ class MMDVMLogLine:
 		match = cls.DSTAR_PATTERN.match(logline)
 		if match:
 			obj = cls()
-			obj.mode = 'D-Star'
+			obj.mode = sys.intern('D-Star')
 			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
-			obj.callsign = Formatter.remove_double_spaces(match.group('callsign').strip())
-			obj.destination = match.group('destination').strip()
+			obj.callsign = sys.intern(Formatter.remove_double_spaces(match.group('callsign').strip()))
+			obj.destination = sys.intern(match.group('destination').strip())
 			obj.duration = float(match.group('duration'))
 			obj.packet_loss = int(match.group('packet_loss'))
 			obj.ber = float(match.group('ber'))
@@ -924,7 +934,7 @@ class MMDVMLogLine:
 		match = cls.YSF_PATTERN.match(logline)
 		if match:
 			obj = cls()
-			obj.mode = 'YSF'
+			obj.mode = sys.intern('YSF')
 			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
 			obj.is_voice = True
@@ -943,12 +953,12 @@ class MMDVMLogLine:
 		match = cls.YSF_NETWORK_DATA_PATTERN.match(logline)
 		if match:
 			obj = cls()
-			obj.mode = 'YSF-D'
+			obj.mode = sys.intern('YSF-D')
 			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
 			obj.is_voice = False
 			obj.callsign = match.group('callsign').strip()
-			obj.destination = f'DG-ID {match.group("dgid")} at {match.group("location").strip()}'
+			obj.destination = sys.intern(f'DG-ID {match.group("dgid")} at {match.group("location").strip()}')
 			obj._set_url(obj.callsign.split('-')[0].strip())
 			return obj
 		return None
@@ -959,7 +969,7 @@ class MMDVMLogLine:
 		match = cls.DVS_PATTERN.match(logline)
 		if match:
 			obj = cls()
-			obj.mode = match.group('mode')
+			obj.mode = sys.intern(match.group('mode'))
 			obj.timestamp = dt.datetime.strptime(match.group('timestamp'), '%Y-%m-%d %H:%M:%S.%f')
 			obj.is_network = match.group('source') == 'network'
 			obj.callsign = match.group('callsign').strip()
@@ -977,30 +987,6 @@ class MMDVMLogLine:
 			self.url = f'https://database.radioid.net/database/view?id={lookup_call}'
 		else:
 			self.url = f'https://www.qrz.com/db/{lookup_call}'
-
-	def _format_rssi_string(self):
-		"""Formats the RSSI string."""
-		if self.rssi3 >= -93:
-			s_meter = '🟢S9'
-		elif -99 <= self.rssi3 < -93:
-			s_meter = '🟢S8'
-		elif -105 <= self.rssi3 < -99:
-			s_meter = '🟢S7'
-		elif -111 <= self.rssi3 < -105:
-			s_meter = '🟠S6'
-		elif -117 <= self.rssi3 < -111:
-			s_meter = '🟠S5'
-		elif -123 <= self.rssi3 < -117:
-			s_meter = '🟠S4'
-		elif -129 <= self.rssi3 < -123:
-			s_meter = '🟡S3'
-		elif -135 <= self.rssi3 < -129:
-			s_meter = '🟡S2'
-		elif -141 <= self.rssi3 < -135:
-			s_meter = '🔴S1'
-		else:
-			s_meter = '🔴S0'
-		self.rssi = f'{s_meter} ({self.rssi3}dBm)'
 
 	def __str__(self):
 		"""Returns a string representation of the log line."""
@@ -1035,11 +1021,9 @@ class MMDVMLogLine:
 			user_map = self.data_manager.users.get_map()
 			user_info = user_map.get(tg_id_str)
 			if user_info:
-				call, fname, country = user_info
-				code = Formatter.get_country_code(country)
+				fname, code = user_info  # Tuple is now (name, code)
 				flag = Formatter.get_flag_emoji(code)
-				label = code if code else country
-				name = f'~{call} ({fname}) [{flag} {label}]'
+				name = f'~{tg_id_str} ({fname}) [{flag} {code}]'
 		if name is None:
 			xlx_tgs = self.data_manager.dmr_gateway.get_xlx_tgs()
 			if tg_id_str in xlx_tgs:
@@ -1098,15 +1082,12 @@ class MMDVMLogLine:
 
 	def get_caller_location(self) -> str:
 		"""Returns the location of the caller based on the callsign."""
-		caller_details = ''
 		user_map = self.data_manager.users.get_map()
 		user_info = user_map.get(self.callsign)
 		if user_info:
-			call, fname, country = user_info
-			code = Formatter.get_country_code(country)
+			fname, code = user_info
 			flag = Formatter.get_flag_emoji(code)
-			label = code if code else country
-			caller_details = f'~{call} ({fname}) [{flag} {label}]'
+			return f'~{self.callsign} ({fname}) [{flag} {code}]'
 		elif self.callsign.isdigit():
 			if len(self.callsign) == 7:
 				try:
@@ -1123,23 +1104,10 @@ class MMDVMLogLine:
 		return caller_details
 
 	def get_telegram_message(self) -> str:
-		"""Returns a formatted message for Telegram with emojis."""
-		display_mode = self.mode
-		if self.mode == 'DMR':
-			mode_icon = '📻'
-		elif self.mode == 'D-Star':
-			mode_icon = '⭐'
-		elif self.mode == 'YSF':
-			mode_icon = '📡'
-		elif self.mode in ('DVS', 'DVSwitch'):
-			mode_icon = '📱'
-			display_mode = 'DVSwitch'
-		elif self.mode == 'DMR-D':
-			mode_icon = '📟'
-		elif self.mode == 'YSF-D':
-			mode_icon = '📟'
-		else:
-			mode_icon = '📶'
+		"""Returns a formatted message for Telegram using class-cached icons."""
+		mode_icon = self._ICONS.get(self.mode, '📶')
+		display_mode = 'DVSwitch' if self.mode in ('DVS', 'DVSwitch') else self.mode
+
 		message = f'{mode_icon} Mode: <b>{display_mode}</b>'
 		if self.mode == 'DMR' or self.mode == 'DMR-D':
 			message += f' (Slot {self.slot})'
