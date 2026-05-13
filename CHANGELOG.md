@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-13T14:55:01+08:00)
+## [beta9] - (2026-05-13T15:23:19+08:00)
 
-- 1 commit(s) contributed to the release.
+- 2 commit(s) contributed to the release.
 - 1 day(s) passed between releases.
+
+### 📚 Documentation in beta9
+
+- [8507f8a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/8507f8a5d021e0d051802e82fcb8c86364ba9a58) docs(README): update service setup instructions *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T15:23:19+08:00*
 
 ### ⚙️ Miscellaneous Tasks in beta9
 
@@ -583,4 +587,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T14:56:19.801182408+08:00
+generated using git-cliff at 2026-05-13T15:24:28.588178120+08:00
