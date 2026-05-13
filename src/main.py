@@ -1067,7 +1067,7 @@ class MMDVMLogLine:
 		if user_info:
 			fname, code = user_info
 			flag = Formatter.get_flag_emoji(code)
-			return f'~{self.callsign} ({fname}) [{flag} {code}]'
+			return f' ({fname}) [{flag} {code}]'
 		elif self.callsign.isdigit():
 			if len(self.callsign) == 7:
 				try:
