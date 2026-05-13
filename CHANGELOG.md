@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-13T15:44:29+08:00)
+## [beta9] - (2026-05-13T16:48:01+08:00)
 
-- 4 commit(s) contributed to the release.
+- 5 commit(s) contributed to the release.
 - 1 day(s) passed between releases.
+
+### 🐛 Bug Fixes in beta9
+
+- [fad4d16](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/fad4d16bdf1c4251ecff45f50f971283f192a1c0) refactor(main): remove callsign prefix from location format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T16:48:01+08:00*
 
 ### 💼 Other in beta9
 
@@ -595,4 +599,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T15:45:32.401724266+08:00
+generated using git-cliff at 2026-05-13T16:49:10.285469476+08:00
