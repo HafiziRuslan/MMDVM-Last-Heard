@@ -100,13 +100,44 @@ sudo chmod +x main.sh
 sudo ./main.sh
 ```
 
-## ⏰ AutoStart
+## ⏰ AutoStart (Systemd Service)
 
-To run the bot automatically on system boot, add the following entry to your `/etc/crontab` (change `pi-star` to your actual username and verify the path):
+To run the bot automatically on system boot, it is recommended to use a systemd service.
 
-```bash
-@reboot pi-star cd /home/pi-star/MMDVM-LastHeard && ./main.sh > /dev/null 2>&1
-```
+1. Copy the service file to the systemd directory:
+
+  ```bash
+  sudo cp mmdvm-lastheard.service /etc/systemd/system/
+  ```
+
+2. Adjust the WorkingDirectory and ExecStart parameters to match your installation path:
+
+  ```bash
+  sudo systemctl edit mmdvm-lastheard
+  ```
+
+  ```properties
+  WorkingDirectory=/YourDir/MMDVM-LastHeard
+  ExecStart=/bin/bash /YourDir/MMDVM-LastHeard/main.sh
+  ```
+
+3. Reload the systemd daemon:
+
+  ```bash
+  sudo systemctl daemon-reload
+  ```
+
+4. Enable the service to start on boot:
+
+  ```bash
+  sudo systemctl enable mmdvm-lastheard
+  ```
+
+5. Start the service:
+
+  ```bash
+  sudo systemctl start mmdvm-lastheard
+  ```
 
 ## 🔄 Update
 

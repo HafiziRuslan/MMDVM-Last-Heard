@@ -1,0 +1,16 @@
+[Unit]
+Description=MMDVM LastHeard Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/MMDVM-LastHeard
+ExecStart=/bin/bash /opt/MMDVM-LastHeard/main.sh
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=always
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
