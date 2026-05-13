@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-13T15:36:20+08:00)
+## [beta9] - (2026-05-13T15:44:29+08:00)
 
-- 3 commit(s) contributed to the release.
+- 4 commit(s) contributed to the release.
 - 1 day(s) passed between releases.
+
+### 💼 Other in beta9
+
+- [3fdba46](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/3fdba464c4c0b5307f21c66ba7fbfc146754585e) Refactor(README): update systemd config for installation *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T15:44:29+08:00*
 
 ### 🚜 Refactor in beta9
 
@@ -591,4 +595,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T15:37:34.866433365+08:00
+generated using git-cliff at 2026-05-13T15:45:32.401724266+08:00
