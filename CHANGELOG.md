@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [beta9] - (2026-05-13T14:55:01+08:00)
+
+- 1 commit(s) contributed to the release.
+- 1 day(s) passed between releases.
+
+### ⚙️ Miscellaneous Tasks in beta9
+
+- [2afc5d2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2afc5d224e7d4cfdd00a3b2ce3f39e8c4552583c) chore(version): update project version to 0.1b9 and idna to 3.15 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T14:55:01+08:00*
+
+---
+
 ## [beta8] - (2026-05-13T01:53:51+08:00)
 
 - 16 commit(s) contributed to the release.
@@ -572,4 +583,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T01:54:47.716587159+08:00
+generated using git-cliff at 2026-05-13T14:56:19.801182408+08:00
