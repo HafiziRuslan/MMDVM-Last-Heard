@@ -1,6 +1,6 @@
 [Unit]
 Description=MMDVM LastHeard Service
-After=network.target
+After=network-online.target mmdvmhost.service
 
 [Service]
 Type=simple
@@ -8,9 +8,12 @@ User=root
 WorkingDirectory=/opt/MMDVM-LastHeard
 ExecStart=/bin/bash /opt/MMDVM-LastHeard/main.sh
 ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGINT
 KillMode=process
 Restart=always
 RestartSec=15
+StandardOutput=inherit
+StandardError=inherit
 
 [Install]
 WantedBy=multi-user.target
