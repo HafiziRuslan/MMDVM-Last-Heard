@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-13T15:23:19+08:00)
+## [beta9] - (2026-05-13T15:36:20+08:00)
 
-- 2 commit(s) contributed to the release.
+- 3 commit(s) contributed to the release.
 - 1 day(s) passed between releases.
+
+### 🚜 Refactor in beta9
+
+- [19b0421](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/19b0421aa55d5736db4467ab2a66fda6a5df7246) refactor(MMDVMLogLine): simplify parsers and slots *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T15:36:20+08:00*
 
 ### 📚 Documentation in beta9
 
@@ -587,4 +591,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T15:24:28.588178120+08:00
+generated using git-cliff at 2026-05-13T15:37:34.866433365+08:00
