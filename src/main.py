@@ -748,27 +748,8 @@ class DataManager:
 		self.log_reader = LogFileReader()
 
 
-@dataclass
+@dataclass(slots=True)
 class MMDVMLogLine:
-	__slots__ = (
-		'timestamp',
-		'mode',
-		'callsign',
-		'destination',
-		'data_type',
-		'block',
-		'duration',
-		'packet_loss',
-		'ber',
-		'rssi',
-		'url',
-		'slot',
-		'is_voice',
-		'is_kerchunk',
-		'is_network',
-		'is_watchdog',
-		'data_manager',
-	)
 	timestamp: Optional[dt.datetime] = None
 	mode: str = ''
 	callsign: str = ''
@@ -791,7 +772,6 @@ class MMDVMLogLine:
 	data_manager: 'DataManager' = field(init=False, repr=False)
 
 	_ICONS = {'DMR': '📻', 'D-Star': '⭐', 'YSF': '📡', 'DVS': '📱', 'DVSwitch': '📱', 'DMR-D': '📟', 'YSF-D': '📟'}
-
 	_TIMESTAMP = r'(?P<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+)'
 	_SOURCE = r'(?P<source>network|RF)'
 	_CALLSIGN = r'from (?P<callsign>[\w\d\-/]+)'
@@ -803,7 +783,9 @@ class MMDVMLogLine:
 	_PACKET_LOSS = r'(?P<packet_loss>[\d\.]+)% packet loss'
 	_BER = r'BER: (?P<ber>[\d\.]+)%'
 	_RSSI = r'RSSI: (?P<rssi1>-[\d]+)/(?P<rssi2>-[\d]+)/(?P<rssi3>-[\d]+) dBm'
-	DMR_GW_PATTERN = re.compile(
+	_PARSERS = None
+
+	DMR_NET_PATTERN = re.compile(
 		rf'^M: {_TIMESTAMP} DMR Slot (?P<slot>\d), received (?P<source>network) '
 		r'(?:late entry|voice header|end of voice transmission) '
 		rf'{_CALLSIGN} {_DMR_DESTINATION}'
@@ -833,7 +815,7 @@ class MMDVMLogLine:
 		rf'{_CALLSIGN} {_YSF_DESTINATION}, '
 		rf'{_DURATION}, {_PACKET_LOSS}, {_BER}'
 	)
-	YSF_NETWORK_DATA_PATTERN = re.compile(
+	YSF_NET_DATA_PATTERN = re.compile(
 		rf'^M: {_TIMESTAMP} YSF, received network data '
 		rf'{_CALLSIGN}\s+{_YSF_DESTINATION} at (?P<location>\S+)'
 	)
@@ -842,8 +824,6 @@ class MMDVMLogLine:
 		rf'{_CALLSIGN} {_DMR_DESTINATION}'
 		rf'(?:, {_DURATION}, {_PACKET_LOSS}, {_BER})'
 	)
-
-	_PARSED = None
 
 	@classmethod
 	def from_logline(cls, logline: str, data_manager: 'DataManager') -> 'MMDVMLogLine':
@@ -854,7 +834,7 @@ class MMDVMLogLine:
 				cls._parse_dstar,
 				cls._parse_dstar_watchdog,
 				cls._parse_ysf,
-				cls._parse_ysf_network_data,
+				cls._parse_ysf_net_data,
 				cls._parse_dvs,
 			)
 		for parser in cls._PARSERS:
@@ -874,7 +854,7 @@ class MMDVMLogLine:
 	@classmethod
 	def _parse_dmr_voice(cls, logline: str) -> Optional['MMDVMLogLine']:
 		"""Parses a DMR voice transmission log line."""
-		match = cls.DMR_GW_PATTERN.match(logline) or cls.DMR_RF_PATTERN.match(logline)
+		match = cls.DMR_NET_PATTERN.match(logline) or cls.DMR_RF_PATTERN.match(logline)
 		if match:
 			obj = cls()
 			obj.mode = sys.intern('DMR')
@@ -948,9 +928,9 @@ class MMDVMLogLine:
 		return None
 
 	@classmethod
-	def _parse_ysf_network_data(cls, logline: str) -> Optional['MMDVMLogLine']:
+	def _parse_ysf_net_data(cls, logline: str) -> Optional['MMDVMLogLine']:
 		"""Parses a YSF network data transmission log line."""
-		match = cls.YSF_NETWORK_DATA_PATTERN.match(logline)
+		match = cls.YSF_NET_DATA_PATTERN.match(logline)
 		if match:
 			obj = cls()
 			obj.mode = sys.intern('YSF-D')
