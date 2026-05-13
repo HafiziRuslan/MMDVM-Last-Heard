@@ -113,7 +113,7 @@ To run the bot automatically on system boot, it is recommended to use a systemd 
 2. Adjust the WorkingDirectory and ExecStart parameters to match your installation path:
 
   ```bash
-  sudo systemctl edit mmdvm-lastheard
+  sudo nano /etc/systemd/system/mmdvm-lastheard.service
   ```
 
   ```properties
