@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-13T16:48:01+08:00)
+## [beta9] - (2026-05-13T18:55:36+08:00)
 
-- 5 commit(s) contributed to the release.
+- 6 commit(s) contributed to the release.
 - 1 day(s) passed between releases.
 
 ### 🐛 Bug Fixes in beta9
@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚜 Refactor in beta9
 
+- [a67bf7a](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/a67bf7ae83bd1aadc1cd379ca38fed4b4d25e4a2) refactor(mmdvm-lastheard): improve service dependencies and logging *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T18:55:36+08:00*
 - [19b0421](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/19b0421aa55d5736db4467ab2a66fda6a5df7246) refactor(MMDVMLogLine): simplify parsers and slots *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T15:36:20+08:00*
 
 ### 📚 Documentation in beta9
@@ -599,4 +600,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T16:49:10.285469476+08:00
+generated using git-cliff at 2026-05-13T18:56:41.038224916+08:00
