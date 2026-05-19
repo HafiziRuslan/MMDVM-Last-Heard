@@ -2,10 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-13T18:55:36+08:00)
+## [beta9] - (2026-05-19T18:46:11+08:00)
 
-- 6 commit(s) contributed to the release.
-- 1 day(s) passed between releases.
+- 7 commit(s) contributed to the release.
+- 7 day(s) passed between releases.
+
+### 🚀 Features in beta9
+
+- [b872961](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b872961f2dca09a7eef950edcc71463964b33078) feat(service): improve service startup and restart behavior *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-19T18:46:11+08:00*
 
 ### 🐛 Bug Fixes in beta9
 
@@ -600,4 +604,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-13T18:56:41.038224916+08:00
+generated using git-cliff at 2026-05-19T18:48:52.076652119+08:00
