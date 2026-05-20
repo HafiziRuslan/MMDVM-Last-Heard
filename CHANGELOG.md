@@ -2,9 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-20T13:12:51+08:00)
+## [beta9] - (2026-05-20T15:54:47+08:00)
 
-- 8 commit(s) contributed to the release.
+- 9 commit(s) contributed to the release.
 - 8 day(s) passed between releases.
 
 ### 🚀 Features in beta9
@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes in beta9
 
+- [b4223ae](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/b4223aef77d51eb7c5700a046df83820ffb4461f) fix(service): update mmdvm-lastheard service configuration *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-20T15:54:47+08:00*
 - [fad4d16](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/fad4d16bdf1c4251ecff45f50f971283f192a1c0) refactor(main): remove callsign prefix from location format *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T16:48:01+08:00*
 
 ### 💼 Other in beta9
@@ -605,4 +606,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-20T13:13:57.018610526+08:00
+generated using git-cliff at 2026-05-20T15:56:36.922312987+08:00
