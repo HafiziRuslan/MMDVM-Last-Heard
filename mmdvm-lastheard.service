@@ -1,5 +1,5 @@
 [Unit]
-Description=MMDVM LastHeard Service
+Description=MMDVM Last Heard Monitoring Service
 Wants=network-online.target
 After=network-online.target mmdvmhost.service
 
@@ -7,14 +7,14 @@ After=network-online.target mmdvmhost.service
 Type=simple
 User=root
 WorkingDirectory=/opt/MMDVM-LastHeard
-ExecStartPre=/bin/sleep 90
+ExecStartPre=/bin/sleep 15
 ExecStart=/bin/bash /opt/MMDVM-LastHeard/main.sh
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGINT
 RestartKillSignal=SIGINT
 KillMode=control-group
 Restart=always
-RestartSec=15
+RestartSec=10
 StandardOutput=inherit
 StandardError=inherit
 
