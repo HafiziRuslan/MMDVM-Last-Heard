@@ -2,14 +2,14 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
   "version": 1,
-  "serialNumber": "urn:uuid:585b5d08-96da-4d5e-a013-928eea1b4dfe",
+  "serialNumber": "urn:uuid:8228ef52-c4c2-48e7-9e6e-768c41f9ef18",
   "metadata": {
-    "timestamp": "2026-05-20T05:08:27.322065800Z",
+    "timestamp": "2026-05-23T14:25:49.339664200Z",
     "tools": [
       {
         "vendor": "Astral Software Inc.",
         "name": "uv",
-        "version": "0.11.15"
+        "version": "0.11.16"
       }
     ],
     "component": {
@@ -35,10 +35,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "certifi-3@2026.4.22",
+      "bom-ref": "certifi-3@2026.5.20",
       "name": "certifi",
-      "version": "2026.4.22",
-      "purl": "pkg:pypi/certifi@2026.4.22"
+      "version": "2026.5.20",
+      "purl": "pkg:pypi/certifi@2026.5.20"
     },
     {
       "type": "library",
@@ -70,10 +70,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "idna-8@3.15",
+      "bom-ref": "idna-8@3.16",
       "name": "idna",
-      "version": "3.15",
-      "purl": "pkg:pypi/idna@3.15"
+      "version": "3.16",
+      "purl": "pkg:pypi/idna@3.16"
     },
     {
       "type": "library",
@@ -101,11 +101,11 @@
     {
       "ref": "anyio-2@4.13.0",
       "dependsOn": [
-        "idna-8@3.15"
+        "idna-8@3.16"
       ]
     },
     {
-      "ref": "certifi-3@2026.4.22"
+      "ref": "certifi-3@2026.5.20"
     },
     {
       "ref": "h11-4@0.16.0"
@@ -113,7 +113,7 @@
     {
       "ref": "httpcore-5@1.0.9",
       "dependsOn": [
-        "certifi-3@2026.4.22",
+        "certifi-3@2026.5.20",
         "h11-4@0.16.0"
       ]
     },
@@ -121,16 +121,16 @@
       "ref": "httpx-6@0.28.1",
       "dependsOn": [
         "anyio-2@4.13.0",
-        "certifi-3@2026.4.22",
+        "certifi-3@2026.5.20",
         "httpcore-5@1.0.9",
-        "idna-8@3.15"
+        "idna-8@3.16"
       ]
     },
     {
       "ref": "humanize-7@4.15.0"
     },
     {
-      "ref": "idna-8@3.15"
+      "ref": "idna-8@3.16"
     },
     {
       "ref": "mmdvm-lastheard-1@0.1b9",
