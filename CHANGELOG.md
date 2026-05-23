@@ -2,10 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [beta9] - (2026-05-20T15:54:47+08:00)
+## [beta9] - (2026-05-23T22:26:42+08:00)
 
-- 9 commit(s) contributed to the release.
-- 8 day(s) passed between releases.
+- 10 commit(s) contributed to the release.
+- 11 day(s) passed between releases.
 
 ### 🚀 Features in beta9
 
@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks in beta9
 
+- [481827f](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/481827f806788e7f9bdc2bc775eebd117cd1c7b6) chore(dependencies): update certifi to 2026.5.20 and idna to 3.16 across project files *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-23T22:26:42+08:00*
 - [ad92a26](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/ad92a2655ca6257b1ccd1a7eaeeeadd3f91a74d3) chore(bom): bump sbom serial, timestamp, uv version *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-20T13:12:51+08:00*
 - [2afc5d2](https://github.com/HafiziRuslan/MMDVM-LastHeard/commit/2afc5d224e7d4cfdd00a3b2ce3f39e8c4552583c) chore(version): update project version to 0.1b9 and idna to 3.15 *by [@HafiziRuslan](https://github.com/HafiziRuslan) on 2026-05-13T14:55:01+08:00*
 
@@ -606,4 +607,4 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-generated using git-cliff at 2026-05-20T15:56:36.922312987+08:00
+generated using git-cliff at 2026-05-23T22:27:43.268087858+08:00
